@@ -1,0 +1,4 @@
+name: SquadAssault
+version: 0.1
+main: com.podcrash.squadassault.Main
+authors: [Noid, Notoh]
