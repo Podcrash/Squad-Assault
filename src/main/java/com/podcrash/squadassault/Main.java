@@ -1,5 +1,7 @@
 package com.podcrash.squadassault;
 
+import com.podcrash.squadassault.commands.DeleteWorldCommand;
+import com.podcrash.squadassault.listeners.InventoryListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
@@ -22,11 +24,11 @@ public class Main extends JavaPlugin {
     }
 
     private void registerCommands() {
-
+        getCommand("deleteworld").setExecutor(new DeleteWorldCommand());
     }
 
     private void registerListeners() {
-
+        new InventoryListener(this);
     }
 
 }
