@@ -37,6 +37,5 @@ public class ScoreboardTeam {
 
     public void update(SAGame game, Player player) {
         Team team = scoreboard.getTeam(player.getName());
-
     }
 }

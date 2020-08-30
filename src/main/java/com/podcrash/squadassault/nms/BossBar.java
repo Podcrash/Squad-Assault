@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
+//todo for now this sends a bossbar to all players, isolate it so you can do callouts. lower priority than other
+// stuff though
 public class BossBar {
 
     private String title;

@@ -11,7 +11,7 @@ public class GunDamageEvent extends Event {
     private Player victim;
     private static final HandlerList handlers = new HandlerList();
 
-    public GunDamageEvent(final double damage, final boolean isHeadshot, final Player damager, final Player victim) {
+    public GunDamageEvent(double damage, boolean isHeadshot, Player damager, Player victim) {
         this.damage = damage;
         this.isHeadshot = isHeadshot;
         this.damager = damager;
