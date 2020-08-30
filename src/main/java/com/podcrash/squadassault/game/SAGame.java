@@ -343,7 +343,7 @@ public class SAGame {
         if(!roundEnding) {
             bar.setTitle(Message.BOSSBAR_INGAME.toString().replace("%name%", mapName).replace("%timer%",
                     String.valueOf(timer))); //todo callouts
-            bar.setProgress();
+            bar.setProgress(bomb.isPlanted() ? );
         }
     }
 
