@@ -1,13 +1,17 @@
 package com.podcrash.squadassault.game;
 
 import com.podcrash.squadassault.Main;
+import com.podcrash.squadassault.game.events.BombExplodeEvent;
 import com.podcrash.squadassault.game.events.GameStateChangeEvent;
 import com.podcrash.squadassault.nms.BossBar;
 import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.scoreboard.SAScoreboard;
 import com.podcrash.squadassault.util.Message;
 import com.podcrash.squadassault.util.Randomizer;
+import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -15,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 import static com.podcrash.squadassault.game.SATeam.Team.ALPHA;
+import static com.podcrash.squadassault.game.SATeam.Team.OMEGA;
 
 /**
  * This classs represents a single ongoing lobby of the game. probably needs bungee integration todo
@@ -275,9 +280,9 @@ public class SAGame {
         gameStarted = true;
         if(Randomizer.randomBool()) {
             teamA.setTeam(ALPHA);
-            teamB.setTeam(SATeam.Team.OMEGA);
+            teamB.setTeam(OMEGA);
         } else {
-            teamA.setTeam(SATeam.Team.OMEGA);
+            teamA.setTeam(OMEGA);
             teamA.setTeam(ALPHA);
         }
     }
@@ -410,6 +415,40 @@ public class SAGame {
             }
 
             //bomb explode
+            if(timer == 0 && bomb.isPlanted()) {
+                round++;
+                timer = 7;
+                roundWinner = OMEGA;
+                if(teamA.getTeam() == OMEGA) {
+                    addRoundTeamA();
+                } else {
+                    addRoundTeamB();
+                }
+                bomb.getLocation().getBlock().setType(Material.AIR);
+                Main.getInstance().getServer().getPluginManager().callEvent(new BombExplodeEvent(bomb.getLocation()));
+                bomb.getLocation().getWorld().playSound(bomb.getLocation(), Sound.EXPLODE, 5, 5);
+                bomb.getLocation().getWorld().playEffect(bomb.getLocation(), Effect.EXPLOSION_HUGE, 15);
+                bomb.getLocation().getWorld().createExplosion(bomb.getLocation(), 48,false);
+                if(!roundEnding) {
+                    //todo sounds
+                    for(Player p : teamA.getPlayers()) {
+                        p.sendMessage(Message.ROUND_WINNER_OMEGA.toString());
+                    }
+                    for(Player p : teamB.getPlayers()) {
+                        p.sendMessage(Message.ROUND_WINNER_OMEGA.toString());
+                    }
+                }
+                bomb.reset();
+                roundEnding = true;
+            }
+        }
+        //round ending
+        if(roundEnding) {
+            //game is won
+            if(scoreTeamA == 16 || scoreTeamB == 16) {
+                timer = 10;
+                setState(SAGameState.END);
+            }
         }
     }
 
