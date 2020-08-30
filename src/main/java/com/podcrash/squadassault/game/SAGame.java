@@ -14,6 +14,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
+import static com.podcrash.squadassault.game.SATeam.Team.ALPHA;
+
 /**
  * This classs represents a single ongoing lobby of the game. probably needs bungee integration todo
  */
@@ -26,7 +28,7 @@ public class SAGame {
     private int maxPlayers;
     private int timer;
     private BossBar bar;
-    private SATeam roundWinner;
+    private SATeam.Team roundWinner;
     private int scoreTeamA;
     private int scoreTeamB;
     private boolean gameStarting;
@@ -221,7 +223,7 @@ public class SAGame {
         return shops;
     }
 
-    public void setRoundWinner(SATeam roundWinner) {
+    public void setRoundWinner(SATeam.Team roundWinner) {
         this.roundWinner = roundWinner;
     }
 
@@ -272,11 +274,11 @@ public class SAGame {
     public void start() {
         gameStarted = true;
         if(Randomizer.randomBool()) {
-            teamA.setTeam(SATeam.Team.ALPHA);
+            teamA.setTeam(ALPHA);
             teamB.setTeam(SATeam.Team.OMEGA);
         } else {
             teamA.setTeam(SATeam.Team.OMEGA);
-            teamA.setTeam(SATeam.Team.ALPHA);
+            teamA.setTeam(ALPHA);
         }
     }
 
@@ -343,7 +345,71 @@ public class SAGame {
         if(!roundEnding) {
             bar.setTitle(Message.BOSSBAR_INGAME.toString().replace("%name%", mapName).replace("%timer%",
                     String.valueOf(timer))); //todo callouts
-            bar.setProgress(bomb.isPlanted() ? );
+            bar.setProgress(bomb.isPlanted() ? (double) timer / 45 : (double) timer / 115);
+        }
+        //30s after round start close shop
+        if(this.timer == 95) {
+            for(Player player : teamA.getPlayers()) {
+                if(player.getOpenInventory() != null && player.getOpenInventory().getTitle().equals("Shop")) {
+                    player.closeInventory();
+                    player.sendMessage(Message.SHOP_30_S.getMsg());
+                }
+            }
+            for(Player player : teamB.getPlayers()) {
+                if(player.getOpenInventory() != null && player.getOpenInventory().getTitle().equals("Shop")) {
+                    player.closeInventory();
+                    player.sendMessage(Message.SHOP_30_S.getMsg());
+                }
+            }
+        }
+        //bomb planted
+        if(bomb.isPlanted()) {
+            bomb.setTimer(bomb.getTimer() - 1);
+            //TODO tick sound/notifs
+            //probably send a title with like 5s left or smth
+
+            //defusing
+            for(Player player : defusing.keySet()) {
+                if(spectators.contains(player) || !gameStarted) {
+                    defusing.remove(player);
+                    break;
+                }
+                if(player.getLocation().distance(bomb.getLocation()) > 3) {
+                    NmsUtils.sendTitle(player, 0, 40, 0, "", Message.CANCEL_DEFUSE.toString());
+                    defusing.remove(player);
+                    break;
+                }
+                NmsUtils.sendTitle(player, 0, 40, 0, Message.BOMB_DEFUSE.toString(), String.valueOf(defusing.get(player).getTime()));
+                //defused
+                if(defusing.get(player).getTime() == -1 && !roundEnding) {
+                    round++;
+                    for(Player p : teamA.getPlayers()) {
+                        //play sound? todo
+                        NmsUtils.sendTitle(p, 0, 60, 0, Message.BOMB_DEFUSED.toString(), player.getName());
+                        p.sendMessage(Message.ROUND_WINNER_ALPHA.toString());
+                    }
+                    for(Player p : teamB.getPlayers()) {
+                        //play sound? todo
+                        NmsUtils.sendTitle(p, 0, 60, 0, Message.BOMB_DEFUSED.toString(), player.getName());
+                        p.sendMessage(Message.ROUND_WINNER_ALPHA.toString());
+                    }
+                    timer = 7;
+                    roundWinner = ALPHA;
+                    if(teamA.getTeam() == ALPHA) {
+                        addRoundTeamA();
+                    } else {
+                        addRoundTeamB();
+                    }
+                    defusing.remove(player);
+                    bomb.reset();
+                    //todo reset grenades, maybe extract method
+                    roundEnding = true;
+                    break;
+                }
+                defusing.get(player).setTime(defusing.get(player).getTime() - 1);
+            }
+
+            //bomb explode
         }
     }
 
