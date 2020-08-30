@@ -1,5 +1,6 @@
 package com.podcrash.squadassault;
 
+import com.podcrash.squadassault.game.GameListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
@@ -13,7 +14,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         registerCommands();
-        registerListeners();
+        getServer().getPluginManager().registerEvents(new GameListener(), this);
     }
 
     @Override
@@ -25,7 +26,5 @@ public class Main extends JavaPlugin {
        // getCommand("deleteworld").setExecutor(new DeleteWorldCommand());
     }
 
-    private void registerListeners() {
-    }
 
 }
