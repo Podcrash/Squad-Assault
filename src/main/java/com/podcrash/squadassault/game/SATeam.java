@@ -1,5 +1,6 @@
 package com.podcrash.squadassault.game;
 
+import com.podcrash.squadassault.util.Randomizer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -19,6 +20,14 @@ public class SATeam {
 
     public Team getTeam() {
         return team;
+    }
+
+    public Player randomPlayer() {
+        return players.get(Randomizer.randomInt(players.size()));
+    }
+
+    public List<Player> getPlayers() {
+        return players;
     }
 
     public void addPlayer(Player player) {

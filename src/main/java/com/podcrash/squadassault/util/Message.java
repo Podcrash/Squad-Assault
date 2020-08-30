@@ -5,7 +5,7 @@ public enum Message {
     SCOREBOARD_TITLE("§4Squad Assault"),
     BOSSBAR_INGAME("§fMap: §b%name% §fLocation: §b%callout% §fTime Left: §b%timer%");
 
-    private String msg;
+    private final String msg;
 
     Message(String msg) {
         this.msg = msg;

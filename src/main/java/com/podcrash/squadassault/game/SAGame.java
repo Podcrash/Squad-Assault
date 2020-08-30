@@ -6,6 +6,7 @@ import com.podcrash.squadassault.nms.BossBar;
 import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.scoreboard.SAScoreboard;
 import com.podcrash.squadassault.util.Message;
+import com.podcrash.squadassault.util.Randomizer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -47,7 +48,7 @@ public class SAGame {
     private Map<UUID, Inventory> shops;
     private Map<Player, Defuse> defusing;
     private Map<UUID, SAScoreboard> scoreboards;
-    private Map<Player, SATeam> queue;
+    private Map<UUID, SATeam> queue;
 
     public SAGame(String id, String mapName, Location lobby, int minPlayers, List<Location> alphaSpawns,
                   List<Location> omegaSpawns, Location bombA, Location bombB) {
@@ -137,7 +138,7 @@ public class SAGame {
     }
 
    public void removeFromQueue(Player player) {
-        queue.remove(player);
+        queue.remove(player.getUniqueId());
    }
 
     public Location getBombA() {
@@ -248,7 +249,109 @@ public class SAGame {
         }
     }
 
-    public void randomTeam() {
+    public void randomTeam(Player player) {
+        teamA.removePlayer(player);
+        teamB.removePlayer(player);
+        if(Randomizer.randomBool()) {
+            teamA.addPlayer(player);
+        } else {
+            teamB.addPlayer(player);
+        }
+    }
+
+    public void addTeamA(Player player) {
+        teamB.removePlayer(player);
+        teamA.addPlayer(player);
+    }
+
+    public void addTeamB(Player player) {
+        teamA.removePlayer(player);
+        teamB.addPlayer(player);
+    }
+
+    public void start() {
+        gameStarted = true;
+        if(Randomizer.randomBool()) {
+            teamA.setTeam(SATeam.Team.ALPHA);
+            teamB.setTeam(SATeam.Team.OMEGA);
+        } else {
+            teamA.setTeam(SATeam.Team.OMEGA);
+            teamA.setTeam(SATeam.Team.ALPHA);
+        }
+    }
+
+    public void quickJoin(Player player) {
+        if(teamA.size() <= teamB.size()) {
+            queue.put(player.getUniqueId(), teamA);
+            player.teleport(teamA.randomPlayer());
+            teamA.addPlayer(player);
+        } else {
+            queue.put(player.getUniqueId(), teamB);
+            player.teleport(teamB.randomPlayer());
+            teamB.addPlayer(player);
+        }
+        spectators.add(player);
+    }
+
+    public void sendToAll(String msg) {
+        for(Player player : teamA.getPlayers()) {
+            player.sendMessage(msg);
+        }
+        for(Player player : teamB.getPlayers()) {
+            player.sendMessage(msg);
+        }
+        //todo make this work properly with spectators
+    }
+
+    public void stop() {
+        scoreTeamA = 0;
+        scoreTeamB = 0;
+        teamA.setTeam(null);
+        teamB.setTeam(null);
+        gameStarted = false;
+    }
+
+    public void run() {
+        if(!gameStarted) {
+            return;
+        }
+        switch(state) {
+            case END:
+                runEnd();
+                break;
+            case INGAME:
+                runIngame();
+                break;
+            case ROUND:
+                runRound();
+                break;
+            case WAITING:
+                runWaiting();
+                break;
+        }
+        timer--;
+    }
+
+    private void runEnd() {
+        if(timer != 0) {
+            return;
+        }
+        //getManager, stop game todo, add bungee integration here too
+    }
+
+    private void runIngame() {
+        if(!roundEnding) {
+            bar.setTitle(Message.BOSSBAR_INGAME.toString().replace("%name%", mapName).replace("%timer%",
+                    String.valueOf(timer))); //todo callouts
+            bar.setProgress();
+        }
+    }
+
+    private void runRound() {
+
+    }
+
+    private void runWaiting() {
 
     }
 }
