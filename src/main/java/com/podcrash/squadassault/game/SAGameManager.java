@@ -1,6 +1,5 @@
 package com.podcrash.squadassault.game;
 
-import com.podcrash.api.game.Game;
 import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.scoreboard.SAScoreboard;
 import com.podcrash.squadassault.scoreboard.ScoreboardStatus;
@@ -12,7 +11,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
@@ -58,7 +56,7 @@ public class SAGameManager {
         }
         game.randomTeam(player);
         player.teleport(game.getLobby());
-        game.getScoreboards().put(player.getUniqueId(), new SAScoreboard(game, player));
+        game.getScoreboards().put(player.getUniqueId(), new SAScoreboard(player));
         player.getInventory().setItem(0, ItemBuilder.create(Material.DIAMOND, 1, "Team Selector", "Select a team"));
         //TODO leave game item
         player.updateInventory();
@@ -91,7 +89,7 @@ public class SAGameManager {
         }
 
         if(game.getState() != SAGameState.WAITING && game.getState() != SAGameState.END && !game.isGameEnding() && (game.getTeamA().size() == 0 || game.getTeamB().size() == 0)) {
-            stopGame(game);
+            stopGame(game, true);
             game.sendToAll("The game was stopped because a team had no players!");
         }
         game.getBar().removePlayer(player);
@@ -128,7 +126,7 @@ public class SAGameManager {
         game.stop();
         game.setGameEnding(true);
         endRound(game);
-        for(SAScoreboard scoreboard : game.getScoreboards()) {
+        for(SAScoreboard scoreboard : game.getScoreboards().values()) {
             scoreboard.getStatus().reset();
         }
 
@@ -333,8 +331,9 @@ public class SAGameManager {
 
     public boolean damage(SAGame game, Player damager, Player damaged, double damage, String cause) {
         if(damaged.getHealth() <= damage) {
-
+            //todo
         }
+        return false;
     }
 
     public void removeGame(SAGame game) {
