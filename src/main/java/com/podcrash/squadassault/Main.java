@@ -29,21 +29,14 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        instance = this;
+        instance 
+          this;
         gameManager = new SAGameManager();
         config = new Config();
         weaponManager = new WeaponManager();
         registerCommands();
         getServer().getPluginManager().registerEvents(new GameListener(), this);
-    }
-
-    @Override
-    public void onDisable() {
-        super.onDisable();
-    }
 
     private void registerCommands() {
     }
-
-
 }
