@@ -55,7 +55,14 @@ public class Config {
         grenades = YamlConfiguration.loadConfiguration(fileNades);
         loadNades();
 
-        //todo shop
+        log("loading shop.yml");
+        File fileShop = new File(dataFolder, "shop.yml");
+        if(!fileShop.exists()) {
+            Main.getInstance().saveResource("shop.yml",true);
+        }
+
+        shop = YamlConfiguration.loadConfiguration(fileShop);
+
     }
 
     private void loadNades() {

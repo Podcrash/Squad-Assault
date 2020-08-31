@@ -6,6 +6,7 @@ import com.podcrash.squadassault.game.events.GameStateChangeEvent;
 import com.podcrash.squadassault.nms.BossBar;
 import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.scoreboard.SAScoreboard;
+import com.podcrash.squadassault.shop.MoneyManager;
 import com.podcrash.squadassault.util.Message;
 import com.podcrash.squadassault.util.Randomizer;
 import org.bukkit.Effect;
@@ -42,6 +43,7 @@ public class SAGame {
     private boolean roundEnding;
     private SABomb bomb;
     private SAGameState state;
+    private MoneyManager moneyManager;
     private final Location lobby;
     private final Location bombA;
     private final Location bombB;
@@ -73,6 +75,7 @@ public class SAGame {
         roundEnding = false;
         bomb = new SABomb();
         state = SAGameState.WAITING;
+        moneyManager = new MoneyManager();
         spectators = new ArrayList<>();
         teamA = new SATeam(new ArrayList<>());
         teamB = new SATeam(new ArrayList<>());
@@ -82,9 +85,9 @@ public class SAGame {
         queue = new HashMap<>();
         defusing = new HashMap<>();
         scoreboards = new HashMap<>();
-        this.timer = Main.getSAConfig().getLobbyTime();
-        this.maxPlayers = alphaSpawns.size() + omegaSpawns.size();
-        this.bar = NmsUtils.createBossbar(Message.BOSSBAR_WAITING.getMsg().replace("%name%", mapName));
+        timer = Main.getSAConfig().getLobbyTime();
+        maxPlayers = alphaSpawns.size() + omegaSpawns.size();
+        bar = NmsUtils.createBossbar(Message.BOSSBAR_WAITING.getMsg().replace("%name%", mapName));
     }
 
     public String getId() {
@@ -391,6 +394,7 @@ public class SAGame {
                 //defused
                 if(defusing.get(player).getTime() == -1 && !roundEnding) {
                     round++;
+                    moneyManager.addMoneyEndRound(this, ALPHA, true, MoneyManager.RoundEndType.DEFUSED);
                     for(Player p : teamA.getPlayers()) {
                         //play sound? todo
                         NmsUtils.sendTitle(p, 0, 60, 0, Message.BOMB_DEFUSED.toString(), player.getName());
@@ -420,6 +424,7 @@ public class SAGame {
             //bomb explode
             if(timer == 0 && bomb.isPlanted()) {
                 round++;
+                moneyManager.addMoneyEndRound(this, OMEGA, true, MoneyManager.RoundEndType.BOMB);
                 timer = 7;
                 roundWinner = OMEGA;
                 if(teamA.getTeam() == OMEGA) {
@@ -448,7 +453,7 @@ public class SAGame {
         //round ending
         if(roundEnding) {
             //game is won
-            if(scoreTeamA == 16 || scoreTeamB == 16) {
+            if(scoreTeamA >= 16 || scoreTeamB >= 16) {
                 timer = 10;
                 setState(SAGameState.END);
                 String winnerMsg = scoreTeamA > scoreTeamB ? "Team A wins" : "Team B wins";
@@ -469,28 +474,96 @@ public class SAGame {
             }
             if(timer == 0)  {
                 timer = 11;
-                if(teamA.getTeam() == ALPHA) {
-                    teamA.setTeam(OMEGA);
-                    teamB.setTeam(ALPHA);
-                } else {
-                    teamA.setTeam(ALPHA);
-                    teamB.setTeam(OMEGA);
-                }
-                for(SAScoreboard scoreboard : scoreboards.values()) {
-                    scoreboard.removeTeam();
-                    scoreboard.showTeams(this);
-                }
+                if(round == 15) {
+                    timer = 16;
+                    if(teamA.getTeam() == ALPHA) {
+                        teamA.setTeam(OMEGA);
+                        teamB.setTeam(ALPHA);
+                    } else {
+                        teamA.setTeam(ALPHA);
+                        teamB.setTeam(OMEGA);
+                    }
+                    for(SAScoreboard scoreboard : scoreboards.values()) {
+                        scoreboard.removeTeam();
+                        scoreboard.showTeams(this);
+                    }
+                    //todo shop stuff
 
+                } else {
+                    timer = 11;
+                }
             }
+            return;
+        } else {
+
         }
     }
 
     private void runRound() {
+        if(round == 15) {
 
+        }
     }
 
     private void runWaiting() {
-
+        if(teamA.getPlayers().size() + teamB.getPlayers().size() < minPlayers) {
+            stop();
+            teamA.getPlayers().forEach(player -> player.sendMessage("Not enough players, cancelling game"));
+            teamB.getPlayers().forEach(player -> player.sendMessage("Not enough players, cancelling game"));
+            timer = 30;
+            for(SAScoreboard scoreboard : scoreboards.values()) {
+                Main.getGameManager().updateStatus(this, scoreboard.getStatus());
+            }
+            return;
+        }
+        //start the game
+        if(timer == 0) {
+            //team balancer
+            while(true) {
+                if(teamA.size() <= maxPlayers / 2 && teamB.size() <= maxPlayers / 2) {
+                    if(Math.abs(teamA.size() - teamB.size()) <= 1) {
+                        break;
+                    }
+                    if(teamA.size() < teamB.size()) {
+                        Player player = teamB.getPlayers().get(Randomizer.randomInt(teamB.getPlayers().size()));
+                        teamB.removePlayer(player);
+                        teamA.addPlayer(player);
+                    } else {
+                        if(teamB.size() >= teamA.size()) {
+                            continue;
+                        }
+                        Player player = teamA.getPlayers().get(Randomizer.randomInt(teamA.getPlayers().size()));
+                        teamA.removePlayer(player);
+                        teamB.addPlayer(player);
+                    }
+                } else if(teamA.size() > maxPlayers / 2) {
+                    Player player = teamA.getPlayers().get(Randomizer.randomInt(teamA.getPlayers().size()));
+                    teamA.removePlayer(player);
+                    teamB.addPlayer(player);
+                } else {
+                    if(teamB.size() <= maxPlayers / 2) {
+                        continue;
+                    }
+                    Player player = teamB.getPlayers().get(Randomizer.randomInt(teamB.getPlayers().size()));
+                    teamB.removePlayer(player);
+                    teamA.addPlayer(player);
+                }
+            }
+            //todo shop stuff
+            timer = 7;
+            Main.getGameManager().resetPlayers(this);
+            for(SAScoreboard scoreboard : scoreboards.values()) {
+                scoreboard.getStatus().reset();
+            }
+            setState(SAGameState.ROUND);
+            return;
+        }
+        teamA.getPlayers().forEach(player -> {
+            if(timer <= 5 || timer % 10 == 0) player.sendMessage(String.valueOf(timer));
+        });
+        teamB.getPlayers().forEach(player -> {
+            if(timer <= 5 || timer % 10 == 0) player.sendMessage(String.valueOf(timer));
+        });
     }
 
     public int getSize() {
