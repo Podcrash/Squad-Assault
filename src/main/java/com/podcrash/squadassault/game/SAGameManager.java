@@ -173,6 +173,13 @@ public class SAGameManager {
         return game.getTeamB();
     }
 
+    public SATeam.Team getTeam(SAGame game, Player player) {
+        if (game.getTeamA().getPlayers().contains(player)) {
+            return game.getTeamA().getTeam();
+        }
+        return game.getTeamB().getTeam();
+    }
+
     public void clearPlayer(Player player) {
         player.setExp(0);
         player.setLevel(0);

@@ -451,6 +451,36 @@ public class SAGame {
             if(scoreTeamA == 16 || scoreTeamB == 16) {
                 timer = 10;
                 setState(SAGameState.END);
+                String winnerMsg = scoreTeamA > scoreTeamB ? "Team A wins" : "Team B wins";
+                for(Player player : teamA.getPlayers()) {
+                    if(!spectators.contains(player))
+                        Main.getManager().clearPlayer(player);
+                    player.sendMessage(winnerMsg);
+                    NmsUtils.sendTitle(player, 0, 200, 0, "Game Over", winnerMsg);
+                }
+                for(Player player : teamB.getPlayers()) {
+                    if(!spectators.contains(player))
+                        Main.getManager().clearPlayer(player);
+                    player.sendMessage(winnerMsg);
+                    NmsUtils.sendTitle(player, 0, 200, 0, "Game Over", winnerMsg);
+                }
+                Main.getManager().endRound(this);
+                return;
+            }
+            if(timer == 0)  {
+                timer = 11;
+                if(teamA.getTeam() == ALPHA) {
+                    teamA.setTeam(OMEGA);
+                    teamB.setTeam(ALPHA);
+                } else {
+                    teamA.setTeam(ALPHA);
+                    teamB.setTeam(OMEGA);
+                }
+                for(SAScoreboard scoreboard : scoreboards.values()) {
+                    scoreboard.removeTeam();
+                    scoreboard.showTeams(this);
+                }
+
             }
         }
     }

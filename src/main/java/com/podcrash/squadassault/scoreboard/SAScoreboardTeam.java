@@ -1,6 +1,9 @@
 package com.podcrash.squadassault.scoreboard;
 
+import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SAGame;
+import com.podcrash.squadassault.game.SATeam;
+import com.podcrash.squadassault.nms.NmsUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -20,10 +23,34 @@ public class SAScoreboardTeam {
     }
 
     public void registerSides(SAGame game) {
-
+        for(Player player : Main.getManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
+            Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
+            registerNewTeam.setPrefix("Ω");
+            registerNewTeam.setSuffix("kills - deaths"); //kills - deaths ? todo
+            NmsUtils.hideNametag(registerNewTeam);
+            registerNewTeam.addEntry(player.getName());
+            teams.add(registerNewTeam);
+        }
+        for(Player player : Main.getManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
+            Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
+            registerNewTeam.setPrefix("α");
+            registerNewTeam.setSuffix("kills - deaths"); //kills - deaths ? todo
+            NmsUtils.hideNametag(registerNewTeam);
+            registerNewTeam.addEntry(player.getName());
+            teams.add(registerNewTeam);
+        }
     }
 
-    public void remove(SAGame game, Player player) {
+    public void add(SAGame game, Player player) {
+        Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
+        registerNewTeam.setPrefix(Main.getManager().getTeam(game, player) == SATeam.Team.OMEGA ? "Ω" : "α");
+        registerNewTeam.setSuffix("kills - deaths"); //kills - deaths ? todo
+        NmsUtils.hideNametag(registerNewTeam);
+        registerNewTeam.addEntry(player.getName());
+        teams.add(registerNewTeam);
+    }
+
+    public void remove(Player player) {
         Team team = scoreboard.getTeam(player.getName());
         if(team == null)
             return;
@@ -37,5 +64,8 @@ public class SAScoreboardTeam {
 
     public void update(SAGame game, Player player) {
         Team team = scoreboard.getTeam(player.getName());
+        team.setPrefix(Main.getManager().getTeam(game, player) == SATeam.Team.OMEGA ? "Ω" : "α");
+        team.setSuffix("kills - deaths"); //kills - deaths ? todo
+        NmsUtils.hideNametag(team);
     }
 }
