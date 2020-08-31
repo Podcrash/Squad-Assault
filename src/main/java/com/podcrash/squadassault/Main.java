@@ -29,13 +29,13 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        instance 
-          this;
+        instance = this;
         gameManager = new SAGameManager();
         config = new Config();
         weaponManager = new WeaponManager();
         registerCommands();
         getServer().getPluginManager().registerEvents(new GameListener(), this);
+    }
 
     private void registerCommands() {
     }
