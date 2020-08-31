@@ -1,9 +1,6 @@
 package com.podcrash.squadassault.nms;
 
-import net.minecraft.server.v1_8_R3.EntityArmorStand;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.ItemStack;
-import net.minecraft.server.v1_8_R3.Vector3f;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
@@ -55,7 +52,36 @@ public class PhysicsItem extends EntityArmorStand {
 
     @Override
     public void t_() {
+        if(motX == 0 && motY == 0 && motZ == 0) {
+            if(!intersects) {
+                intersects = true;
+                PacketPlayOutEntityDestroy packetPlayOutEntityDestroy = new PacketPlayOutEntityDestroy(getId());
+                PacketPlayOutSpawnEntity packetPlayOutSpawnEntity = new PacketPlayOutSpawnEntity(this, 78);
+                PacketPlayOutEntityMetadata packetPlayOutEntityMetadata = new PacketPlayOutEntityMetadata(getId(), datawatcher, true);
+                PacketPlayOutEntityEquipment packetPlayOutEntityEquipment = new PacketPlayOutEntityEquipment(getId(), 0, getEquipment(0));
+                for(EntityHuman human : world.players) {
+                    ((EntityPlayer)human).playerConnection.sendPacket(packetPlayOutEntityDestroy);
+                    ((EntityPlayer)human).playerConnection.sendPacket(packetPlayOutSpawnEntity);
+                    ((EntityPlayer)human).playerConnection.sendPacket(packetPlayOutEntityMetadata);
+                    ((EntityPlayer)human).playerConnection.sendPacket(packetPlayOutEntityEquipment);
+                }
 
+            }
+        } else {
+            lastX = locX;
+            lastY = locY;
+            lastZ = locZ;
+            double n = motX / 30.0;
+            double n2 = motY / 30.0;
+            double n3 = motZ / 30.0;
+            int i = 0;
+            while(i < 30) {
+                this.locX += n;
+                this.locY += n2;
+                this.locZ += n3;
+
+            }
+        }
     }
 
     public void remove() {
