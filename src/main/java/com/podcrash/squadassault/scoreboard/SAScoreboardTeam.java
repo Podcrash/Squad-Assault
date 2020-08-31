@@ -8,12 +8,12 @@ import org.bukkit.scoreboard.Team;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScoreboardTeam {
+public class SAScoreboardTeam {
 
     private Scoreboard scoreboard;
     private List<Team> teams;
 
-    public ScoreboardTeam(SAGame game, Scoreboard scoreboard) {
+    public SAScoreboardTeam(SAGame game, Scoreboard scoreboard) {
         teams = new ArrayList<>();
         this.scoreboard = scoreboard;
         registerSides(game);

@@ -1,5 +1,9 @@
 package com.podcrash.squadassault.nms;
 
+import com.podcrash.squadassault.game.SAGame;
+import com.podcrash.squadassault.game.SATeam;
+import com.podcrash.squadassault.scoreboard.SAScoreboard;
+import com.podcrash.squadassault.scoreboard.SAScoreboardTeam;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -7,6 +11,8 @@ import org.bukkit.craftbukkit.v1_8_R3.scoreboard.CraftScoreboard;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Team;
+
+import java.lang.reflect.Field;
 
 public final class NmsUtils {
 
@@ -40,6 +46,41 @@ public final class NmsUtils {
 
     public static void hideNametag(Team team) {
         ((CraftScoreboard)team.getScoreboard()).getHandle().getTeam(team.getName()).setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.NEVER);
+    }
+
+    public static void sendInvisibility(SAScoreboard scoreboard, SAGame game) {
+        for(Player player : game.getTeamA().getPlayers()) {
+            if(game.getSpectators().contains(player))
+                continue;
+            ScoreboardTeam team = ((CraftScoreboard)scoreboard.getScoreboard()).getHandle().getTeam(player.getName());
+            try {
+                Field declaredField = team.getClass().getDeclaredField("i");
+                declaredField.setAccessible(true);
+                declaredField.set(team, ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            sendListPacket(game.getTeamA(), new PacketPlayOutScoreboardTeam(team, 2));
+        }
+        for(Player player : game.getTeamB().getPlayers()) {
+            if(game.getSpectators().contains(player))
+                continue;
+            ScoreboardTeam team = ((CraftScoreboard)scoreboard.getScoreboard()).getHandle().getTeam(player.getName());
+            try {
+                Field declaredField = team.getClass().getDeclaredField("i");
+                declaredField.setAccessible(true);
+                declaredField.set(team, ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            sendListPacket(game.getTeamA(), new PacketPlayOutScoreboardTeam(team, 2));
+        }
+    }
+
+    private static void sendListPacket(SATeam team, Packet<?> packet) {
+        for(Player player : team.getPlayers()) {
+            ((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
+        }
     }
 
 }

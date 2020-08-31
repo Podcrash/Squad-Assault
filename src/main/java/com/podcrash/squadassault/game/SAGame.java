@@ -12,9 +12,9 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -50,7 +50,7 @@ public class SAGame {
     private List<Player> spectators;
     private SATeam teamA;
     private SATeam teamB;
-    private List<ItemStack> drops;
+    private Map<Item, Integer> drops;
     private Map<UUID, Integer> money;
     private Map<UUID, Inventory> shops;
     private Map<Player, Defuse> defusing;
@@ -76,7 +76,7 @@ public class SAGame {
         spectators = new ArrayList<>();
         teamA = new SATeam(new ArrayList<>());
         teamB = new SATeam(new ArrayList<>());
-        drops = new ArrayList<>();
+        drops = new HashMap<>();
         money = new HashMap<>();
         shops = new HashMap<>();
         queue = new HashMap<>();
@@ -146,6 +146,9 @@ public class SAGame {
 
    public void removeFromQueue(Player player) {
         queue.remove(player.getUniqueId());
+        teamA.removePlayer(player);
+        teamB.removePlayer(player);
+        spectators.remove(player);
    }
 
     public Location getBombA() {
@@ -459,4 +462,49 @@ public class SAGame {
     private void runWaiting() {
 
     }
+
+    public int getSize() {
+        return teamA.size() + teamB.size();
+    }
+
+    public Map<Item, Integer> getDrops() {
+        return drops;
+    }
+
+    public boolean sameTeam(Player player, Player player2) {
+        return (teamA.getPlayers().contains(player) && teamA.getPlayers().contains(player2)) || (teamB.getPlayers().contains(player) && teamB.getPlayers().contains(player2));
+    }
+
+    public boolean isAtSpawn(Player player) {
+        SATeam team = teamA.getPlayers().contains(player) ? teamA : teamB;
+        if(team.getTeam() == ALPHA) {
+            for(Location location : alphaSpawns) {
+                if(player.getLocation().distance(location) <= 7) {
+                    return true;
+                }
+            }
+        } else {
+            for(Location location : omegaSpawns) {
+                if(player.getLocation().distance(location) <= 7) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isAtBombsite(Location location) {
+        return location.distance(bombA) <= 4 || location.distance(bombB) <= 4;
+    }
+
+    public int alivePlayers(SATeam team) {
+        int n = 0;
+        for(Player player : team.getPlayers()) {
+            if(!spectators.contains(player)) {
+                n++;
+            }
+        }
+        return n;
+    }
+
 }
