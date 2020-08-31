@@ -79,35 +79,56 @@ public class SAGameManager {
         }
     }
 
-    public void removePlayer(SAGame game, Player player) {
+    public void removePlayer(SAGame game, Player player, boolean newGame, boolean lobby) {
         game.removeFromQueue(player);
-        if(game.getState() == SAGameState.INGAME && game.getBomb().getCarrier() == player) {
+        //todo remove grenades
+
+        if(!newGame && game.getState() == SAGameState.INGAME && game.getBomb().getCarrier() == player) {
             Item dropItemNaturally = player.getWorld().dropItemNaturally(player.getLocation(),
                     ItemBuilder.create(Material.QUARTZ, 1, "Bomb", false));
             game.getBomb().setDrop(dropItemNaturally);
             game.getDrops().put(dropItemNaturally, 1);
         }
 
-        if(game.getState() != SAGameState.WAITING && game.getState() != SAGameState.END && !game.isGameEnding() && (game.getTeamA().size() == 0 || game.getTeamB().size() == 0)) {
+        if(!newGame && game.getState() != SAGameState.WAITING && game.getState() != SAGameState.END && !game.isGameEnding() && (game.getTeamA().size() == 0 || game.getTeamB().size() == 0)) {
             stopGame(game, true);
             game.sendToAll("The game was stopped because a team had no players!");
         }
         game.getBar().removePlayer(player);
 
-        for(Player p : Bukkit.getOnlinePlayers()) {
-            player.showPlayer(p);
+        if(newGame) {
+            clearPlayer(player);
+            SAScoreboard scoreboard = game.getScoreboards().get(player.getUniqueId());
+            scoreboard.getStatus().reset();
+            updateStatus(game, scoreboard.getStatus());
+            player.getInventory().setItem(0, ItemBuilder.create(Material.DIAMOND, 1, "Team Selector", "Select a team"));
+        } else {
+            SAScoreboard scoreboard = game.getScoreboards().remove(player.getUniqueId());
+            if(game.getState() != SAGameState.WAITING) {
+                for(SAScoreboard saScoreboard : game.getScoreboards().values()) {
+                    if(scoreboard != saScoreboard) {
+                        saScoreboard.getTeams().remove(player);
+                    }
+                }
+            }
+            scoreboard.remove();
+            if(!lobby) {
+                for(Player p : Bukkit.getOnlinePlayers()) {
+                    player.showPlayer(p);
+                }
+                for(Player p : game.getTeamA().getPlayers()) {
+                    p.hidePlayer(player);
+                }
+                for(Player p : game.getTeamB().getPlayers()) {
+                    p.hidePlayer(player);
+                }
+            }
+            if(lobby && game.getState() == SAGameState.WAITING) {
+                game.sendToAll(player.getDisplayName() + " left! " + game.getSize() + "/" + game.getMaxPlayers());
+            }
+            //call an event?
         }
-        for(Player p : game.getTeamA().getPlayers()) {
-            p.hidePlayer(player);
-        }
-        for(Player p : game.getTeamB().getPlayers()) {
-            p.hidePlayer(player);
-        }
-
-        if(game.getState() == SAGameState.WAITING) {
-            game.sendToAll(player.getDisplayName() + " left! " + game.getSize() + "/" + game.getMaxPlayers());
-        }
-        //todo bungee and actually correctly sending the player to where they should be
+        player.updateInventory();
     }
 
     public void addGame(SAGame game) {
@@ -129,14 +150,33 @@ public class SAGameManager {
         for(SAScoreboard scoreboard : game.getScoreboards().values()) {
             scoreboard.getStatus().reset();
         }
+        List<Player> list = new ArrayList<>();
+        if(autoJoin) {
+            list.addAll(game.getTeamA().getPlayers());
+            list.addAll(game.getTeamB().getPlayers());
+        }
+        game.getTeamA().getPlayers().forEach(player -> removePlayer(game, player, autoJoin, false));
+        game.getTeamB().getPlayers().forEach(player -> removePlayer(game, player, autoJoin, false));
 
-        game.getTeamA().getPlayers().forEach(player -> removePlayer(game, player));
-        game.getTeamB().getPlayers().forEach(player -> removePlayer(game, player));
+        //todo bungee code here
 
-        //todo NEW GAME CODE
+        if(autoJoin) {
+            for(Player player : list) {
+                game.randomTeam(player);
+            }
+            for(SAScoreboard scoreboard : game.getScoreboards().values()) {
+                scoreboard.removeHealth();
+                scoreboard.removeTeam();
+                updateStatus(game, scoreboard.getStatus());
+            }
+            list.clear();
+        }
+        if(autoJoin && game.getTeamA().size() + game.getTeamB().size() >= game.getMinPlayers()) {
+            game.start();
+        }
+        game.setGameTimer(30); //todo get config lobby time
         game.setState(SAGameState.WAITING);
         game.setGameEnding(false);
-        game.setGameTimer(10); //todo get config lobby time
     }
 
     public void endRound(SAGame game) {

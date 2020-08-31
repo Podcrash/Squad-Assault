@@ -336,7 +336,7 @@ public class SAGame {
                 runIngame();
                 break;
             case ROUND:
-                runRound();
+                runRoundStart();
                 break;
             case WAITING:
                 runWaiting();
@@ -349,6 +349,13 @@ public class SAGame {
         if(timer != 0) {
             return;
         }
+        Main.getGameManager().stopGame(this, false);
+        /*
+          if(shutdown) {
+            shutdown();
+            return;
+          }
+         */
         //getManager, stop game todo, add bungee integration here too
     }
 
@@ -499,10 +506,21 @@ public class SAGame {
         }
     }
 
-    private void runRound() {
-        if(round == 15) {
-
+    private void runRoundStart() {
+        if(round == 15 && timer >= 11) {
+            teamA.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 40, 0, "team swap yeet", ""));
+            teamB.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 40, 0, "team swap yeet", ""));
+            return;
         }
+        if(timer == 0) {
+            teamA.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 30, 0, "round start go", ""));
+            teamB.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 30, 0, "round start go", ""));
+            timer = 115;
+            setState(SAGameState.INGAME);
+            return;
+        }
+        teamA.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 30, 0, "buy stuff", ""));
+        teamB.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 30, 0, "buy stuff", ""));
     }
 
     private void runWaiting() {
