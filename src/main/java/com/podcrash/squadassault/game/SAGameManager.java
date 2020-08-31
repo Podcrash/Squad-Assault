@@ -336,4 +336,11 @@ public class SAGameManager {
 
         }
     }
+
+    public void removeGame(SAGame game) {
+        game.getShops().clear();
+        game.getAlphaSpawns().clear();
+        game.getOmegaSpawns().clear();
+        games.remove(game);
+    }
 }
