@@ -1,5 +1,7 @@
 package com.podcrash.squadassault.weapons;
 
+import org.bukkit.inventory.ItemStack;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,24 @@ public class WeaponManager {
         for(Gun gun : guns) {
             if(gun.getName().equals(name)) {
                 return gun;
+            }
+        }
+        return null;
+    }
+
+    public Gun getGun(ItemStack stack) {
+        for(Gun gun : guns) {
+            if(gun.getItem().equals(stack)) {
+                return gun;
+            }
+        }
+        return null;
+    }
+
+    public Grenade getGrenade(ItemStack stack) {
+        for(Grenade grenade : grenades) {
+            if(grenade.getItem().equals(stack)) {
+                return grenade;
             }
         }
         return null;

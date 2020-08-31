@@ -1,6 +1,8 @@
 package com.podcrash.squadassault.weapons;
 
+import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.util.Item;
+import org.bukkit.entity.Player;
 
 public class Grenade {
 
@@ -50,5 +52,17 @@ public class Grenade {
 
     public double getThrowSpeed() {
         return throwSpeed;
+    }
+
+    public void throwGrenade(SAGame game, Player player) {
+
+    }
+
+    public void roll(SAGame game, Player player) {
+
+    }
+
+    public void tick(long ticks) {
+
     }
 }

@@ -29,10 +29,6 @@ public class Item {
         return itemStack != null && itemStack.getItemMeta() != null && itemStack.getType() == material && itemStack.getItemMeta().getDisplayName().contains(name);
     }
 
-    public boolean equals(ItemStack itemStack, String s) {
-        return itemStack != null && itemStack.getItemMeta() != null && itemStack.getType() == material && itemStack.getItemMeta().getDisplayName().equals(name + " §7" + s);
-    }
-
     public Material getType() {
         return this.material;
     }

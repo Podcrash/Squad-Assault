@@ -370,13 +370,13 @@ public class SAGame {
             for(Player player : teamA.getPlayers()) {
                 if(player.getOpenInventory() != null && player.getOpenInventory().getTitle().equals("Shop")) {
                     player.closeInventory();
-                    player.sendMessage(Message.SHOP_30_S.getMsg());
+                    player.sendMessage(Message.SHOP_20_S.getMsg());
                 }
             }
             for(Player player : teamB.getPlayers()) {
                 if(player.getOpenInventory() != null && player.getOpenInventory().getTitle().equals("Shop")) {
                     player.closeInventory();
-                    player.sendMessage(Message.SHOP_30_S.getMsg());
+                    player.sendMessage(Message.SHOP_20_S.getMsg());
                 }
             }
         }

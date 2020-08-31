@@ -4,7 +4,7 @@ public enum Message {
     BOSSBAR_WAITING("§7You are currently playing §4Squad Assault §7on §b%name%"),
     SCOREBOARD_TITLE("§4Squad Assault"),
     BOSSBAR_INGAME("§fMap: §b%name% §fLocation: §b%callout% §fTime Left: §b%timer%"),
-    SHOP_30_S("§cThe time to buy items has expired!"),
+    SHOP_20_S("§cThe time to buy items has expired!"),
     CANCEL_DEFUSE("§b§lBomb defusing has been cancelled!"),
     BOMB_DEFUSE("§b§lBomb Defusing"),
     BOMB_DEFUSED("§cBomb Defused"),

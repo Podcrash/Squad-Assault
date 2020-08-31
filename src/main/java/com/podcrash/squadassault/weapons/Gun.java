@@ -1,6 +1,8 @@
 package com.podcrash.squadassault.weapons;
 
+import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.util.Item;
+import org.bukkit.entity.Player;
 
 public class Gun {
 
@@ -160,5 +162,17 @@ public class Gun {
 
     public String getReloadSound() {
         return reloadSound;
+    }
+
+    public void shoot(SAGame game, Player player) {
+
+    }
+
+    public void reload(Player player, int slot) {
+
+    }
+
+    public void tick() {
+
     }
 }
