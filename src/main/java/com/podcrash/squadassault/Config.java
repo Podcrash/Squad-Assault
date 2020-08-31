@@ -1,12 +1,11 @@
 package com.podcrash.squadassault;
 
 import com.podcrash.squadassault.game.SAGame;
+import com.podcrash.squadassault.game.SATeam;
+import com.podcrash.squadassault.shop.PlayerShop;
 import com.podcrash.squadassault.util.GameUtils;
 import com.podcrash.squadassault.util.Item;
-import com.podcrash.squadassault.weapons.Grenade;
-import com.podcrash.squadassault.weapons.GrenadeType;
-import com.podcrash.squadassault.weapons.Gun;
-import com.podcrash.squadassault.weapons.GunHotbarType;
+import com.podcrash.squadassault.weapons.*;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -62,7 +61,44 @@ public class Config {
         }
 
         shop = YamlConfiguration.loadConfiguration(fileShop);
+        loadShop();
+    }
 
+    private void loadShop() {
+        WeaponManager manager = Main.getWeaponManager();
+        for(String gun : shop.getConfigurationSection("ShopGuns").getKeys(false)) {
+            if(manager.getGun(gun) == null) {
+                log(gun + " in shop.yml doesn't exist in guns.yml");
+                continue;
+            }
+            int price = shop.getInt("ShopGuns."+gun+".Price");
+            SATeam.Team side = SATeam.Team.valueOf(shop.getString("ShopGuns."+gun+".Side"));
+            String name = shop.getString("ShopGuns."+gun+".ItemName");
+            String lore = shop.getString("ShopGuns."+gun+".ItemLore");
+            int slot = shop.getInt("ShopGuns."+gun+".Slot");
+            Main.getShopManager().addShop(new PlayerShop(gun, name, slot, price, lore, side));
+        }
+        for(String grenade : shop.getConfigurationSection("ShopGrenades").getKeys(false)) {
+            if(manager.getGrenade(grenade) == null) {
+                log(grenade + " in shop.yml doesn't exist in grenades.yml");
+                continue;
+            }
+            Main.getShopManager().addShop(new PlayerShop(
+                grenade, shop.getString("ShopGrenades."+grenade+".ItemName"), shop.getInt("ShopGrenades."+grenade+
+                    ".Slot"), shop.getInt("ShopGrenades."+grenade+
+                    ".Price"), shop.getString("ShopGrenades."+grenade+".ItemLore")
+            ));
+        }
+        for(String item : shop.getConfigurationSection("ShopItems").getKeys(false)) {
+            int slot = shop.getInt("ShopItems."+item+".Slot");
+            int price = shop.getInt("ShopItems."+item+".Price");
+            int slotPlace = shop.getInt("ShopItems."+item+".SlotPlace");
+            String name = shop.getString("ShopItems."+item+".ItemName");
+            String lore = shop.getString("ShopItems."+item+".ItemLore");
+            SATeam.Team side = SATeam.Team.valueOf(shop.getString("ShopItems."+item+".Side"));
+            Material material = Material.getMaterial(shop.getString("ShopItems."+item+".Material"));
+            Main.getShopManager().addShop(new PlayerShop(slot, slotPlace, name, material, price, lore, side, item));
+        }
     }
 
     private void loadNades() {

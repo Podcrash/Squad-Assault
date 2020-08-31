@@ -17,6 +17,24 @@ public class WeaponManager {
         return guns;
     }
 
+    public Gun getGun(String name) {
+        for(Gun gun : guns) {
+            if(gun.getName().equals(name)) {
+                return gun;
+            }
+        }
+        return null;
+    }
+
+    public Grenade getGrenade(String name) {
+        for(Grenade nade : grenades) {
+            if(nade.getName().equals(name)) {
+                return nade;
+            }
+        }
+        return null;
+    }
+
     public void addGun(Gun gun) {
         guns.add(gun);
     }

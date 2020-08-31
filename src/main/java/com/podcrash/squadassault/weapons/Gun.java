@@ -137,4 +137,28 @@ public class Gun {
     public void setBulletsPerBurst(int bulletsPerBurst) {
         this.bulletsPerBurst = bulletsPerBurst;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public GunHotbarType getType() {
+        return type;
+    }
+
+    public boolean isProjectile() {
+        return projectile;
+    }
+
+    public String getShootSound() {
+        return shootSound;
+    }
+
+    public String getReloadSound() {
+        return reloadSound;
+    }
 }

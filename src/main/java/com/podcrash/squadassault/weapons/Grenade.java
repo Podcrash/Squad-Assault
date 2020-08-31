@@ -24,4 +24,31 @@ public class Grenade {
         this.effectPower = effectPower;
     }
 
+    public Item getItem() {
+        return item;
+    }
+
+    public double getEffectPower() {
+        return effectPower;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getDelay() {
+        return delay;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public GrenadeType getType() {
+        return type;
+    }
+
+    public double getThrowSpeed() {
+        return throwSpeed;
+    }
 }
