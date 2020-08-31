@@ -23,7 +23,7 @@ public class SAScoreboardTeam {
     }
 
     public void registerSides(SAGame game) {
-        for(Player player : Main.getManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
+        for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
             registerNewTeam.setPrefix("Ω");
             registerNewTeam.setSuffix("kills - deaths"); //kills - deaths ? todo
@@ -31,7 +31,7 @@ public class SAScoreboardTeam {
             registerNewTeam.addEntry(player.getName());
             teams.add(registerNewTeam);
         }
-        for(Player player : Main.getManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
+        for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
             registerNewTeam.setPrefix("α");
             registerNewTeam.setSuffix("kills - deaths"); //kills - deaths ? todo
@@ -43,7 +43,7 @@ public class SAScoreboardTeam {
 
     public void add(SAGame game, Player player) {
         Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
-        registerNewTeam.setPrefix(Main.getManager().getTeam(game, player) == SATeam.Team.OMEGA ? "Ω" : "α");
+        registerNewTeam.setPrefix(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA ? "Ω" : "α");
         registerNewTeam.setSuffix("kills - deaths"); //kills - deaths ? todo
         NmsUtils.hideNametag(registerNewTeam);
         registerNewTeam.addEntry(player.getName());
@@ -64,7 +64,7 @@ public class SAScoreboardTeam {
 
     public void update(SAGame game, Player player) {
         Team team = scoreboard.getTeam(player.getName());
-        team.setPrefix(Main.getManager().getTeam(game, player) == SATeam.Team.OMEGA ? "Ω" : "α");
+        team.setPrefix(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA ? "Ω" : "α");
         team.setSuffix("kills - deaths"); //kills - deaths ? todo
         NmsUtils.hideNametag(team);
     }

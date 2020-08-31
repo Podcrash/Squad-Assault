@@ -454,17 +454,17 @@ public class SAGame {
                 String winnerMsg = scoreTeamA > scoreTeamB ? "Team A wins" : "Team B wins";
                 for(Player player : teamA.getPlayers()) {
                     if(!spectators.contains(player))
-                        Main.getManager().clearPlayer(player);
+                        Main.getGameManager().clearPlayer(player);
                     player.sendMessage(winnerMsg);
                     NmsUtils.sendTitle(player, 0, 200, 0, "Game Over", winnerMsg);
                 }
                 for(Player player : teamB.getPlayers()) {
                     if(!spectators.contains(player))
-                        Main.getManager().clearPlayer(player);
+                        Main.getGameManager().clearPlayer(player);
                     player.sendMessage(winnerMsg);
                     NmsUtils.sendTitle(player, 0, 200, 0, "Game Over", winnerMsg);
                 }
-                Main.getManager().endRound(this);
+                Main.getGameManager().endRound(this);
                 return;
             }
             if(timer == 0)  {
