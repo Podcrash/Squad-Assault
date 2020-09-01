@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GameUtils {
+public final class Utils {
 
     public static Location getDeserializedLocation(String s) {
         if (s == null) {
@@ -22,6 +22,10 @@ public final class GameUtils {
             list2.add(getDeserializedLocation(s));
         }
         return list2;
+    }
+
+    public static double dumbMinecraftDegrees(double n) {
+        return (n > 179.9) ? (-180.0 + (n - 179.9)) : n;
     }
 
 }

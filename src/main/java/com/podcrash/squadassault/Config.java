@@ -3,7 +3,7 @@ package com.podcrash.squadassault;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.SATeam;
 import com.podcrash.squadassault.shop.PlayerShopItem;
-import com.podcrash.squadassault.util.GameUtils;
+import com.podcrash.squadassault.util.Utils;
 import com.podcrash.squadassault.util.Item;
 import com.podcrash.squadassault.weapons.*;
 import org.bukkit.Material;
@@ -120,12 +120,12 @@ public class Config {
             for(String id : maps.getConfigurationSection("Game").getKeys(false)) {
                 try {
                     Main.getGameManager().addGame(new SAGame(id, maps.getString("Game." + id + ".Name"),
-                            GameUtils.getDeserializedLocation(maps.getString("Game." + id + ".Lobby")), maps.getInt(
+                            Utils.getDeserializedLocation(maps.getString("Game." + id + ".Lobby")), maps.getInt(
                             "Game." + id + ".Min"),
-                            GameUtils.getDeserializedLocations(maps.getStringList("Game." + id + ".AlphaSpawns")),
-                            GameUtils.getDeserializedLocations(maps.getStringList("Game." + id + ".OmegaSpawns")),
-                            GameUtils.getDeserializedLocation("Game." + id + "BombA"),
-                            GameUtils.getDeserializedLocation("Game." + id + "BombB")));
+                            Utils.getDeserializedLocations(maps.getStringList("Game." + id + ".AlphaSpawns")),
+                            Utils.getDeserializedLocations(maps.getStringList("Game." + id + ".OmegaSpawns")),
+                            Utils.getDeserializedLocation("Game." + id + "BombA"),
+                            Utils.getDeserializedLocation("Game." + id + "BombB")));
                 } catch (Exception e) {
                     error("Error loading game with ID " + id);
                     e.printStackTrace();
@@ -155,6 +155,7 @@ public class Config {
             gunObj.setBulletsPerShot(guns.getInt("Guns." + gun + ".Shoot.BulletsPerShot"));
             gunObj.setDelayPerShot(guns.getInt("Guns." + gun + ".Shoot.Delay"));
             gunObj.setKillReward(guns.getInt("Guns."+gun+".ItemInfo.KillReward"));
+            gunObj.setArmorPen(guns.getInt("Guns."+gun+".Shoot.ArmorPen"));
             Main.getWeaponManager().addGun(gunObj);
         }
     }
