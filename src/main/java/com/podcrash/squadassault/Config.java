@@ -1,12 +1,11 @@
 package com.podcrash.squadassault;
 
 import com.podcrash.squadassault.game.SAGame;
-import com.podcrash.squadassault.util.GameUtils;
+import com.podcrash.squadassault.game.SATeam;
+import com.podcrash.squadassault.shop.PlayerShopItem;
+import com.podcrash.squadassault.util.Utils;
 import com.podcrash.squadassault.util.Item;
-import com.podcrash.squadassault.weapons.Grenade;
-import com.podcrash.squadassault.weapons.GrenadeType;
-import com.podcrash.squadassault.weapons.Gun;
-import com.podcrash.squadassault.weapons.GunHotbarType;
+import com.podcrash.squadassault.weapons.*;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -55,7 +54,51 @@ public class Config {
         grenades = YamlConfiguration.loadConfiguration(fileNades);
         loadNades();
 
-        //todo shop
+        log("loading shop.yml");
+        File fileShop = new File(dataFolder, "shop.yml");
+        if(!fileShop.exists()) {
+            Main.getInstance().saveResource("shop.yml",true);
+        }
+
+        shop = YamlConfiguration.loadConfiguration(fileShop);
+        loadShop();
+    }
+
+    private void loadShop() {
+        WeaponManager manager = Main.getWeaponManager();
+        for(String gun : shop.getConfigurationSection("ShopGuns").getKeys(false)) {
+            if(manager.getGun(gun) == null) {
+                log(gun + " in shop.yml doesn't exist in guns.yml");
+                continue;
+            }
+            int price = shop.getInt("ShopGuns."+gun+".Price");
+            SATeam.Team side = SATeam.Team.valueOf(shop.getString("ShopGuns."+gun+".Side"));
+            String name = shop.getString("ShopGuns."+gun+".ItemName");
+            String lore = shop.getString("ShopGuns."+gun+".ItemLore");
+            int slot = shop.getInt("ShopGuns."+gun+".Slot");
+            Main.getShopManager().addShop(new PlayerShopItem(gun, name, slot, price, lore, side));
+        }
+        for(String grenade : shop.getConfigurationSection("ShopGrenades").getKeys(false)) {
+            if(manager.getGrenade(grenade) == null) {
+                log(grenade + " in shop.yml doesn't exist in grenades.yml");
+                continue;
+            }
+            Main.getShopManager().addShop(new PlayerShopItem(
+                grenade, shop.getString("ShopGrenades."+grenade+".ItemName"), shop.getInt("ShopGrenades."+grenade+
+                    ".Slot"), shop.getInt("ShopGrenades."+grenade+
+                    ".Price"), shop.getString("ShopGrenades."+grenade+".ItemLore")
+            ));
+        }
+        for(String item : shop.getConfigurationSection("ShopItems").getKeys(false)) {
+            int slot = shop.getInt("ShopItems."+item+".Slot");
+            int price = shop.getInt("ShopItems."+item+".Price");
+            int slotPlace = shop.getInt("ShopItems."+item+".SlotPlace");
+            String name = shop.getString("ShopItems."+item+".ItemName");
+            String lore = shop.getString("ShopItems."+item+".ItemLore");
+            SATeam.Team side = SATeam.Team.valueOf(shop.getString("ShopItems."+item+".Side"));
+            Material material = Material.getMaterial(shop.getString("ShopItems."+item+".Material"));
+            Main.getShopManager().addShop(new PlayerShopItem(slot, slotPlace, name, material, price, lore, side, item));
+        }
     }
 
     private void loadNades() {
@@ -77,12 +120,12 @@ public class Config {
             for(String id : maps.getConfigurationSection("Game").getKeys(false)) {
                 try {
                     Main.getGameManager().addGame(new SAGame(id, maps.getString("Game." + id + ".Name"),
-                            GameUtils.getDeserializedLocation(maps.getString("Game." + id + ".Lobby")), maps.getInt(
+                            Utils.getDeserializedLocation(maps.getString("Game." + id + ".Lobby")), maps.getInt(
                             "Game." + id + ".Min"),
-                            GameUtils.getDeserializedLocations(maps.getStringList("Game." + id + ".AlphaSpawns")),
-                            GameUtils.getDeserializedLocations(maps.getStringList("Game." + id + ".OmegaSpawns")),
-                            GameUtils.getDeserializedLocation("Game." + id + "BombA"),
-                            GameUtils.getDeserializedLocation("Game." + id + "BombB")));
+                            Utils.getDeserializedLocations(maps.getStringList("Game." + id + ".AlphaSpawns")),
+                            Utils.getDeserializedLocations(maps.getStringList("Game." + id + ".OmegaSpawns")),
+                            Utils.getDeserializedLocation("Game." + id + "BombA"),
+                            Utils.getDeserializedLocation("Game." + id + "BombB")));
                 } catch (Exception e) {
                     error("Error loading game with ID " + id);
                     e.printStackTrace();
@@ -97,7 +140,7 @@ public class Config {
                     (byte)guns.getInt("Guns."+gun+".ItemInfo.Data"),guns.getString("Guns."+gun+".ItemInfo.Name")),
                     GunHotbarType.valueOf(guns.getString("Guns."+gun+".ItemInfo.HotbarType")),
                     guns.getBoolean("Guns."+gun+".Shoot.Projectile"), guns.getString("Guns."+gun+".Shoot.Sound"),
-                    guns.getString("Guns."+gun+".Reload.Sound"));
+                    guns.getString("Guns."+gun+".Reload.Sound"), guns.getBoolean("Guns."+gun+".ItemInfo.IsShotgun"));
             gunObj.setBulletsPerPitch(guns.getInt("Guns." + gun + ".Burst.BulletsPerPitch"));
             gunObj.setBulletsPerYaw(guns.getInt("Guns." + gun + ".Burst.BulletsPerYaw"));
             gunObj.setDelayBullets(guns.getInt("Guns." + gun + ".Burst.DelayBullets"));
@@ -111,11 +154,16 @@ public class Config {
             gunObj.setTotalAmmoSize(guns.getInt("Guns." + gun + ".Reload.TotalAmount"));
             gunObj.setBulletsPerShot(guns.getInt("Guns." + gun + ".Shoot.BulletsPerShot"));
             gunObj.setDelayPerShot(guns.getInt("Guns." + gun + ".Shoot.Delay"));
+            gunObj.setKillReward(guns.getInt("Guns."+gun+".ItemInfo.KillReward"));
+            gunObj.setArmorPen(guns.getInt("Guns."+gun+".Shoot.ArmorPen"));
+            gunObj.setConeIncPerBullet(guns.getInt("Guns."+gun+".Burst.ProjectileConeIncrease"));
+            gunObj.setProjectileConeMin(guns.getInt("Guns."+gun+".Burst.ProjectileConeMin"));
+            gunObj.setProjectileConeMax(guns.getInt("Guns."+gun+".Burst.ProjectileConeMax"));
             Main.getWeaponManager().addGun(gunObj);
         }
     }
 
-    private void saveMaps(File dataFolder) {
+    public void saveMaps(File dataFolder) {
         File file = new File(dataFolder, "maps.yml");
         try {
             if(!file.exists()) {
@@ -129,6 +177,10 @@ public class Config {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public YamlConfiguration getMaps() {
+        return maps;
     }
 
     public int getLobbyTime() {

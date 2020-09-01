@@ -15,7 +15,7 @@ public class PhysicsItem extends EntityArmorStand {
     private Hitbox hitbox;
     private boolean intersects;
 
-    public PhysicsItem(EntityPlayer player, ItemStack item, double n) {
+    public PhysicsItem(EntityPlayer player, ItemStack item, double power) {
         super(player.world, player.locX, player.locY + 0.3, player.locZ);
         intersects = false;
         yaw = player.yaw;
@@ -41,9 +41,9 @@ public class PhysicsItem extends EntityArmorStand {
         Vector direction = player.getBukkitEntity().getEyeLocation().getDirection();
         direction.add(new Vector(player.motX, player.motY, player.motZ).multiply(0.3));
         direction.multiply(1.3);
-        motX = direction.getX() * n;
-        motY = direction.getY() * n;
-        motZ = direction.getZ() * n;
+        motX = direction.getX() * power;
+        motY = direction.getY() * power;
+        motZ = direction.getZ() * power;
         a(hitbox.toNmsHitbox());
         player.world.addEntity(this);
     }

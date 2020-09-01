@@ -3,8 +3,8 @@ package com.podcrash.squadassault.game;
 public enum SAGameState {
 
     WAITING,
-    ROUND,
-    INGAME,
+    ROUND_START,
+    ROUND_LIVE,
     END,
     DISABLED
 
