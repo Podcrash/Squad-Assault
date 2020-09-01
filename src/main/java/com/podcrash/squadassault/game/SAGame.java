@@ -449,7 +449,24 @@ public class SAGame {
                 Main.getInstance().getServer().getPluginManager().callEvent(new BombExplodeEvent(bomb.getLocation()));
                 bomb.getLocation().getWorld().playSound(bomb.getLocation(), Sound.EXPLODE, 5, 5);
                 bomb.getLocation().getWorld().playEffect(bomb.getLocation(), Effect.EXPLOSION_HUGE, 15);
-                bomb.getLocation().getWorld().createExplosion(bomb.getLocation(), 48,false);
+                teamA.getPlayers().forEach(player -> {
+                    if(spectators.contains(player)) {
+                        return;
+                    }
+                    double distance = player.getLocation().distance(bomb.getLocation());
+                    if(distance >= 48) {
+                        return;
+                    }
+                    if(distance <= 16) {
+                        Main.getGameManager().damage(this, null, player, 20.0,
+                                "Bomb");
+                    }
+                    double range = (distance-16.0) / 32.0;
+                    double damage = 0.0062 / range;
+
+                    Main.getGameManager().damage(this, null, player, damage,
+                                "Bomb");
+                });
                 if(!roundEnding) {
                     //todo sounds
                     for(Player p : teamA.getPlayers()) {

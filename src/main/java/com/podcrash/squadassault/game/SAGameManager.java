@@ -1,11 +1,14 @@
 package com.podcrash.squadassault.game;
 
+import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.scoreboard.SAScoreboard;
 import com.podcrash.squadassault.scoreboard.ScoreboardStatus;
 import com.podcrash.squadassault.util.ItemBuilder;
 import com.podcrash.squadassault.util.Message;
 import com.podcrash.squadassault.util.Randomizer;
+import com.podcrash.squadassault.weapons.Grenade;
+import com.podcrash.squadassault.weapons.Gun;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
@@ -13,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
@@ -83,7 +87,11 @@ public class SAGameManager {
 
     public void removePlayer(SAGame game, Player player, boolean newGame, boolean leftServer) {
         game.removeFromQueue(player);
-        //todo remove grenades
+        if(!game.isGameEnding()) {
+            for(Grenade grenade : Main.getWeaponManager().getGrenades()) {
+                grenade.removePlayer(player);
+            }
+        }
 
         if(!newGame && game.getState() == SAGameState.ROUND_LIVE && game.getBomb().getCarrier() == player) {
             Item dropItemNaturally = player.getWorld().dropItemNaturally(player.getLocation(),
@@ -316,7 +324,12 @@ public class SAGameManager {
             player.setHealth(20);
             player.closeInventory();
 
-            //todo update scoreboard health
+            for(Player p : game.getTeamA().getPlayers()) {
+                game.getScoreboards().get(p.getUniqueId()).getHealth().update(player);
+            }
+            for(Player p : game.getTeamB().getPlayers()) {
+                game.getScoreboards().get(p.getUniqueId()).getHealth().update(player);
+            }
 
             player.sendMessage("You are alpha yay go");
             if(game.getRound() == 0) {
@@ -330,20 +343,34 @@ public class SAGameManager {
                 player.getInventory().setItem(4, null);
                 player.getInventory().setItem(5, null);
                 player.getInventory().setItem(6, null);
-                //give player default pistol todo
+                Gun gun = Main.getWeaponManager().getGun("USP-S");
+                player.getInventory().setItem(1, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
+                        gun.getItem().getData(), gun.getItem().getName()));
                 player.getInventory().setItem(2, ItemBuilder.create(Material.WOOD_SWORD, 1, "Knife", true));
             }
             if(player.getInventory().getItem(1) == null) {
-                //give player default pistol todo
+                Gun gun = Main.getWeaponManager().getGun("USP-S");
+                player.getInventory().setItem(1, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
+                        gun.getItem().getData(), gun.getItem().getName()));
             }
+
             if(player.getInventory().getItem(2) == null) {
                 player.getInventory().setItem(2, ItemBuilder.create(Material.WOOD_SWORD, 1, "Knife", true));
             }
+
             if(player.getInventory().getItem(7) == null) {
                 player.getInventory().setItem(7, ItemBuilder.create(Material.GOLD_NUGGET, 1, "Wire Cutters", false));
             }
 
-            //reset guns todo
+            for(int i = 0; i < 2; i++) {
+                Gun gun = Main.getWeaponManager().getGun(player.getInventory().getItem(i));
+                if(gun != null) {
+                    gun.resetPlayer(player);
+                    player.getInventory().setItem(i, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
+                            gun.getItem().getData(), gun.getName()));
+                }
+            }
+
             SAScoreboard scoreboard = game.getScoreboards().get(player.getUniqueId());
             for(Player p : game.getTeamA().getPlayers()) {
                 scoreboard.getTeams().update(game,p);
@@ -372,7 +399,12 @@ public class SAGameManager {
             player.setHealth(20);
             player.closeInventory();
 
-            //todo update scoreboard health
+            for(Player p : game.getTeamA().getPlayers()) {
+                game.getScoreboards().get(p.getUniqueId()).getHealth().update(player);
+            }
+            for(Player p : game.getTeamB().getPlayers()) {
+                game.getScoreboards().get(p.getUniqueId()).getHealth().update(player);
+            }
 
             player.sendMessage("You are omega yay go");
             if(game.getRound() == 0) {
@@ -387,11 +419,15 @@ public class SAGameManager {
                 player.getInventory().setItem(5, null);
                 player.getInventory().setItem(6, null);
                 player.getInventory().setItem(7, ItemBuilder.create(Material.GOLD_NUGGET, 1, "Wire Cutters", true));
-                //give player default pistol todo
+                Gun gun = Main.getWeaponManager().getGun("Glock-18");
+                player.getInventory().setItem(1, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
+                        gun.getItem().getData(), gun.getItem().getName()));
                 player.getInventory().setItem(2, ItemBuilder.create(Material.WOOD_SWORD, 1, "Knife", true));
             }
             if(player.getInventory().getItem(1) == null) {
-                //give player default pistol todo
+                Gun gun = Main.getWeaponManager().getGun("Glock-18");
+                player.getInventory().setItem(1, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
+                        gun.getItem().getData(), gun.getItem().getName()));
             }
             if(player.getInventory().getItem(2) == null) {
                 player.getInventory().setItem(2, ItemBuilder.create(Material.WOOD_SWORD, 1, "Knife", true));
@@ -400,7 +436,15 @@ public class SAGameManager {
                 player.getInventory().setItem(7, ItemBuilder.create(Material.GOLD_NUGGET, 1, "Wire Cutters", false));
             }
 
-            //reset guns todo
+            for(int i = 0; i < 2; i++) {
+                Gun gun = Main.getWeaponManager().getGun(player.getInventory().getItem(i));
+                if(gun != null) {
+                    gun.resetPlayer(player);
+                    player.getInventory().setItem(i, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
+                            gun.getItem().getData(), gun.getName()));
+                }
+            }
+
             SAScoreboard scoreboard = game.getScoreboards().get(player.getUniqueId());
             for(Player p : game.getTeamA().getPlayers()) {
                 scoreboard.getTeams().update(game,p);
@@ -443,9 +487,92 @@ public class SAGameManager {
     }
 
     public boolean damage(SAGame game, Player damager, Player damaged, double damage, String cause) {
-        if(damaged.getHealth() <= damage) {
-            //todo
+        if(damaged.getHealth() <= damage) { //they die
+            damaged.setHealth(5); //do this so they experience the hit effect
+            damaged.damage(4);
+            damaged.setHealth(20);
+            damaged.closeInventory();
+            game.getSpectators().add(damaged);
+            ItemStack[] contents = damaged.getInventory().getContents();
+            for(int length = contents.length, i = 0; i < length; i++) {
+                ItemStack itemStack = contents[i];
+                if (itemStack == null) {
+                    continue;
+                }
+                if(Main.getWeaponManager().getGun(itemStack) != null) {
+                    int amount = itemStack.getAmount()-1;
+                    itemStack.setAmount(1);
+                    game.getDrops().put(damaged.getWorld().dropItemNaturally(damaged.getLocation(), itemStack), amount);
+                    damaged.getInventory().remove(itemStack);
+                }
+                if(Main.getWeaponManager().getGrenade(itemStack) != null) {
+                    itemStack.setAmount(1);
+                    game.getDrops().put(damaged.getWorld().dropItemNaturally(damaged.getLocation(), itemStack), 1);
+                    damaged.getInventory().remove(itemStack);
+                }
+                if (itemStack.getType() == Material.SHEARS) {
+                    Item dropItemNaturally = damaged.getWorld().dropItemNaturally(damaged.getLocation(), itemStack);
+                    game.getDrops().put(dropItemNaturally, 1);
+                    dropItemNaturally.setItemStack(itemStack);
+                }
+                if(itemStack.getType() == Material.QUARTZ) {
+                    Item dropItemNaturally = damaged.getWorld().dropItemNaturally(damaged.getLocation(), itemStack);
+                    game.getDrops().put(dropItemNaturally, 1);
+                    dropItemNaturally.setItemStack(itemStack);
+                    game.getBomb().setDrop(dropItemNaturally);
+                }
+                if(itemStack.getType() == Material.GOLDEN_APPLE) {
+                    Item dropItemNaturally = damaged.getWorld().dropItemNaturally(damaged.getLocation(), itemStack);
+                    game.getDrops().put(dropItemNaturally, 1);
+                    ItemMeta itemMeta = itemStack.getItemMeta();
+                    itemMeta.setDisplayName("Bomb");
+                    itemStack.setItemMeta(itemMeta);
+                    itemStack.setType(Material.QUARTZ);
+                    dropItemNaturally.setItemStack(itemStack);
+                    game.getBomb().setDrop(dropItemNaturally);
+                }
+            }
+            game.getTeamA().getPlayers().forEach(player -> {
+                SAScoreboard scoreboard = game.getScoreboards().get(player.getUniqueId());
+                if(damager != null) {
+                    scoreboard.getTeams().update(game, damager);
+                }
+                scoreboard.getTeams().update(game, damaged);
+                NmsUtils.sendInvisibility(scoreboard, game);
+            });
+            game.getTeamB().getPlayers().forEach(player -> {
+                SAScoreboard scoreboard = game.getScoreboards().get(player.getUniqueId());
+                if(damager != null) {
+                    scoreboard.getTeams().update(game, damager);
+                }
+                scoreboard.getTeams().update(game, damaged);
+                NmsUtils.sendInvisibility(scoreboard, game);
+            });
+            clearPlayer(damaged);
+            damaged.updateInventory();
+            damaged.setGameMode(GameMode.SPECTATOR);
+            if(damager != null) {
+                game.setMoney(damager, game.getMoney(damager) +
+                        (damager.getInventory().getHeldItemSlot() == 2 ? 1500 :
+                                Main.getWeaponManager().getGun(damager.getItemInHand()) != null ?
+                                        Main.getWeaponManager().getGun(damager.getItemInHand()).getKillReward() : 300));
+                game.sendToAll(damager.getDisplayName() + " killed " + damaged.getDisplayName() + " via " + cause);
+            } else {
+                game.sendToAll(damaged.getDisplayName() + " died to " + cause);
+            }
+            NmsUtils.sendTitle(damaged, 0, 100, 0, "You died", damager != null ? damager.getDisplayName() : "");
+            return true;
         }
+        if(damaged.getNoDamageTicks() < 1) {
+            double health = damaged.getHealth();
+            damaged.setHealth(5);
+            damaged.damage(4);
+            damaged.setHealth(health);
+            damaged.setNoDamageTicks(1);
+        }
+        damaged.setHealth(damaged.getHealth() - damage);
+        game.getTeamA().getPlayers().forEach(player -> game.getScoreboards().get(player.getUniqueId()).getHealth().update(damaged));
+        game.getTeamB().getPlayers().forEach(player -> game.getScoreboards().get(player.getUniqueId()).getHealth().update(damaged));
         return false;
     }
 

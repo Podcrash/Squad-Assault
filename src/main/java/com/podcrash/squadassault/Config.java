@@ -154,6 +154,7 @@ public class Config {
             gunObj.setTotalAmmoSize(guns.getInt("Guns." + gun + ".Reload.TotalAmount"));
             gunObj.setBulletsPerShot(guns.getInt("Guns." + gun + ".Shoot.BulletsPerShot"));
             gunObj.setDelayPerShot(guns.getInt("Guns." + gun + ".Shoot.Delay"));
+            gunObj.setKillReward(guns.getInt("Guns."+gun+".ItemInfo.KillReward"));
             Main.getWeaponManager().addGun(gunObj);
         }
     }

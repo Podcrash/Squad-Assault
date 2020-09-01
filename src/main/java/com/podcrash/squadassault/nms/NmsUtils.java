@@ -3,7 +3,6 @@ package com.podcrash.squadassault.nms;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.SATeam;
 import com.podcrash.squadassault.scoreboard.SAScoreboard;
-import com.podcrash.squadassault.scoreboard.SAScoreboardTeam;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -81,6 +80,10 @@ public final class NmsUtils {
         for(Player player : team.getPlayers()) {
             ((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
         }
+    }
+
+    public static PhysicsItem spawnPhysicsItem(Player player, ItemStack stack, double power) {
+        return new PhysicsItem(((CraftPlayer)player).getHandle(), CraftItemStack.asNMSCopy(stack), power);
     }
 
 }

@@ -4,6 +4,10 @@ import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.util.Item;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class Gun {
 
     private final Item item;
@@ -25,6 +29,10 @@ public class Gun {
     private int bulletsPerPitch;
     private int delayBullets;
     private int bulletsPerBurst;
+    private int killReward;
+    private final Map<UUID, Long> delay;
+    private Map<UUID, HitscanCache> cache;
+    private final Map<UUID, GunReload> reloading;
     //todo shooting cache stuff
 
     public Gun(String name, Item item, GunHotbarType type, boolean projectile, String shootSound, String reloadSound) {
@@ -34,6 +42,11 @@ public class Gun {
         this.projectile = projectile;
         this.shootSound = shootSound;
         this.reloadSound = reloadSound;
+        delay = new HashMap<>();
+        reloading = new HashMap<>();
+        if(!projectile) {
+            cache = new HashMap<>();
+        }
     }
 
     public void setReloadDuration(int reloadDuration) {
@@ -165,7 +178,10 @@ public class Gun {
     }
 
     public void shoot(SAGame game, Player player) {
-
+        if(player.getInventory().getHeldItemSlot() != type.ordinal()) {
+            return;
+        }
+        long delay = System.currentTimeMillis() / 49;
     }
 
     public void reload(Player player, int slot) {
@@ -182,5 +198,13 @@ public class Gun {
 
     public void resetDelay(Player player) {
 
+    }
+
+    public int getKillReward() {
+        return killReward;
+    }
+
+    public void setKillReward(int killReward) {
+        this.killReward = killReward;
     }
 }

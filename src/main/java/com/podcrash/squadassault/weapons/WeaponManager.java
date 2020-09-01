@@ -7,8 +7,9 @@ import java.util.List;
 
 public class WeaponManager {
 
-    private List<Gun> guns;
-    private List<Grenade> grenades;
+    private final List<Gun> guns;
+    private final List<Grenade> grenades;
+    //todo projectile management
 
     public WeaponManager() {
         guns = new ArrayList<>();
