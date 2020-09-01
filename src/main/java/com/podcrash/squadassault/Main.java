@@ -1,5 +1,6 @@
 package com.podcrash.squadassault;
 
+import com.podcrash.squadassault.commands.QuitCommand;
 import com.podcrash.squadassault.game.GameListener;
 import com.podcrash.squadassault.game.GameTask;
 import com.podcrash.squadassault.game.SAGame;
@@ -77,5 +78,6 @@ public class Main extends JavaPlugin {
     }
 
     private void registerCommands() {
+        getCommand("leave").setExecutor(new QuitCommand());
     }
 }

@@ -16,10 +16,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -366,7 +365,49 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+    public void onPlace(BlockPlaceEvent event) {
+        if(Main.getGameManager().getGame(event.getPlayer()) != null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        if(Main.getGameManager().getGame(event.getPlayer()) != null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        //TODO: When we make this work properly with bungeecord, lots has to be changed probably
+        for(SAGame game : Main.getGameManager().getGames()) {
+            game.getTeamA().getPlayers().forEach(player -> player.hidePlayer(event.getPlayer()));
+            game.getTeamB().getPlayers().forEach(player -> player.hidePlayer(event.getPlayer()));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onLeave(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        SAGame game = Main.getGameManager().getGame(player);
+        if(game != null) {
+            Main.getGameManager().removePlayer(game, player, false, true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onKick(PlayerKickEvent event) {
+        Player player = event.getPlayer();
+        event.setLeaveMessage(null);
+        SAGame game = Main.getGameManager().getGame(player);
+        if(game != null) {
+            Main.getGameManager().removePlayer(game,player,false,true);
+        }
+    }
+
+    @EventHandler
+    public void onMove(PlayerMoveEvent event) {
 
     }
 }

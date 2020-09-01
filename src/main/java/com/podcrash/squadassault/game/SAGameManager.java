@@ -81,7 +81,7 @@ public class SAGameManager {
         }
     }
 
-    public void removePlayer(SAGame game, Player player, boolean newGame, boolean lobby) {
+    public void removePlayer(SAGame game, Player player, boolean newGame, boolean leftServer) {
         game.removeFromQueue(player);
         //todo remove grenades
 
@@ -114,7 +114,7 @@ public class SAGameManager {
                 }
             }
             scoreboard.remove();
-            if(!lobby) {
+            if(!leftServer) {
                 for(Player p : Bukkit.getOnlinePlayers()) {
                     player.showPlayer(p);
                 }
@@ -125,7 +125,7 @@ public class SAGameManager {
                     p.hidePlayer(player);
                 }
             }
-            if(lobby && game.getState() == SAGameState.WAITING) {
+            if(leftServer && game.getState() == SAGameState.WAITING) {
                 game.sendToAll(player.getDisplayName() + " left! " + game.getSize() + "/" + game.getMaxPlayers());
             }
             //call an event?
