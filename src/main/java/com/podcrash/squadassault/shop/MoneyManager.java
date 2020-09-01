@@ -13,6 +13,11 @@ public class MoneyManager {
 
     public void addMoneyEndRound(SAGame game, SATeam.Team winner, boolean wasBombPlanted, RoundEndType type) {
         SATeam.Team loser = winner == SATeam.Team.ALPHA ? SATeam.Team.OMEGA : SATeam.Team.ALPHA;
+        if(type == RoundEndType.TIME) {
+            streak++;
+            addMoneyTeam(game, winner, type.getMoney());
+            return;
+        }
         if(lastWinner == winner) {
             streak++;
             int trueStreak = Math.min(streak, 5);

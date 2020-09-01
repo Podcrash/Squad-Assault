@@ -5,13 +5,13 @@ import org.bukkit.Material;
 
 public class PlayerShopItem {
 
-    private int slot;
+    private int shopSlot;
     private int price;
     private SATeam.Team team;
     private String name;
     private String lore;
     private String weaponName;
-    private int slotPlace;
+    private int hotbarSlot;
     private Material material;
     private ItemType type;
     private String itemName;
@@ -19,7 +19,7 @@ public class PlayerShopItem {
     public PlayerShopItem(String weaponName, String name, int slot, int price, String lore, SATeam.Team team) {
         this.weaponName = weaponName;
         this.name = name;
-        this.slot = slot;
+        this.shopSlot = slot;
         this.price = price;
         this.lore = lore;
         this.team = team;
@@ -28,7 +28,7 @@ public class PlayerShopItem {
 
     public PlayerShopItem(String weaponName, String name, int slot, int price, String lore) {
         this.name = name;
-        this.slot = slot;
+        this.shopSlot = slot;
         this.price = price;
         this.lore = lore;
         this.weaponName = weaponName;
@@ -37,18 +37,18 @@ public class PlayerShopItem {
 
     public PlayerShopItem(int slot, int slotPlace, String name, Material material, int price, String lore, SATeam.Team team, String itemName) {
         type = ItemType.ITEM;
-        this.slot = slot;
+        this.shopSlot = slot;
         this.name = name;
         this.price = price;
         this.lore = lore;
         this.itemName = itemName;
         this.team = team;
-        this.slotPlace = slotPlace;
+        this.hotbarSlot = slotPlace;
         this.material = material;
     }
 
-    public int getSlot() {
-        return slot;
+    public int getShopSlot() {
+        return shopSlot;
     }
 
     public int getPrice() {
@@ -59,8 +59,8 @@ public class PlayerShopItem {
         return name;
     }
 
-    public int getSlotPlace() {
-        return slotPlace;
+    public int getHotbarSlot() {
+        return hotbarSlot;
     }
 
     public String getWeaponName() {

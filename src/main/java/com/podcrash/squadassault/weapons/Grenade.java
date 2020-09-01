@@ -65,4 +65,8 @@ public class Grenade {
     public void tick(long ticks) {
 
     }
+
+    public void remove(SAGame game) {
+
+    }
 }

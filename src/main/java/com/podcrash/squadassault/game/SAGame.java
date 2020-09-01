@@ -6,13 +6,15 @@ import com.podcrash.squadassault.game.events.GameStateChangeEvent;
 import com.podcrash.squadassault.nms.BossBar;
 import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.scoreboard.SAScoreboard;
+import com.podcrash.squadassault.shop.ItemType;
 import com.podcrash.squadassault.shop.MoneyManager;
+import com.podcrash.squadassault.shop.PlayerShopItem;
+import com.podcrash.squadassault.util.ItemBuilder;
 import com.podcrash.squadassault.util.Message;
 import com.podcrash.squadassault.util.Randomizer;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import com.podcrash.squadassault.weapons.Grenade;
+import com.podcrash.squadassault.weapons.Gun;
+import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -365,7 +367,7 @@ public class SAGame {
                     String.valueOf(timer))); //todo callouts
             bar.setProgress(bomb.isPlanted() ? (double) timer / 45 : (double) timer / 115);
         }
-        //30s after round start close shop
+        //20s after round start close shop
         if(this.timer == 95) {
             for(Player player : teamA.getPlayers()) {
                 if(player.getOpenInventory() != null && player.getOpenInventory().getTitle().equals("Shop")) {
@@ -392,6 +394,7 @@ public class SAGame {
                     defusing.remove(player);
                     break;
                 }
+                //todo there might be a bug here in regard to still in range but not looking
                 if(player.getLocation().distance(bomb.getLocation()) > 3) {
                     NmsUtils.sendTitle(player, 0, 40, 0, "", Message.CANCEL_DEFUSE.toString());
                     defusing.remove(player);
@@ -420,8 +423,11 @@ public class SAGame {
                         addRoundTeamB();
                     }
                     defusing.remove(player);
+                    money.put(player.getUniqueId(), money.get(player.getUniqueId())+300);
                     bomb.reset();
-                    //todo reset grenades, maybe extract method
+                    for(Grenade grenade : Main.getWeaponManager().getGrenades()) {
+                        grenade.remove(this);
+                    }
                     roundEnding = true;
                     break;
                 }
@@ -494,16 +500,66 @@ public class SAGame {
                         scoreboard.removeTeam();
                         scoreboard.showTeams(this);
                     }
-                    //todo shop stuff
-
-                } else {
-                    timer = 11;
+                    initShop(OMEGA);
+                    initShop(ALPHA);
                 }
+                //TODO in the future, add quickjoin
+                setState(SAGameState.ROUND_START);
+                Main.getGameManager().endRound(this);
+                Main.getGameManager().resetPlayers(this);
             }
-            return;
         } else {
+            if(!bomb.isPlanted()) {
+                Main.getGameManager().getTeam(this, OMEGA).getPlayers().forEach(player -> player.setCompassTarget(bomb.getLocation()));
+            }
+            //rounds won on kills
+            if(spectators.containsAll(Main.getGameManager().getTeam(this, ALPHA).getPlayers())) {
+                Main.getGameManager().getTeam(this, ALPHA).getPlayers().forEach(player -> player.sendMessage("You lose the round (deaths)"));
+                Main.getGameManager().getTeam(this, OMEGA).getPlayers().forEach(player -> player.sendMessage("You win the round (kills)"));
+                finalizeRoundKills(OMEGA);
+                return;
+            }
+            if(spectators.containsAll(Main.getGameManager().getTeam(this, OMEGA).getPlayers()) && !bomb.isPlanted()) {
+                Main.getGameManager().getTeam(this, ALPHA).getPlayers().forEach(player -> player.sendMessage("You win" +
+                        " the round (kills)"));
+                Main.getGameManager().getTeam(this, OMEGA).getPlayers().forEach(player -> player.sendMessage("You " +
+                        "lose" +
+                        " the round (deaths)"));
+                finalizeRoundKills(ALPHA);
+                return;
+            }
 
+            //timer expires, CTs win
+            if(timer == 0) {
+                Main.getGameManager().getTeam(this, ALPHA).getPlayers().forEach(player -> player.sendMessage("You " +
+                        "win on time"));
+                Main.getGameManager().getTeam(this, OMEGA).getPlayers().forEach(player -> player.sendMessage("You " +
+                        "lose on time"));
+                moneyManager.addMoneyEndRound(this, ALPHA, false, MoneyManager.RoundEndType.TIME);
+                finalizeRound(ALPHA);
+            }
         }
+    }
+
+    private void finalizeRound(SATeam.Team alpha) {
+        timer = 7;
+        roundWinner = alpha;
+        if(teamA.getTeam() == alpha) {
+            addRoundTeamA();
+        } else {
+            addRoundTeamB();
+        }
+        for(Grenade grenade : Main.getWeaponManager().getGrenades()) {
+            grenade.remove(this);
+        }
+        roundEnding = true;
+    }
+
+    private void finalizeRoundKills(SATeam.Team winner) {
+        round++;
+        //bomb planted is irrelevant necessarily on a round won by kills
+        moneyManager.addMoneyEndRound(this, winner, false, MoneyManager.RoundEndType.KILLS);
+        finalizeRound(winner);
     }
 
     private void runRoundStart() {
@@ -567,8 +623,9 @@ public class SAGame {
                     teamA.addPlayer(player);
                 }
             }
-            //todo shop stuff
-            timer = 7;
+            initShopWaiting(OMEGA);
+            initShopWaiting(ALPHA);
+            timer = 15;
             Main.getGameManager().resetPlayers(this);
             for(SAScoreboard scoreboard : scoreboards.values()) {
                 scoreboard.getStatus().reset();
@@ -577,11 +634,52 @@ public class SAGame {
             return;
         }
         teamA.getPlayers().forEach(player -> {
-            if(timer <= 5 || timer % 10 == 0) player.sendMessage(String.valueOf(timer));
+            if(timer <= 5 || timer % 10 == 0) {
+                player.sendMessage(String.valueOf(timer));
+            }
         });
         teamB.getPlayers().forEach(player -> {
-            if(timer <= 5 || timer % 10 == 0) player.sendMessage(String.valueOf(timer));
+            if(timer <= 5 || timer % 10 == 0) {
+                player.sendMessage(String.valueOf(timer));
+            }
         });
+    }
+
+    private void initShop(SATeam.Team team) {
+        for(Player player : Main.getGameManager().getTeam(this, team).getPlayers()) {
+            Inventory inventory = shops.get(player.getUniqueId());
+            initShopInventory(team, inventory);
+        }
+    }
+
+    private void initShopWaiting(SATeam.Team alpha) {
+        for(Player player : Main.getGameManager().getTeam(this, alpha).getPlayers()) {
+            Inventory inventory = Bukkit.createInventory(null, 45, "Shop");
+            initShopInventory(alpha, inventory);
+            shops.put(player.getUniqueId(), inventory);
+            scoreboards.get(player.getUniqueId()).showTeams(this);
+            scoreboards.get(player.getUniqueId()).showHealth(this);
+        }
+    }
+
+    private void initShopInventory(SATeam.Team alpha, Inventory inventory) {
+        inventory.clear();
+        for(PlayerShopItem shop : Main.getShopManager().getShops()) {
+            if(shop.getType() == ItemType.GRENADE) {
+                Grenade grenade = Main.getWeaponManager().getGrenade(shop.getWeaponName());
+                inventory.setItem(shop.getShopSlot(), ItemBuilder.create(grenade.getItem().getType(),
+                        1, grenade.getItem().getData(), shop.getName(),shop.getLore()));
+            } else if(shop.getType() == ItemType.GUN && (shop.getTeam() == null || shop.getTeam() == alpha)) {
+                Gun gun = Main.getWeaponManager().getGun(shop.getWeaponName());
+                inventory.setItem(shop.getShopSlot(), ItemBuilder.create(gun.getItem().getType(), 1,
+                        gun.getItem().getData(), shop.getName(), shop.getLore()));
+            } else {
+                if(shop.getTeam() != null && shop.getTeam() != alpha) {
+                    continue;
+                }
+                inventory.setItem(shop.getShopSlot(), ItemBuilder.create(shop.getMaterial(), 1, shop.getName(), shop.getLore()));
+            }
+        }
     }
 
     public int getSize() {

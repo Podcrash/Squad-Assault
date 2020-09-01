@@ -291,7 +291,7 @@ public class GameListener implements Listener {
         //buying stuff
         if(event.getClickedInventory().getName().equals("Shop")) {
             for(PlayerShopItem shop : Main.getShopManager().getShops()) {
-                if(event.getSlot() == shop.getSlot() && (shop.getTeam() == null || Main.getGameManager().getTeam(game, player) == shop.getTeam())) {
+                if(event.getSlot() == shop.getShopSlot() && (shop.getTeam() == null || Main.getGameManager().getTeam(game, player) == shop.getTeam())) {
                     if(shop.getPrice() > game.getMoney(player)) {
                         player.closeInventory();
                         player.sendMessage("not enough money");
@@ -339,17 +339,17 @@ public class GameListener implements Listener {
                         }
                         //buying armor
                         if(shop.getMaterial() != Material.SHEARS) {
-                            ItemStack itemStack = player.getInventory().getItem(shop.getSlotPlace());
-                            if(shop.getSlotPlace() == 2 || itemStack == null || itemStack.getType() == Material.LEATHER_HELMET || itemStack.getType() == Material.LEATHER_CHESTPLATE) {
+                            ItemStack itemStack = player.getInventory().getItem(shop.getHotbarSlot());
+                            if(shop.getHotbarSlot() == 2 || itemStack == null || itemStack.getType() == Material.LEATHER_HELMET || itemStack.getType() == Material.LEATHER_CHESTPLATE) {
                                 game.setMoney(player, game.getMoney(player) - shop.getPrice());
-                                player.getInventory().setItem(shop.getSlotPlace(),
+                                player.getInventory().setItem(shop.getHotbarSlot(),
                                         ItemBuilder.create(shop.getMaterial(), 1, shop.getName(), false));
                                 break;
                             }
                         } else { //buying defuse kit
-                            if(player.getInventory().getItem(shop.getSlotPlace()).getType() != Material.SHEARS) {
+                            if(player.getInventory().getItem(shop.getHotbarSlot()).getType() != Material.SHEARS) {
                                 game.setMoney(player, game.getMoney(player) - shop.getPrice());
-                                player.getInventory().setItem(shop.getSlotPlace(),
+                                player.getInventory().setItem(shop.getHotbarSlot(),
                                         ItemBuilder.create(shop.getMaterial(), 1, shop.getName(), false));
                                 break;
                             }
