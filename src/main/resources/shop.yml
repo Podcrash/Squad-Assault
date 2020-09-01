@@ -1,0 +1,90 @@
+ShopGuns:
+  ExampleHitscan:
+    Slot: 2
+    ItemName: 'Example Hitscan'
+    ItemLore: 'buy me'
+    Price: 400
+  USP-S:
+    Slot: 2
+    ItemName: 'USP-S'
+    ItemLore: 'buy me'
+    Price: 400
+    Side: Alpha
+  ExampleProjectile:
+    Slot: 2
+    ItemName: 'Example Projectile'
+    ItemLore: 'buy me'
+    Price: 400
+  Glock-18:
+    Slot: 2
+    ItemName: 'Glock-18'
+    ItemLore: 'buy me'
+    Price: 400
+    Side: OMEGA
+ShopGrenades:
+  HighExplosive:
+    Slot: 19
+    Price: 300
+    ItemName: 'High Explosive'
+    ItemLore: 'buy me'
+  Smoke:
+    Slot: 27
+    Price: 300
+    ItemName: 'Smoke'
+    ItemLore: 'buy me'
+  Flashbang:
+    Slot: 36
+    Price: 300
+    ItemName: 'Flashbang'
+    ItemLore: 'buy me'
+  Decoy:
+    Slot: 18
+    Price: 100
+    ItemName: 'Decoy'
+    ItemLore: 'buy me'
+  Molotov:
+    Slot: 20
+    Price: 400
+    ItemName: 'Molotov'
+    ItemLore: 'buy me'
+ShopItems:
+  DefuseKit:
+    Slot: 44
+    Price: 400
+    SlotPlace: 7
+    Side: ALPHA
+    Material: SHEARS
+    ItemName: "Defuse Kit"
+    ItemLore: 'buy me'
+  AlphaKevlar:
+    Slot: 34
+    Price: 650
+    SlotPlace: 38
+    Side: ALPHA
+    Material: IRON_CHESTPLATE
+    Item-Name: "Kevlar"
+    Item-Lore: 'buy me'
+  AlphaHelmet:
+    Slot: 35
+    Price: 350
+    SlotPlace: 39
+    Side: ALPHA
+    Item-Material: IRON_HELMET
+    Item-Name: "Alpha Helmet"
+    Item-Lore: 'buy me'
+  OmegaKevlar:
+    Slot: 34
+    Price: 650
+    SlotPlace: 38
+    Side: OMEGA
+    Item-Material: CHAINMAIL_CHESTPLATE
+    Item-Name: "Kevlar"
+    Item-Lore: 'buy me'
+  OmegaHelmet:
+    Slot: 35
+    Price: 300
+    SlotPlace: 39
+    Side: OMEGA
+    Material: CHAINMAIL_HELMET
+    ItemName: "Omega Helmet"
+    ItemLore: 'buy me'

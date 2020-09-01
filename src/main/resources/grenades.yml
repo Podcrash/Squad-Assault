@@ -1,0 +1,56 @@
+Grenades:
+  HighExplosive:
+    ItemInfo:
+      Name: 'High Explosive'
+      Type: FRAG
+      ItemType: APPLE
+      Data: 0
+    Properties:
+      Delay: 3
+      Duration: 0
+      ThrowSpeed: 2.0
+      EffectPower: 20
+  Flashbang:
+    ItemInfo:
+      Name: 'Flashbang'
+      Type: FLASH
+      ItemType: CARROT_ITEM
+      Data: 0
+    Properties:
+      Delay: 3
+      Duration: 4.5
+      ThrowSpeed: 2.0
+      EffectPower: 20
+  Decoy:
+    ItemInfo:
+      Name: 'Decoy'
+      Type: DECOY
+      ItemType: IRON_INGOT
+      Data: 0
+    Properties:
+      Delay: 3
+      Duration: 8
+      ThrowSpeed: 2.0
+      EffectPower: 20
+  Smoke:
+    ItemInfo:
+      Name: 'Smoke'
+      Type: SMOKE
+      ItemType: POTATO_ITEM
+      Data: 0
+    Properties:
+      Delay: 3
+      Duration: 15
+      ThrowSpeed: 2.0
+      EffectPower: 4.0
+  Molotov:
+    ItemInfo:
+      Name: 'Molotov'
+      Type: FIRE
+      ItemType: PORK
+      Data: 0
+    Properties:
+      Delay: 3
+      Duration: 10
+      ThrowSpeed: 2.0
+      EffectPower: 4.0
