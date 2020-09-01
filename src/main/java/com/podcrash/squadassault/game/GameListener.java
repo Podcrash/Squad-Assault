@@ -671,7 +671,7 @@ public class GameListener implements Listener {
             return;
         }
         Player damaged = (Player) event.getEntity();
-        if(Main.getGameManager().getGame(damaged).sameTeam(damaged,stats.getShooter())) {
+        if(Main.getGameManager().getGame(damaged).sameTeam(damaged,stats.getShooter()) || Main.getGameManager().getGame(damaged).getSpectators().contains(damaged)) {
             event.setCancelled(true);
             return;
         }
@@ -693,6 +693,7 @@ public class GameListener implements Listener {
             Main.getGameManager().damage(Main.getGameManager().getGame(damaged), stats.getShooter(), damaged,
                     finalDamage, stats.getGunName());
         }
+        Main.getWeaponManager().getProjectiles().remove(snowball);
 
     }
 

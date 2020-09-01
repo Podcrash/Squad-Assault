@@ -30,9 +30,8 @@ public class FinishCreationCommand extends CommandBase {
                     Utils.getSerializedLocations(setup.getAlphaSpawns()));
             Main.getSAConfig().getMaps().set("Game." + setup.getId() + ".OmegaSpawns",
                     Utils.getSerializedLocations(setup.getOmegaSpawns()));
-            Main.getSAConfig().getMaps().set("Game." + setup.getId() + ".BombsiteA", Utils.getSerializedLocation(setup.getBombA()));
-            Main.getSAConfig().getMaps().set("Game." + setup.getId() + ".BombsiteB", Utils.getSerializedLocation(setup.getBombB()));
-            //todo make sure this actually lines up with what you did yesterday its 4 am go to sleep
+            Main.getSAConfig().getMaps().set("Game." + setup.getId() + ".BombA", Utils.getSerializedLocation(setup.getBombA()));
+            Main.getSAConfig().getMaps().set("Game." + setup.getId() + ".BombB", Utils.getSerializedLocation(setup.getBombB()));
             Main.getSAConfig().saveMaps(Main.getInstance().getDataFolder());
             Main.getGameManager().getSetup().remove(commandSender);
             commandSender.sendMessage("Success");
