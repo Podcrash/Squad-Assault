@@ -233,7 +233,15 @@ public class Grenade {
     }
 
     public void removePlayer(Player player) {
-
+        for(GrenadeCache cache : played) {
+            if(cache.getPlayer() == player) {
+                for(Block block : cache.getBlocks()) {
+                    block.setType(Material.AIR);
+                }
+                cache.getGrenade().remove();
+                played.remove(cache);
+            }
+        }
     }
 
     private List<Block> getBlocks(Block block, double distance) {
