@@ -352,7 +352,7 @@ public class SAGameManager {
                 scoreboard.getTeams().update(game,p);
             }
             NmsUtils.sendInvisibility(scoreboard, game);
-            player.getInventory().setItem(8, ItemBuilder.create(Material.GHAST_TEAR, 1, "Alpha Shop", false));
+            player.getInventory().setItem(8, ItemBuilder.create(Material.GHAST_TEAR, 1, "Shop", false));
             player.teleport(game.getAlphaSpawns().get(Randomizer.randomInt(game.getAlphaSpawns().size())));
             if(player.getInventory().getHeldItemSlot() == 2) {
                 player.setWalkSpeed(1.05f);
@@ -410,7 +410,7 @@ public class SAGameManager {
             }
             NmsUtils.sendInvisibility(scoreboard, game);
             player.getInventory().setItem(7, ItemBuilder.create(Material.COMPASS, 1, "Bomb Locator", false));
-            player.getInventory().setItem(8, ItemBuilder.create(Material.GHAST_TEAR, 1, "Omega Shop", false));
+            player.getInventory().setItem(8, ItemBuilder.create(Material.GHAST_TEAR, 1, "Shop", false));
             player.teleport(game.getAlphaSpawns().get(Randomizer.randomInt(game.getOmegaSpawns().size())));
             if(player.getInventory().getHeldItemSlot() == 2) {
                 player.setWalkSpeed(1.05f);

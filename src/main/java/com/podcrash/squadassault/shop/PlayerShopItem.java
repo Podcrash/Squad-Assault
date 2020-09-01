@@ -3,7 +3,7 @@ package com.podcrash.squadassault.shop;
 import com.podcrash.squadassault.game.SATeam;
 import org.bukkit.Material;
 
-public class PlayerShop {
+public class PlayerShopItem {
 
     private int slot;
     private int price;
@@ -16,7 +16,7 @@ public class PlayerShop {
     private ItemType type;
     private String itemName;
 
-    public PlayerShop(String weaponName, String name, int slot, int price, String lore, SATeam.Team team) {
+    public PlayerShopItem(String weaponName, String name, int slot, int price, String lore, SATeam.Team team) {
         this.weaponName = weaponName;
         this.name = name;
         this.slot = slot;
@@ -26,7 +26,7 @@ public class PlayerShop {
         type = ItemType.GUN;
     }
 
-    public PlayerShop(String weaponName, String name, int slot, int price, String lore) {
+    public PlayerShopItem(String weaponName, String name, int slot, int price, String lore) {
         this.name = name;
         this.slot = slot;
         this.price = price;
@@ -35,7 +35,7 @@ public class PlayerShop {
         type = ItemType.GRENADE;
     }
 
-    public PlayerShop(int slot, int slotPlace, String name, Material material, int price, String lore, SATeam.Team team, String itemName) {
+    public PlayerShopItem(int slot, int slotPlace, String name, Material material, int price, String lore, SATeam.Team team, String itemName) {
         type = ItemType.ITEM;
         this.slot = slot;
         this.name = name;

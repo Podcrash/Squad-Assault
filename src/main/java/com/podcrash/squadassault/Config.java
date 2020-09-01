@@ -2,7 +2,7 @@ package com.podcrash.squadassault;
 
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.SATeam;
-import com.podcrash.squadassault.shop.PlayerShop;
+import com.podcrash.squadassault.shop.PlayerShopItem;
 import com.podcrash.squadassault.util.GameUtils;
 import com.podcrash.squadassault.util.Item;
 import com.podcrash.squadassault.weapons.*;
@@ -76,14 +76,14 @@ public class Config {
             String name = shop.getString("ShopGuns."+gun+".ItemName");
             String lore = shop.getString("ShopGuns."+gun+".ItemLore");
             int slot = shop.getInt("ShopGuns."+gun+".Slot");
-            Main.getShopManager().addShop(new PlayerShop(gun, name, slot, price, lore, side));
+            Main.getShopManager().addShop(new PlayerShopItem(gun, name, slot, price, lore, side));
         }
         for(String grenade : shop.getConfigurationSection("ShopGrenades").getKeys(false)) {
             if(manager.getGrenade(grenade) == null) {
                 log(grenade + " in shop.yml doesn't exist in grenades.yml");
                 continue;
             }
-            Main.getShopManager().addShop(new PlayerShop(
+            Main.getShopManager().addShop(new PlayerShopItem(
                 grenade, shop.getString("ShopGrenades."+grenade+".ItemName"), shop.getInt("ShopGrenades."+grenade+
                     ".Slot"), shop.getInt("ShopGrenades."+grenade+
                     ".Price"), shop.getString("ShopGrenades."+grenade+".ItemLore")
@@ -97,7 +97,7 @@ public class Config {
             String lore = shop.getString("ShopItems."+item+".ItemLore");
             SATeam.Team side = SATeam.Team.valueOf(shop.getString("ShopItems."+item+".Side"));
             Material material = Material.getMaterial(shop.getString("ShopItems."+item+".Material"));
-            Main.getShopManager().addShop(new PlayerShop(slot, slotPlace, name, material, price, lore, side, item));
+            Main.getShopManager().addShop(new PlayerShopItem(slot, slotPlace, name, material, price, lore, side, item));
         }
     }
 

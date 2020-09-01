@@ -84,7 +84,7 @@ public class Gun {
         this.bulletsPerShot = bulletsPerShot;
     }
 
-    public boolean isScope() {
+    public boolean hasScope() {
         return scope;
     }
 
@@ -173,6 +173,10 @@ public class Gun {
     }
 
     public void tick() {
+
+    }
+
+    public void resetPlayer(Player player) {
 
     }
 }

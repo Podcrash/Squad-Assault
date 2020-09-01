@@ -9,7 +9,8 @@ public enum Message {
     BOMB_DEFUSE("§b§lBomb Defusing"),
     BOMB_DEFUSED("§cBomb Defused"),
     ROUND_WINNER_ALPHA("§eRound winner: §bAlpha"),
-    ROUND_WINNER_OMEGA("§eRound winner: §cOmega");
+    ROUND_WINNER_OMEGA("§eRound winner: §cOmega"),
+    TEAM_CHAT_FORMAT("[Team] %player%: %message%");
 
     private final String msg;
 

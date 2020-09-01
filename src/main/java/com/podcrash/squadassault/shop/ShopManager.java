@@ -6,14 +6,17 @@ import java.util.List;
 
 public class ShopManager {
 
-    private List<PlayerShop> shops;
+    private List<PlayerShopItem> shops;
 
     public ShopManager() {
         shops = new ArrayList<>();
     }
 
-    public void addShop(PlayerShop shop) {
+    public void addShop(PlayerShopItem shop) {
         shops.add(shop);
     }
 
+    public List<PlayerShopItem> getShops() {
+        return shops;
+    }
 }
