@@ -671,28 +671,31 @@ public class GameListener implements Listener {
             return;
         }
         Player damaged = (Player) event.getEntity();
-        if(Main.getGameManager().getGame(damaged).sameTeam(damaged,stats.getShooter())) {
+        if(Main.getGameManager().getGame(damaged).sameTeam(damaged,stats.getShooter()) || Main.getGameManager().getGame(damaged).getSpectators().contains(damaged)) {
             event.setCancelled(true);
             return;
         }
         boolean hs = snowballHeadshot(damaged, snowball);
         if(hs) {
-            double armorPen = damaged.getInventory().getChestplate().getType() == Material.LEATHER_HELMET ? 0 : stats.getArmorPen();
-            double rangeFalloff = 1/(stats.getDropoff() * (100-(damaged.getLocation().distance(stats.getLocation()))));
+            double armorPen = damaged.getInventory().getChestplate().getType() == Material.LEATHER_HELMET ? 1 :
+                    stats.getArmorPen();
+            double rangeFalloff = (stats.getDropoff() * damaged.getLocation().distance(stats.getLocation()));
             double damage = stats.getDamage()*2.5;
-            double finalDamage = damage - (armorPen * damage) - (rangeFalloff * damage);
+            double finalDamage = Math.max(0,armorPen*(damage - rangeFalloff));
             Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, true, stats.getShooter(), damaged));
             Main.getGameManager().damage(Main.getGameManager().getGame(damaged), stats.getShooter(), damaged,
                     finalDamage, stats.getGunName() + " headshot");
         } else {
-            double armorPen = damaged.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 0 : stats.getArmorPen();
-            double rangeFalloff = 1/(stats.getDropoff() * (100-(damaged.getLocation().distance(stats.getLocation()))));
+            double armorPen = damaged.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 1 :
+                    stats.getArmorPen();
+            double rangeFalloff = (stats.getDropoff() * damaged.getLocation().distance(stats.getLocation()));
             double damage = stats.getDamage();
-            double finalDamage = damage - (armorPen * damage) - (rangeFalloff * damage);
+            double finalDamage = Math.max(0,armorPen*(damage - rangeFalloff));
             Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, false, stats.getShooter(), damaged));
             Main.getGameManager().damage(Main.getGameManager().getGame(damaged), stats.getShooter(), damaged,
                     finalDamage, stats.getGunName());
         }
+        Main.getWeaponManager().getProjectiles().remove(snowball);
 
     }
 

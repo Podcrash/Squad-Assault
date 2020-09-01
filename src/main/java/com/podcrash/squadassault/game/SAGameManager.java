@@ -270,7 +270,6 @@ public class SAGameManager {
         if(game.getState() == SAGameState.ROUND_START) {
             game.getSpectators().forEach(player -> player.setGameMode(GameMode.ADVENTURE));
         }
-        game.setRoundWinner(null);
         game.resetDefusers();
         game.getBomb().reset();
         game.getSpectators().clear();

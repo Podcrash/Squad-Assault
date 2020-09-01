@@ -9,7 +9,7 @@ public class ReloadPluginCommand extends CommandBase {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if(commandSender.hasPermission("invicta.admin")) {
+        if(commandSender.hasPermission("podcrash.admin")) {
             Main.getInstance().getServer().getPluginManager().disablePlugin(Main.getInstance());
             Main.getInstance().getServer().getPluginManager().enablePlugin(Main.getInstance());
             commandSender.sendMessage("Reloaded successfully.");
