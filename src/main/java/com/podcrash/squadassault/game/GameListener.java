@@ -32,6 +32,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 @SuppressWarnings("unused")
 public class GameListener implements Listener {
@@ -96,6 +97,36 @@ public class GameListener implements Listener {
                     if((inHand.getType() == Material.SHEARS || inHand.getType() == Material.GOLD_NUGGET) && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.CROPS) {
                         addDefuse(event, player, game, inHand);
                     }
+                    if(inHand.getType() == Material.GOLDEN_APPLE && game.getState() == SAGameState.ROUND_LIVE && !game.isRoundEnding() && player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
+                        event.setCancelled(true);
+                        new BukkitRunnable() {
+                            public void run() {
+                                if(!game.isAtBombsite(player.getLocation())) {
+                                    cancel();
+                                    return;
+                                }
+                                Block block = player.getLocation().getBlock();
+                                if(block.getType() == Material.AIR) {
+                                    player.getInventory().setItem(7, ItemBuilder.create(Material.COMPASS, 1, "Bomb Locator", false));
+                                    block.setType(Material.DAYLIGHT_DETECTOR);
+                                    game.getBomb().setLocation(block.getLocation());
+                                    game.getBomb().setTimer(40);
+                                    game.getBomb().setPlanted(true);
+                                    game.setMoney(player, game.getMoney(player)+300);
+                                    for(Player omega : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
+                                        omega.setCompassTarget(game.getBomb().getLocation());
+                                        //todo play sound
+                                        NmsUtils.sendTitle(omega,0,23,0,"","BOMB PLANTED");
+                                    }
+                                    for(Player alpha : Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers()) {
+                                        //todo play sound
+                                        NmsUtils.sendTitle(alpha,0,23,0,"","BOMB PLANTED");
+                                    }
+                                }
+                            }
+                        }.runTaskLater(Main.getInstance(), 60);
+                        return;
+                    }
                 }
                 Gun gun = Main.getWeaponManager().getGun(inHand);
                 if(gun != null && !game.isDefusing(player)) {
@@ -158,36 +189,6 @@ public class GameListener implements Listener {
                 Main.getGameManager().damage(game, damager, damaged, 20, "Knife");
             }
             Main.getUpdateTask().getDelay().put(damaged.getUniqueId(), 35);
-        }
-    }
-
-    @EventHandler
-    public void onBombPlant(PlayerItemConsumeEvent event) {
-        Player player = event.getPlayer();
-        SAGame game = Main.getGameManager().getGame(player);
-        if(game == null) {
-            return;
-        }
-        event.setCancelled(true);
-        if(player.getItemInHand().getType() == Material.GOLDEN_APPLE && game.getState() == SAGameState.ROUND_LIVE && !game.isRoundEnding() && player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
-            Block block = player.getLocation().getBlock();
-            if(block.getType() == Material.AIR) {
-                player.getInventory().setItem(7, ItemBuilder.create(Material.COMPASS, 1, "Bomb Locator", false));
-                block.setType(Material.DAYLIGHT_DETECTOR);
-                game.getBomb().setLocation(block.getLocation());
-                game.getBomb().setTimer(40);
-                game.getBomb().setPlanted(true);
-                game.setMoney(player, game.getMoney(player)+300);
-                for(Player omega : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
-                    omega.setCompassTarget(game.getBomb().getLocation());
-                    //todo play sound
-                    NmsUtils.sendTitle(omega,0,23,0,"","BOMB PLANTED");
-                }
-                for(Player alpha : Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers()) {
-                    //todo play sound
-                    NmsUtils.sendTitle(alpha,0,23,0,"","BOMB PLANTED");
-                }
-            }
         }
     }
 
@@ -448,7 +449,7 @@ public class GameListener implements Listener {
                 }
             }
         }
-        //todo callotus
+        //todo callouts & movement inaccuracy
     }
 
     @EventHandler
@@ -612,6 +613,45 @@ public class GameListener implements Listener {
         ItemStack clone = itemStack.clone();
         event.getItemDrop().remove();
         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), clone);
+    }
+
+    @EventHandler
+    public void onSneak(PlayerToggleSneakEvent event) {
+        Player player = event.getPlayer();
+        if(Main.getGameManager().getGame(player) == null) {
+            return;
+        }
+        Gun gun = Main.getWeaponManager().getGun(player.getItemInHand());
+        if(gun == null || !gun.hasScope()) {
+            return;
+        }
+        if(event.isSneaking()) {
+            NmsUtils.sendFakeItem(player, 5, new ItemStack(Material.PUMPKIN));
+        } else {
+            NmsUtils.sendFakeItem(player, 5, player.getInventory().getHelmet());
+        }
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractAtEntityEvent event) {
+        Player player = event.getPlayer();
+        ItemStack itemInHand = player.getInventory().getItemInHand();
+        SAGame game = Main.getGameManager().getGame(player);
+        if (game == null || itemInHand == null || itemInHand.getType() == Material.AIR) {
+            return;
+        }
+        event.setCancelled(true);
+        Gun gun = Main.getWeaponManager().getGun(itemInHand);
+        if(gun != null && !game.isDefusing(player) && game.getState() == SAGameState.ROUND_LIVE) {
+            gun.shoot(game, player);
+        }
+    }
+
+    @EventHandler
+    public void onPhysics(BlockPhysicsEvent event) {
+        if(event.getBlock().getType() == Material.CROPS) {
+            event.setCancelled(true);
+        }
     }
 
 }
