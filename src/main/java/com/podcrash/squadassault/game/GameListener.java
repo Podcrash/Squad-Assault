@@ -14,17 +14,24 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 @SuppressWarnings("unused")
 public class GameListener implements Listener {
@@ -68,11 +75,11 @@ public class GameListener implements Listener {
                         player.sendMessage("You left the game");
                     }
                 }
-            } else if(game.getState() == SAGameState.INGAME || game.getState() == SAGameState.ROUND) {
+            } else if(game.getState() == SAGameState.ROUND_LIVE || game.getState() == SAGameState.ROUND_START) {
                 ItemStack inHand = player.getItemInHand();
                 if(inHand != null && inHand.getType() == Material.GHAST_TEAR) {
                     if(game.isAtSpawn(player)) {
-                        if(game.getTimer() > 85 || game.getState() == SAGameState.ROUND) {
+                        if(game.getTimer() > 85 || game.getState() == SAGameState.ROUND_START) {
                             player.openInventory(game.getShops().get(player.getUniqueId()));
                         } else {
                             player.sendMessage(Message.SHOP_20_S.toString());
@@ -82,7 +89,7 @@ public class GameListener implements Listener {
                     }
                     return;
                 }
-                if(inHand != null && inHand.getType() != Material.AIR && game.getState() == SAGameState.INGAME) {
+                if(inHand != null && inHand.getType() != Material.AIR && game.getState() == SAGameState.ROUND_LIVE) {
                     if((inHand.getType() == Material.SHEARS || inHand.getType() == Material.GOLD_NUGGET) && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.DAYLIGHT_DETECTOR) {
                         addDefuse(event, player, game, inHand);
                     }
@@ -95,7 +102,7 @@ public class GameListener implements Listener {
                     gun.shoot(game, player);
                 }
                 Grenade grenade = Main.getWeaponManager().getGrenade(inHand);
-                if (grenade != null && game.getState() == SAGameState.INGAME && !game.isRoundEnding() && !game.isDefusing(player)) {
+                if (grenade != null && game.getState() == SAGameState.ROUND_LIVE && !game.isRoundEnding() && !game.isDefusing(player)) {
                     event.setCancelled(true);
                     grenade.throwGrenade(game, player);
                 }
@@ -141,7 +148,7 @@ public class GameListener implements Listener {
             return;
         }
         event.setCancelled(true);
-        if(game.getState() == SAGameState.INGAME && !game.sameTeam(damaged, damager) && damager.getInventory().getHeldItemSlot() == 2 && damager.getInventory().getItemInHand() != null && Main.getUpdateTask().getDelay().get(damaged.getUniqueId()) == null && !game.getSpectators().contains(damaged)) {
+        if(game.getState() == SAGameState.ROUND_LIVE && !game.sameTeam(damaged, damager) && damager.getInventory().getHeldItemSlot() == 2 && damager.getInventory().getItemInHand() != null && Main.getUpdateTask().getDelay().get(damaged.getUniqueId()) == null && !game.getSpectators().contains(damaged)) {
             float angle =
                     damager.getEyeLocation().toVector().subtract(damaged.getEyeLocation().toVector()).angle(damaged.getEyeLocation().getDirection().normalize());
             //check if they are behind player or not
@@ -162,7 +169,7 @@ public class GameListener implements Listener {
             return;
         }
         event.setCancelled(true);
-        if(player.getItemInHand().getType() == Material.GOLDEN_APPLE && game.getState() == SAGameState.INGAME && !game.isRoundEnding() && player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
+        if(player.getItemInHand().getType() == Material.GOLDEN_APPLE && game.getState() == SAGameState.ROUND_LIVE && !game.isRoundEnding() && player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
             Block block = player.getLocation().getBlock();
             if(block.getType() == Material.AIR) {
                 player.getInventory().setItem(7, ItemBuilder.create(Material.COMPASS, 1, "Bomb Locator", false));
@@ -408,6 +415,203 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-
+        Player player = event.getPlayer();
+        SAGame game = Main.getGameManager().getGame(player);
+        if(game == null) {
+            return;
+        }
+        if(game.getState() == SAGameState.ROUND_START && !game.getSpectators().contains(player)) {
+            event.setTo(event.getFrom());
+            return;
+        }
+        if(game.getState() != SAGameState.ROUND_LIVE) {
+            return;
+        }
+        if(player.getFallDistance() >= 6 && !game.getSpectators().contains(player) && player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
+            Main.getGameManager().damage(game, null, player, player.getFallDistance(), "Fall");
+        }
+        if(!game.getBomb().getCarrier().equals(player) && (event.getFrom().getBlockX() != event.getTo().getBlockX() || event.getFrom().getBlockZ() != event.getTo().getBlockZ())) {
+            ItemStack itemStack = player.getInventory().getItem(7);
+            if(itemStack != null) {
+                if(game.isAtBombsite(event.getTo())) {
+                    if(itemStack.getType() == Material.QUARTZ) {
+                        ItemMeta meta = itemStack.getItemMeta();
+                        meta.setDisplayName("Bomb - Right Click");
+                        itemStack.setItemMeta(meta);
+                        itemStack.setType(Material.GOLDEN_APPLE);
+                    } else if(itemStack.getType() == Material.GOLDEN_APPLE) {
+                        ItemMeta meta = itemStack.getItemMeta();
+                        meta.setDisplayName("Bomb");
+                        itemStack.setItemMeta(meta);
+                        itemStack.setType(Material.QUARTZ);
+                    }
+                }
+            }
+        }
+        //todo callotus
     }
+
+    @EventHandler
+    public void onDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player && Main.getGameManager().getGame((Player)event.getEntity()) != null && event.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onFoodChange(FoodLevelChangeEvent event) {
+        if (event.getEntity() instanceof Player && Main.getGameManager().getGame((Player)event.getEntity()) != null) {
+            event.setFoodLevel(20);
+        }
+    }
+
+    @EventHandler
+    public void onHealthRegain(EntityRegainHealthEvent event) {
+        if (event.getEntity() instanceof Player && Main.getGameManager().getGame((Player)event.getEntity()) != null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onEntityBreak(HangingBreakByEntityEvent event) {
+        if (event.getRemover().getType() == EntityType.PLAYER && Main.getGameManager().getGame((Player)event.getRemover()) != null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onEntityBreak(HangingBreakEvent event) {
+        if (event.getCause() != HangingBreakEvent.RemoveCause.ENTITY) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPickup(PlayerPickupItemEvent event) {
+        Player player = event.getPlayer();
+        SAGame game = Main.getGameManager().getGame(player);
+        if (game == null) {
+            return;
+        }
+        event.setCancelled(true);
+        if (game.getSpectators().contains(player) || (game.getState() != SAGameState.ROUND_LIVE && game.getState() != SAGameState.ROUND_START)) {
+            return;
+        }
+        Item item = event.getItem();
+        ItemStack itemStack = item.getItemStack();
+        if(itemStack.getType() == Material.SHEARS && Main.getGameManager().getTeam(game,player) == SATeam.Team.ALPHA && player.getInventory().getItem(7).getType() == Material.GOLD_NUGGET) {
+            item.remove();
+            game.getDrops().remove(item);
+            player.getInventory().setItem(7, itemStack);
+        } else {
+            if((itemStack.getType() == Material.QUARTZ || itemStack.getType() == Material.GOLDEN_APPLE) && Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA) {
+                item.remove();
+                game.getDrops().remove(item);
+                if(itemStack.getType() == Material.QUARTZ && game.isAtBombsite(item.getLocation())) {
+                    ItemMeta meta = itemStack.getItemMeta();
+                    meta.setDisplayName("Bomb - Right Click");
+                    itemStack.setItemMeta(meta);
+                    itemStack.setType(Material.GOLDEN_APPLE);
+                }
+                if(itemStack.getType() == Material.GOLDEN_APPLE && !game.isAtBombsite(item.getLocation())) {
+                    ItemMeta meta = itemStack.getItemMeta();
+                    meta.setDisplayName("Bomb");
+                    itemStack.setItemMeta(meta);
+                    itemStack.setType(Material.QUARTZ);
+                }
+                game.getBomb().setCarrier(player);
+                player.getInventory().setItem(7, itemStack);
+                return;
+            }
+            Grenade grenade = Main.getWeaponManager().getGrenade(itemStack);
+            if(grenade != null && game.getDrops().get(item) != null) {
+                int slot = findNadeSlot(player);
+                int current = 0;
+                GrenadeType type = grenade.getType();
+                int max = type.getMax();
+                for(int i = 3; i < 8; i++) {
+                    if(Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)) != null && Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)).getType() == type) {
+                        current++;
+                    }
+                }
+                if (slot != -1 && current != max) {
+                    event.setCancelled(true);
+                    player.getInventory().setItem(slot, itemStack);
+                    game.getDrops().remove(item);
+                    item.remove();
+                }
+            }
+            Gun gun = Main.getWeaponManager().getGun(itemStack);
+            Integer n = game.getDrops().get(item);
+            if (gun == null || n == null) {
+                return;
+            }
+            int gunSlot = gun.getType().ordinal();
+            if(player.getInventory().getItem(gunSlot) != null) {
+                event.setCancelled(true);
+                itemStack.setAmount(n + 1);
+                player.getInventory().setItem(gunSlot, itemStack);
+                game.getDrops().remove(item);
+                item.remove();
+            }
+        }
+    }
+
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+        SAGame game = Main.getGameManager().getGame(player);
+        if(game == null) {
+            return;
+        }
+        int heldItemSlot = player.getInventory().getHeldItemSlot();
+        ItemStack itemStack = event.getItemDrop().getItemStack();
+        int amount = player.getItemInHand().getAmount();
+        if(game.getState() == SAGameState.ROUND_LIVE || game.getState() == SAGameState.ROUND_START) {
+            if(itemStack.getType() == Material.SHEARS) {
+                game.getDrops().put(event.getItemDrop(), 1);
+                player.getInventory().setItem(7, ItemBuilder.create(Material.GOLD_NUGGET, 1,"Wire Cutters", false));
+                return;
+            }
+            if(itemStack.getType() == Material.QUARTZ || itemStack.getType() == Material.GOLDEN_APPLE) {
+                if(itemStack.getType() == Material.GOLDEN_APPLE) {
+                    ItemMeta meta = itemStack.getItemMeta();
+                    meta.setDisplayName("Bomb");
+                    itemStack.setItemMeta(meta);
+                    itemStack.setType(Material.QUARTZ);
+                }
+                game.getDrops().put(event.getItemDrop(), 1);
+                game.getBomb().setDrop(event.getItemDrop());
+                player.getInventory().setItem(7, ItemBuilder.create(Material.COMPASS, 1, "Bomb Locator", false));
+                player.setCompassTarget(player.getLocation());
+                return;
+            }
+            Gun gun = Main.getWeaponManager().getGun(itemStack);
+            if(gun != null) {
+                game.getDrops().put(event.getItemDrop(), amount);
+                itemStack.setAmount(1);
+                gun.resetDelay(player);
+                event.getItemDrop().setItemStack(ItemBuilder.create(itemStack.getType(), 1, gun.getItem().getData(),
+                        itemStack.getItemMeta().getDisplayName()));
+                player.getInventory().setItem(heldItemSlot, null);
+                if(gun.hasScope()) {
+                    NmsUtils.sendFakeItem(player, 5, player.getInventory().getHelmet());
+                }
+                return;
+            }
+            Grenade grenade = Main.getWeaponManager().getGrenade(itemStack);
+            if(grenade != null) {
+                game.getDrops().put(event.getItemDrop(), 1);
+                itemStack.setAmount(1);
+                event.getItemDrop().setItemStack(ItemBuilder.create(itemStack.getType(), 1,
+                        grenade.getItem().getData(), itemStack.getItemMeta().getDisplayName()));
+                player.getInventory().setItem(heldItemSlot, null);
+                return;
+            }
+        }
+        ItemStack clone = itemStack.clone();
+        event.getItemDrop().remove();
+        player.getInventory().setItem(player.getInventory().getHeldItemSlot(), clone);
+    }
+
 }

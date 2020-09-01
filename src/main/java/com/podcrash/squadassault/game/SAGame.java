@@ -250,7 +250,7 @@ public class SAGame {
             case END:
                 //todo
                 break;
-            case ROUND:
+            case ROUND_START:
                 bar.setTitle(Message.BOSSBAR_INGAME.toString().replace("%name%", mapName).replace("%timer%",
                         String.valueOf(timer))); //todo callouts
                 bar.setProgress(1);
@@ -332,10 +332,10 @@ public class SAGame {
             case END:
                 runEnd();
                 break;
-            case INGAME:
-                runIngame();
+            case ROUND_LIVE:
+                runLiveRound();
                 break;
-            case ROUND:
+            case ROUND_START:
                 runRoundStart();
                 break;
             case WAITING:
@@ -356,10 +356,10 @@ public class SAGame {
             return;
           }
          */
-        //getManager, stop game todo, add bungee integration here too
+        //add bungee integration here todo
     }
 
-    private void runIngame() {
+    private void runLiveRound() {
         if(!roundEnding) {
             bar.setTitle(Message.BOSSBAR_INGAME.toString().replace("%name%", mapName).replace("%timer%",
                     String.valueOf(timer))); //todo callouts
@@ -516,7 +516,7 @@ public class SAGame {
             teamA.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 30, 0, "round start go", ""));
             teamB.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 30, 0, "round start go", ""));
             timer = 115;
-            setState(SAGameState.INGAME);
+            setState(SAGameState.ROUND_LIVE);
             return;
         }
         teamA.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 30, 0, "buy stuff", ""));
@@ -573,7 +573,7 @@ public class SAGame {
             for(SAScoreboard scoreboard : scoreboards.values()) {
                 scoreboard.getStatus().reset();
             }
-            setState(SAGameState.ROUND);
+            setState(SAGameState.ROUND_START);
             return;
         }
         teamA.getPlayers().forEach(player -> {

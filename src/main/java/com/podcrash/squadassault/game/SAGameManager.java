@@ -85,7 +85,7 @@ public class SAGameManager {
         game.removeFromQueue(player);
         //todo remove grenades
 
-        if(!newGame && game.getState() == SAGameState.INGAME && game.getBomb().getCarrier() == player) {
+        if(!newGame && game.getState() == SAGameState.ROUND_LIVE && game.getBomb().getCarrier() == player) {
             Item dropItemNaturally = player.getWorld().dropItemNaturally(player.getLocation(),
                     ItemBuilder.create(Material.QUARTZ, 1, "Bomb", false));
             game.getBomb().setDrop(dropItemNaturally);
@@ -141,7 +141,7 @@ public class SAGameManager {
         for(SAScoreboard scoreboard : game.getScoreboards().values()) {
             if(game.getState() == SAGameState.WAITING) {
                 scoreboard.getStatus().setTitle(Message.SCOREBOARD_TITLE.toString());
-            } else if(game.getState() == SAGameState.ROUND || game.getState() == SAGameState.INGAME) {
+            } else if(game.getState() == SAGameState.ROUND_START || game.getState() == SAGameState.ROUND_LIVE) {
                 int scoreTeamA = game.getScoreTeamA();
                 int scoreTeamB = game.getScoreTeamB();
                 SATeam.Team side = game.getTeamA().getTeam();
@@ -187,7 +187,7 @@ public class SAGameManager {
                 status.updateLine(13, "Protect the bomb carrier " + (game.getBomb().getCarrier() != null ?
                         game.getBomb().getCarrier().getDisplayName() : ""));
             }
-            if(game.getState() == SAGameState.INGAME && !game.isRoundEnding()) {
+            if(game.getState() == SAGameState.ROUND_LIVE && !game.isRoundEnding()) {
                 int timer = game.getTimer();
                 status.updateLine(12,
                         ((timer % 3600 / 60 < 10) ? "0" : "") + timer % 3600 / 60 + ":" + ((timer % 3600 % 60 < 10) ? "0" : "") + timer % 3600 % 60);
@@ -254,7 +254,7 @@ public class SAGameManager {
 
     public void endRound(SAGame game) {
         game.getDrops().clear();
-        if(game.getState() == SAGameState.ROUND) {
+        if(game.getState() == SAGameState.ROUND_START) {
             game.getSpectators().forEach(player -> player.setGameMode(GameMode.ADVENTURE));
         }
         game.setRoundWinner(null);

@@ -179,4 +179,8 @@ public class Gun {
     public void resetPlayer(Player player) {
 
     }
+
+    public void resetDelay(Player player) {
+
+    }
 }
