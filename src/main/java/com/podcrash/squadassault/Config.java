@@ -163,7 +163,7 @@ public class Config {
         }
     }
 
-    private void saveMaps(File dataFolder) {
+    public void saveMaps(File dataFolder) {
         File file = new File(dataFolder, "maps.yml");
         try {
             if(!file.exists()) {
@@ -177,6 +177,10 @@ public class Config {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public YamlConfiguration getMaps() {
+        return maps;
     }
 
     public int getLobbyTime() {

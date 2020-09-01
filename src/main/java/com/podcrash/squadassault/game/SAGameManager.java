@@ -1,6 +1,7 @@
 package com.podcrash.squadassault.game;
 
 import com.podcrash.squadassault.Main;
+import com.podcrash.squadassault.commands.GameSetup;
 import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.scoreboard.SAScoreboard;
 import com.podcrash.squadassault.scoreboard.ScoreboardStatus;
@@ -20,14 +21,18 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SAGameManager {
 
     private List<SAGame> games;
+    private Map<Player, GameSetup> setup;
 
     public SAGameManager() {
         games = new ArrayList<>();
+        setup = new HashMap<>();
     }
 
     public SAGame findQuickGame(Player player) {
@@ -591,5 +596,18 @@ public class SAGameManager {
             }
         }
         return n;
+    }
+
+    public SAGame getGame(String id) {
+        for (SAGame game : games) {
+            if (game.getId().equals(id)) {
+                return game;
+            }
+        }
+        return null;
+    }
+
+    public Map<Player, GameSetup> getSetup() {
+        return setup;
     }
 }

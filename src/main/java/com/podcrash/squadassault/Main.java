@@ -1,6 +1,6 @@
 package com.podcrash.squadassault;
 
-import com.podcrash.squadassault.commands.QuitCommand;
+import com.podcrash.squadassault.commands.*;
 import com.podcrash.squadassault.game.GameListener;
 import com.podcrash.squadassault.game.GameTask;
 import com.podcrash.squadassault.game.SAGame;
@@ -78,6 +78,15 @@ public class Main extends JavaPlugin {
     }
 
     private void registerCommands() {
-        getCommand("leave").setExecutor(new QuitCommand());
+        getCommand("quit").setExecutor(new QuitCommand());
+        getCommand("addalphaspawn").setExecutor(new AddAlphaSpawnCommand());
+        getCommand("addomegaspawn").setExecutor(new AddOmegaSpawnCommand());
+        getCommand("addbomb").setExecutor(new AddBombCommand());
+        getCommand("creategame").setExecutor(new CreateGameCommand());
+        getCommand("disablemap").setExecutor(new DisableMapCommand());
+        getCommand("enablemap").setExecutor(new EnableMapCommand());
+        getCommand("finishcreation").setExecutor(new FinishCreationCommand());
+        getCommand("reloadplugin").setExecutor(new ReloadPluginCommand());
+        getCommand("setlobby").setExecutor(new SetLobbyCommand());
     }
 }

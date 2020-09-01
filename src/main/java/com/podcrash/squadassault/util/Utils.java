@@ -40,4 +40,17 @@ public final class Utils {
         return a.subtract(b).length();
     }
 
+    public static String getSerializedLocation(Location location) {
+        return location.getWorld().getName() + "," + (location.getBlockX() + 0.5) + "," + location.getBlockY() + "," + (location.getBlockZ() + 0.5) + "," + location.getYaw() + "," + location.getPitch();
+    }
+
+    public static List<String> getSerializedLocations(final List<Location> list) {
+        List<String> list2 = new ArrayList<>();
+        for (Location location : list) {
+            list2.add(getSerializedLocation(location));
+        }
+        return list2;
+    }
+
+
 }
