@@ -295,7 +295,7 @@ public class GameListener implements Listener {
                         GrenadeType type = grenade.getType();
                         int max = type.getMax();
                         int current = 0;
-                        for(int i = 3; i < 6; i++) {
+                        for(int i = 3; i < 8; i++) {
                             if(Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)) != null && Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)).getType() == type) {
                                 current++;
                             }
@@ -357,11 +357,16 @@ public class GameListener implements Listener {
     }
 
     private int findNadeSlot(Player player) {
-        for(int i = 3; i < 6; i++) {
+        for(int i = 3; i < 8; i++) {
             if(player.getInventory().getItem(i).getType() == null) {
                 return i;
             }
         }
         return -1;
+    }
+
+    @EventHandler
+    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+
     }
 }
