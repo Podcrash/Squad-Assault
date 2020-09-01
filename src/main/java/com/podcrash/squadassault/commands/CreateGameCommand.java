@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 public class CreateGameCommand extends CommandBase {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if(commandSender.hasPermission("invicta.admin") && commandSender instanceof Player) {
+        if(commandSender.hasPermission("podcrash.admin") && commandSender instanceof Player) {
             if(strings.length != 3) {
                 commandSender.sendMessage("need 3 args");
                 return true;

@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 public class AddAlphaSpawnCommand extends CommandBase {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if(commandSender.hasPermission("invicta.admin") && commandSender instanceof Player) {
+        if(commandSender.hasPermission("podcrash.admin") && commandSender instanceof Player) {
             GameSetup setup = Main.getGameManager().getSetup().get(commandSender);
             if(setup == null) {
                 commandSender.sendMessage("use /creategame first");

@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 public class DisableMapCommand extends CommandBase {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if(commandSender.hasPermission("invicta.admin")) {
+        if(commandSender.hasPermission("podcrash.admin")) {
             if(strings.length != 1) {
                 commandSender.sendMessage("Must specify id!");
                 return true;

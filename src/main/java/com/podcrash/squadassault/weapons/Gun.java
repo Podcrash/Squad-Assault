@@ -450,19 +450,25 @@ public class Gun {
                 continue;
             }
             if((hit.isSneaking() || eye.getY() - hit.getLocation().getY() <= 1.35 || eye.getY() - hit.getLocation().getY() >= 1.9) && (eye.getY() - hit.getLocation().getY() <= 1.27 || eye.getY() - hit.getLocation().getY() >= 1.82)) {
-                double armorPen = hit.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 0 : this.armorPen;
-                double rangeFalloff = 1/(dropoffPerBlock * (100-distance));
-                Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(damage - armorPen*damage - rangeFalloff*damage, false, player, hit));
+                double armorPen = hit.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 1 :
+                        this.armorPen;
+                double rangeFalloff = (dropoffPerBlock * distance);
+                double damage = getDamage();
+                double finalDamage = Math.max(0,armorPen*(damage - rangeFalloff));
+
+                Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, false, player, hit));
                 Main.getGameManager().damage(gunCache.getGame(), player, hit,
-                        damage - armorPen*damage - rangeFalloff*damage, name);
+                        finalDamage, name);
                 break;
             }
-            double helmetDamage = damage*2.5;
-            double armorPen = player.getInventory().getHelmet().getType() == Material.LEATHER_HELMET ? 0 : this.armorPen;
-            double rangeFalloff = 1/(dropoffPerBlock * (100-distance));
-            Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(helmetDamage - armorPen*damage - rangeFalloff*damage, true, player, hit));
+            double armorPen = hit.getInventory().getChestplate().getType() == Material.LEATHER_HELMET ? 1 :
+                    this.armorPen;
+            double rangeFalloff = (dropoffPerBlock * distance);
+            double damage = getDamage()*2.5;
+            double finalDamage = Math.max(0,armorPen*(damage - rangeFalloff));
+            Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, true, player, hit));
             Main.getGameManager().damage(gunCache.getGame(), player, hit,
-                    helmetDamage - armorPen*damage - rangeFalloff*damage, name + " headshot");
+                    finalDamage, name + " headshot");
             break;
         }
 

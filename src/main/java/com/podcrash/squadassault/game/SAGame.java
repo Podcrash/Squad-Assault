@@ -36,10 +36,8 @@ public class SAGame {
     private int maxPlayers;
     private int timer;
     private BossBar bar;
-    private SATeam.Team roundWinner;
     private int scoreTeamA;
     private int scoreTeamB;
-    private boolean gameStarting;
     private boolean gameStarted;
     private boolean gameEnding;
     private boolean roundEnding;
@@ -142,11 +140,12 @@ public class SAGame {
 
     public void addRoundTeamA() {
         scoreTeamA++;
-        //todo update scoreboard
+        Main.getGameManager().updateTitle(this);
     }
 
     public void addRoundTeamB() {
         scoreTeamB++;
+        Main.getGameManager().updateTitle(this);
     }
 
    public void removeFromQueue(Player player) {
@@ -204,10 +203,6 @@ public class SAGame {
         return gameStarted;
     }
 
-    public boolean isGameStarting() {
-        return gameStarting;
-    }
-
     public boolean isGameEnding() {
         return gameEnding;
     }
@@ -234,10 +229,6 @@ public class SAGame {
 
     public Map<UUID, Inventory> getShops() {
         return shops;
-    }
-
-    public void setRoundWinner(SATeam.Team roundWinner) {
-        this.roundWinner = roundWinner;
     }
 
     public Map<UUID, SAScoreboard> getScoreboards() {
@@ -416,7 +407,6 @@ public class SAGame {
                         p.sendMessage(Message.ROUND_WINNER_ALPHA.toString());
                     }
                     timer = 7;
-                    roundWinner = ALPHA;
                     if(teamA.getTeam() == ALPHA) {
                         addRoundTeamA();
                     } else {
@@ -439,7 +429,6 @@ public class SAGame {
                 round++;
                 moneyManager.addMoneyEndRound(this, OMEGA, true, MoneyManager.RoundEndType.BOMB);
                 timer = 7;
-                roundWinner = OMEGA;
                 if(teamA.getTeam() == OMEGA) {
                     addRoundTeamA();
                 } else {
@@ -520,7 +509,22 @@ public class SAGame {
                     initShop(OMEGA);
                     initShop(ALPHA);
                 }
-                //TODO in the future, add quickjoin
+                if(queue.size() > 0) {
+                    teamA.getPlayers().forEach(player -> {
+                        player.sendMessage("Following players joined the game:");
+                        for(UUID uuid : queue.keySet()) {
+                            player.sendMessage(Bukkit.getPlayer(uuid) + " joined as " + queue.get(uuid).getTeam());
+                        }
+                    });
+                    teamB.getPlayers().forEach(player -> {
+                        player.sendMessage("Following players joined the game:");
+                        for(UUID uuid : queue.keySet()) {
+                            player.sendMessage(Bukkit.getPlayer(uuid) + " joined as " + queue.get(uuid).getTeam());
+                        }
+                    });
+                }
+
+                queue.clear();
                 setState(SAGameState.ROUND_START);
                 Main.getGameManager().endRound(this);
                 Main.getGameManager().resetPlayers(this);
@@ -560,7 +564,6 @@ public class SAGame {
 
     private void finalizeRound(SATeam.Team alpha) {
         timer = 7;
-        roundWinner = alpha;
         if(teamA.getTeam() == alpha) {
             addRoundTeamA();
         } else {
@@ -731,16 +734,6 @@ public class SAGame {
 
     public boolean isAtBombsite(Location location) {
         return location.distance(bombA) <= 4 || location.distance(bombB) <= 4;
-    }
-
-    public int alivePlayers(SATeam team) {
-        int n = 0;
-        for(Player player : team.getPlayers()) {
-            if(!spectators.contains(player)) {
-                n++;
-            }
-        }
-        return n;
     }
 
 }
