@@ -17,4 +17,8 @@ public final class Randomizer {
     public static int randomRange(int n, int k) {
         return n+random.nextInt(k - n + 1);
     }
+
+    public static double random() {
+        return random.nextDouble();
+    }
 }

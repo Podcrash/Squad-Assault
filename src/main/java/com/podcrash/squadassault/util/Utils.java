@@ -2,9 +2,11 @@ package com.podcrash.squadassault.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public final class Utils {
 
@@ -26,6 +28,16 @@ public final class Utils {
 
     public static double dumbMinecraftDegrees(double n) {
         return (n > 179.9) ? (-180.0 + (n - 179.9)) : n;
+    }
+
+    public static double offset2d(Vector a, Vector b) {
+        a.setY(0);
+        b.setY(0);
+        return a.subtract(b).length();
+    }
+
+    public static double offset(Vector a, Vector b) {
+        return a.subtract(b).length();
     }
 
 }

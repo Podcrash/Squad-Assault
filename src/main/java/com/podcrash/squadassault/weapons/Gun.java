@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Snowball;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -23,6 +24,7 @@ public class Gun {
     private final String name;
     private final GunHotbarType type;
     private final boolean projectile;
+    private final boolean isShotgun;
     private final String shootSound;
     private final String reloadSound;
     private int reloadDuration;
@@ -40,23 +42,26 @@ public class Gun {
     private int delayBullets;
     private int bulletsPerBurst;
     private int killReward;
+    private double projectileConeMin;
+    private double projectileConeMax;
+    private double coneIncPerBullet;
     private final Map<UUID, Long> delay;
-    private Map<UUID, HitscanCache> cache;
+    private final Map<UUID, GunCache> cache;
     private final Map<UUID, GunReload> reloading;
     //todo shooting cache stuff
 
-    public Gun(String name, Item item, GunHotbarType type, boolean projectile, String shootSound, String reloadSound) {
+    public Gun(String name, Item item, GunHotbarType type, boolean projectile, String shootSound, String reloadSound,
+     boolean isShotgun) {
         this.name = name;
         this.item = item;
         this.type = type;
         this.projectile = projectile;
         this.shootSound = shootSound;
         this.reloadSound = reloadSound;
+        this.isShotgun = isShotgun;
         delay = new HashMap<>();
         reloading = new HashMap<>();
-        if(!projectile) {
-            cache = new HashMap<>();
-        }
+        cache = new HashMap<>();
     }
 
     public void setReloadDuration(int reloadDuration) {
@@ -197,11 +202,11 @@ public class Gun {
         } else if(del - delay.get(player.getUniqueId()) <= delayPerShot) {
             return;
         }
-        HitscanCache hitscanCache = cache.get(player.getUniqueId());
-        if(hitscanCache == null) {
-            cache.put(player.getUniqueId(), new HitscanCache(game, bulletsPerShot));
+        GunCache gunCache = cache.get(player.getUniqueId());
+        if(gunCache == null) {
+            cache.put(player.getUniqueId(), new GunCache(game, bulletsPerShot, projectileConeMin));
         } else {
-            hitscanCache.setRounds(bulletsPerShot);
+            gunCache.setRounds(bulletsPerShot);
         }
         delay.put(player.getUniqueId(), del);
     }
@@ -265,27 +270,27 @@ public class Gun {
             }
         }
         if(!cache.isEmpty()) {
-            for(Map.Entry<UUID, HitscanCache> entry : cache.entrySet()) {
+            for(Map.Entry<UUID, GunCache> entry : cache.entrySet()) {
                 Player player = Bukkit.getPlayer(entry.getKey());
-                HitscanCache hitscanCache = entry.getValue();
+                GunCache gunCache = entry.getValue();
                 if(reloading.containsKey(entry.getKey())) {
                     cache.remove(entry.getKey());
                     continue;
                 }
-                if(player == null || player.isDead() || !player.isOnline() || hitscanCache.getGame() == null) {
+                if(player == null || player.isDead() || !player.isOnline() || gunCache.getGame() == null) {
                     cache.remove(entry.getKey());
                     continue;
                 }
-                if(hitscanCache.getGame().getSpectators().contains(player)) {
+                if(gunCache.getGame().getSpectators().contains(player)) {
                     cache.remove(entry.getKey());
                     continue;
                 }
-                hitscanCache.setTicksLeft(hitscanCache.getTicksLeft() - 1);
-                if(hitscanCache.getRounds() > 0 && item.equals(player.getItemInHand())) {
-                    hitscanCache.setTicks(hitscanCache.getTicks() + 1);
-                    if(hitscanCache.isFirstShot()) {
-                        hitscanCache.setFirstShot(false);
-                    } else if(hitscanCache.getTicks() % delayBullets != 0) {
+                gunCache.setTicksLeft(gunCache.getTicksLeft() - 1);
+                if(gunCache.getRounds() > 0 && item.equals(player.getItemInHand())) {
+                    gunCache.setTicks(gunCache.getTicks() + 1);
+                    if(gunCache.isFirstShot()) {
+                        gunCache.setFirstShot(false);
+                    } else if(gunCache.getTicks() % delayBullets != 0) {
                         return;
                     }
                     if(player.getItemInHand().getAmount() == 1) {
@@ -294,7 +299,7 @@ public class Gun {
 
                         //play sound
                     } else {
-                        hitscanCache.setRounds(hitscanCache.getRounds() - 1);
+                        gunCache.setRounds(gunCache.getRounds() - 1);
                         player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
                     }
                     Location eye = player.getLocation();
@@ -307,195 +312,47 @@ public class Gun {
                     //play sound
 
                     if(accuracy == 0) {
-                        hitscanCache.setAccuracyPitch(0);
-                        hitscanCache.setAccuracyYaw(0);
+                        gunCache.setAccuracyPitch(0);
+                        gunCache.setAccuracyYaw(0);
                     }
                     float yaw = eye.getYaw();
                     float pitch = eye.getPitch();
                     double x = eye.getX();
                     double y = eye.getY();
                     double z = eye.getZ();
-                    for(int i = 0; i < bulletsPerShot; i++) {
-                        if(isMoving) {
-                            hitscanCache.setAccuracyPitch(Randomizer.randomRange((int)(-accuracy*10),
-                                    (int)(accuracy*10))+0.5f);
-                            hitscanCache.setAccuracyPitch(Randomizer.randomRange((int)(-accuracy*10),
-                                    (int)(accuracy*10))+0.5f);
-                        } else if(scope && player.isSneaking()) {
-                            hitscanCache.setAccuracyYaw(0);
-                            hitscanCache.setAccuracyPitch(0);
-                        } else if(scope && !player.isSneaking()) {
-                            hitscanCache.setAccuracyPitch(Randomizer.randomRange((int)(-accuracy),
-                                    (int)(accuracy))+0.5f);
-                            hitscanCache.setAccuracyPitch(Randomizer.randomRange((int)(-accuracy),
-                                    (int)(accuracy))+0.5f);
-                        } else if(bulletsPerShot > 1) {
-                            hitscanCache.setAccuracyPitch(Randomizer.randomRange((int)(-accuracy),
-                                    (int)(accuracy))+0.5f);
-                            hitscanCache.setAccuracyPitch(Randomizer.randomRange((int)(-accuracy),
-                                    (int)(accuracy))+0.5f);
-                        } else if(hitscanCache.getAccuracyPitch() >= -accuracy * bulletsPerPitch && !hitscanCache.isFirstShot()) {
-                            if(bulletsPerYaw == 0) {
-                                hitscanCache.setAccuracyPitch(hitscanCache.getAccuracyPitch() - (float) accuracy);
-                            } else if(hitscanCache.getYawDirection() == 0) {
-                                hitscanCache.setYawDirection(1);
-                                hitscanCache.setAccuracyYaw((float) accuracy);
-                            } else if(hitscanCache.getAccuracyYaw() / accuracy == bulletsPerYaw) {
-                                hitscanCache.setYawDirection(-1);
-                                hitscanCache.setAccuracyYaw(hitscanCache.getAccuracyPitch() - (float) accuracy);
-                            } else if(hitscanCache.getAccuracyYaw() / accuracy == -bulletsPerYaw) {
-                                hitscanCache.setAccuracyYaw(0);
-                                hitscanCache.setYawDirection(1);
-                                hitscanCache.setAccuracyPitch(hitscanCache.getAccuracyPitch() - (float) accuracy);
-                            } else if(hitscanCache.getYawDirection() > 0 && hitscanCache.getAccuracyYaw() / accuracy < bulletsPerYaw) {
-                                hitscanCache.setAccuracyYaw(hitscanCache.getAccuracyYaw() + (float) accuracy);
-                            } else if(hitscanCache.getYawDirection() < 0 && hitscanCache.getAccuracyYaw() / accuracy < bulletsPerYaw) {
-                                hitscanCache.setAccuracyYaw(hitscanCache.getAccuracyYaw() - (float) accuracy);
-                            }
-                        } else if(hitscanCache.getAccuracyPitch() <= accuracy * bulletsPerPitch && player.getItemInHand().getAmount() >= 1 && bulletsPerYaw == 0) {
-                            if (hitscanCache.getYawDirection() == 0) {
-                                hitscanCache.setYawDirection(1);
-                                hitscanCache.setAccuracyYaw(2);
-                            } else if (hitscanCache.getAccuracyYaw() / 2 <= -2) {
-                                hitscanCache.setAccuracyYaw(hitscanCache.getAccuracyYaw() + 2);
-                                hitscanCache.setYawDirection(1);
-                            } else if (hitscanCache.getAccuracyYaw() / 2 >= 2) {
-                                hitscanCache.setAccuracyYaw(hitscanCache.getAccuracyYaw() - 2);
-                                hitscanCache.setYawDirection(-1);
-                            } else if (hitscanCache.getYawDirection() > 0 && hitscanCache.getAccuracyYaw() / 2 < 2) {
-                                hitscanCache.setAccuracyYaw(hitscanCache.getAccuracyYaw() + 2);
-                            } else if (hitscanCache.getYawDirection() < 0 && hitscanCache.getAccuracyYaw() / 2 < 2) {
-                                hitscanCache.setAccuracyYaw(hitscanCache.getAccuracyYaw() - 2);
-                            }
-                        } else if(hitscanCache.getAccuracyPitch() <= -accuracy * bulletsPerPitch && player.getItemInHand().getAmount() >= 1) {
-                            if (hitscanCache.getYawDirection() == 0) {
-                                hitscanCache.setYawDirection(1);
-                                hitscanCache.setAccuracyYaw((float) accuracy);
-                            } else if (hitscanCache.getAccuracyYaw() / accuracy == bulletsPerYaw) {
-                                hitscanCache.setAccuracyYaw(hitscanCache.getAccuracyYaw() - (float) accuracy);
-                                hitscanCache.setYawDirection(-1);
-                            } else if (hitscanCache.getAccuracyYaw() / accuracy == -bulletsPerYaw) {
-                                hitscanCache.setAccuracyYaw(hitscanCache.getAccuracyYaw() + (float) accuracy);
-                                hitscanCache.setYawDirection(1);
-                            } else if (hitscanCache.getYawDirection() > 0 && hitscanCache.getAccuracyYaw() / accuracy < bulletsPerYaw) {
-                                hitscanCache.setAccuracyYaw(hitscanCache.getAccuracyYaw() + (float) accuracy);
-                            } else if (hitscanCache.getYawDirection() < 0 && hitscanCache.getAccuracyYaw() / accuracy < bulletsPerYaw) {
-                                hitscanCache.setAccuracyYaw(hitscanCache.getAccuracyYaw() - (float) accuracy);
-                            }
-                        }
-                        double yawRad = Math.toRadians(Utils.dumbMinecraftDegrees(yaw + 0.6) + hitscanCache.getAccuracyYaw() + 90);
-                        double pitchRad = Math.toRadians(pitch + hitscanCache.getAccuracyPitch() + 90);
-                        double cot = Math.sin(pitchRad) * Math.cos(yawRad);
-                        double cos = Math.cos(pitchRad);
-                        double sin2 = Math.sin(pitchRad) * Math.sin(yawRad);
-                        double distance = 0.5;
-                        while(distance < 100) {
-                            eye.setX(x + distance * cot);
-                            eye.setY(y + distance * cos);
-                            eye.setZ(z + distance * sin2);
-                            //particle effect?
-                            Material type = eye.getBlock().getType();
-                            if(type != Material.CROPS) {
-                                int xMod = (int)((eye.getX() - eye.getBlockX()) * 1000.0);
-                                int yMod = (int)((eye.getY() - eye.getBlockY()) * 10.0);
-                                int zMod = (int)((eye.getZ() - eye.getBlockZ()) * 1000.0);
-                                String data = eye.getBlock().getState().getData().toString();
-                                boolean inverted = data.contains("inverted");
-                                //check non full blocks to see if hit passes
-                                if(type.name().contains("FENCE")) {
-                                    if(xMod >= 370 && xMod <= 620 && zMod >= 370 && zMod <= 620) {
-                                        break;
-                                    }
-                                } else if(type == Material.COBBLE_WALL) {
-                                    if (xMod <= 750 && xMod >= 240 && zMod <= 750) {
-                                        break;
-                                    }
-                                } else if (type.name().contains("STEP") || type.name().contains("STONE_SLAB2")) {
-                                    if (inverted) {
-                                        if (yMod > 5) {
-                                            break;
-                                        }
-                                    } else if (yMod < 5) {
-                                        break;
-                                    }
-                                } else {
-                                    if (!type.name().contains("STAIRS")) {
-                                        break;
-                                    }
-                                    if (data.contains("NORTH")) {
-                                        if (inverted) {
-                                            if (zMod > 500 || (zMod < 500 && yMod >= 5)) {
-                                                break;
-                                            }
-                                        } else if (zMod > 500 || (zMod < 500 && yMod < 5)) {
-                                            break;
-                                        }
-                                    } else if (data.contains("SOUTH")) {
-                                        if (inverted) {
-                                            if (zMod < 500 || (zMod > 500 && yMod >= 5)) {
-                                                break;
-                                            }
-                                        } else if (zMod < 500 || (zMod > 500 && yMod < 5)) {
-                                            break;
-                                        }
-                                    } else if (data.contains("EAST")) {
-                                        if (inverted) {
-                                            if (xMod < 500 || (xMod > 500 && yMod >= 5)) {
-                                                break;
-                                            }
-                                        } else if (xMod < 500 || (xMod > 500 && yMod < 5)) {
-                                            break;
-                                        }
-                                    } else if (data.contains("WEST")) {
-                                        if (inverted) {
-                                            if (xMod > 500 || (xMod < 500 && yMod >= 5)) {
-                                                break;
-                                            }
-                                        } else if (xMod > 500 || (xMod < 500 && yMod < 5)) {
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            Player hit = null;
-                            for(Player p : hitscanCache.getGame().getTeamA().getPlayers()) {
-                                if (hitscanHit(player, hitscanCache, eye, p)) {
-                                    hit = p;
-                                    break;
-                                }
-                            }
-                            for(Player p : hitscanCache.getGame().getTeamB().getPlayers()) {
-                                if (hitscanHit(player, hitscanCache, eye, p)) {
-                                    hit = p;
-                                    break;
-                                }
-                            }
-                            if(hit == null) {
-                                distance += 0.25;
-                                continue;
-                            }
-                            if((hit.isSneaking() || eye.getY() - hit.getLocation().getY() <= 1.35 || eye.getY() - hit.getLocation().getY() >= 1.9) && (eye.getY() - hit.getLocation().getY() <= 1.27 || eye.getY() - hit.getLocation().getY() >= 1.82)) {
-                                double armorPen = hit.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 0 : this.armorPen;
-                                double rangeFalloff = 1/(dropoffPerBlock * (100-distance));
-                                Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(damage - armorPen*damage - rangeFalloff*damage, false, player, hit));
-                                Main.getGameManager().damage(hitscanCache.getGame(), player, hit,
-                                        damage - armorPen*damage - rangeFalloff*damage, name);
-                                break;
-                            }
-                            double helmetDamage = damage*2.5;
-                            double armorPen = player.getInventory().getHelmet().getType() == Material.LEATHER_HELMET ? 0 : this.armorPen;
-                            double rangeFalloff = 1/(dropoffPerBlock * (100-distance));
-                            Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(helmetDamage - armorPen*damage - rangeFalloff*damage, true, player, hit));
-                            Main.getGameManager().damage(hitscanCache.getGame(), player, hit,
-                                    helmetDamage - armorPen*damage - rangeFalloff*damage, name + " headshot");
-                            break;
-                        }
-                        eye.setX(x);
-                        eye.setY(y);
-                        eye.setZ(sin2);
+                    if(isMoving) {
+                        gunCache.setAccuracyYaw(Randomizer.randomRange((int)(-accuracy*10),
+                                (int)(accuracy*10))+0.5f);
+                        gunCache.setAccuracyPitch(Randomizer.randomRange((int)(-accuracy*10),
+                                (int)(accuracy*10))+0.5f);
+                    } else if(scope && player.isSneaking()) {
+                        gunCache.setAccuracyYaw(0);
+                        gunCache.setAccuracyPitch(0);
+                    } else if(scope && !player.isSneaking()) {
+                        gunCache.setAccuracyYaw(Randomizer.randomRange((int)(-accuracy),
+                                (int)(accuracy))+0.5f);
+                        gunCache.setAccuracyPitch(Randomizer.randomRange((int)(-accuracy),
+                                (int)(accuracy))+0.5f);
                     }
+                    double yawRad = Math.toRadians(Utils.dumbMinecraftDegrees(yaw + 0.6) + gunCache.getAccuracyYaw() + 90);
+                    double pitchRad = Math.toRadians(pitch + gunCache.getAccuracyPitch() + 90);
+                    double cot = Math.sin(pitchRad) * Math.cos(yawRad);
+                    double cos = Math.cos(pitchRad);
+                    double sin2 = Math.sin(pitchRad) * Math.sin(yawRad);
+                    if(projectile) {
+                        if(isShotgun) {
+                            shotgun(player, isMoving, gunCache);
+                        } else {
+                            projectile(player, isMoving, gunCache);
+                        }
+                    } else {
+                        hitscan(player, eye, x, y, z, cot, cos, sin2, gunCache);
+                    }
+                    eye.setX(x);
+                    eye.setY(y);
+                    eye.setZ(sin2);
                 } else {
-                    if(hitscanCache.getTicksLeft() > 0) {
+                    if(gunCache.getTicksLeft() > 0) {
                         continue;
                     }
                     cache.remove(entry.getKey());
@@ -504,16 +361,182 @@ public class Gun {
         }
     }
 
-    private boolean hitscanHit(Player player, HitscanCache hitscanCache, Location eye, Player p) {
-        return player != p && !hitscanCache.getGame().getSpectators().contains(p) && !hitscanCache.getGame().sameTeam(p,
-                player) && (p.getLocation().add(0, 0.2, 0).distance(eye) <= 0.4 || p.getLocation().add(0, 1, 0).distance(eye) <= 0.5 || p.getEyeLocation().distance(eye) <= 0.35 && !p.isDead());
+    private void hitscan(Player player, Location eye, double x, double y, double z, double cot, double cos,
+                         double sin2, GunCache gunCache) {
+        double distance = 0.5;
+        while(distance < 100) {
+            eye.setX(x + distance * cot);
+            eye.setY(y + distance * cos);
+            eye.setZ(z + distance * sin2);
+            //particle effect?
+            Material type = eye.getBlock().getType();
+            if(type != Material.CROPS) {
+                int xMod = (int)((eye.getX() - eye.getBlockX()) * 1000.0);
+                int yMod = (int)((eye.getY() - eye.getBlockY()) * 10.0);
+                int zMod = (int)((eye.getZ() - eye.getBlockZ()) * 1000.0);
+                String data = eye.getBlock().getState().getData().toString();
+                boolean inverted = data.contains("inverted");
+                //check non full blocks to see if hit passes
+                if(type.name().contains("FENCE")) {
+                    if(xMod >= 370 && xMod <= 620 && zMod >= 370 && zMod <= 620) {
+                        break;
+                    }
+                } else if(type == Material.COBBLE_WALL) {
+                    if (xMod <= 750 && xMod >= 240 && zMod <= 750) {
+                        break;
+                    }
+                } else if (type.name().contains("STEP") || type.name().contains("STONE_SLAB2")) {
+                    if (inverted) {
+                        if (yMod > 5) {
+                            break;
+                        }
+                    } else if (yMod < 5) {
+                        break;
+                    }
+                } else {
+                    if (!type.name().contains("STAIRS")) {
+                        break;
+                    }
+                    if (data.contains("NORTH")) {
+                        if (inverted) {
+                            if (zMod > 500 || (zMod < 500 && yMod >= 5)) {
+                                break;
+                            }
+                        } else if (zMod > 500 || (zMod < 500 && yMod < 5)) {
+                            break;
+                        }
+                    } else if (data.contains("SOUTH")) {
+                        if (inverted) {
+                            if (zMod < 500 || (zMod > 500 && yMod >= 5)) {
+                                break;
+                            }
+                        } else if (zMod < 500 || (zMod > 500 && yMod < 5)) {
+                            break;
+                        }
+                    } else if (data.contains("EAST")) {
+                        if (inverted) {
+                            if (xMod < 500 || (xMod > 500 && yMod >= 5)) {
+                                break;
+                            }
+                        } else if (xMod < 500 || (xMod > 500 && yMod < 5)) {
+                            break;
+                        }
+                    } else if (data.contains("WEST")) {
+                        if (inverted) {
+                            if (xMod > 500 || (xMod < 500 && yMod >= 5)) {
+                                break;
+                            }
+                        } else if (xMod > 500 || (xMod < 500 && yMod < 5)) {
+                            break;
+                        }
+                    }
+                }
+            }
+            Player hit = null;
+            for(Player p : gunCache.getGame().getTeamA().getPlayers()) {
+                if (hitscanHit(player, gunCache, eye, p)) {
+                    hit = p;
+                    break;
+                }
+            }
+            for(Player p : gunCache.getGame().getTeamB().getPlayers()) {
+                if (hitscanHit(player, gunCache, eye, p)) {
+                    hit = p;
+                    break;
+                }
+            }
+            if(hit == null) {
+                distance += 0.25;
+                continue;
+            }
+            if((hit.isSneaking() || eye.getY() - hit.getLocation().getY() <= 1.35 || eye.getY() - hit.getLocation().getY() >= 1.9) && (eye.getY() - hit.getLocation().getY() <= 1.27 || eye.getY() - hit.getLocation().getY() >= 1.82)) {
+                double armorPen = hit.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 0 : this.armorPen;
+                double rangeFalloff = 1/(dropoffPerBlock * (100-distance));
+                Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(damage - armorPen*damage - rangeFalloff*damage, false, player, hit));
+                Main.getGameManager().damage(gunCache.getGame(), player, hit,
+                        damage - armorPen*damage - rangeFalloff*damage, name);
+                break;
+            }
+            double helmetDamage = damage*2.5;
+            double armorPen = player.getInventory().getHelmet().getType() == Material.LEATHER_HELMET ? 0 : this.armorPen;
+            double rangeFalloff = 1/(dropoffPerBlock * (100-distance));
+            Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(helmetDamage - armorPen*damage - rangeFalloff*damage, true, player, hit));
+            Main.getGameManager().damage(gunCache.getGame(), player, hit,
+                    helmetDamage - armorPen*damage - rangeFalloff*damage, name + " headshot");
+            break;
+        }
+
     }
 
-    public double getArmorPen() {
-        return armorPen;
+    private void projectile(Player player, boolean moving, GunCache cache) {
+        Snowball snowball = player.launchProjectile(Snowball.class);
+
+        double cone = projectileSpray(player, moving, cache);
+
+        Vector spray = new Vector(Randomizer.random() - 0.5, (Randomizer.random() - 0.2) * (5d/8d),
+                Math.random() - 0.5);
+        spray.normalize();
+        spray.multiply(cone);
+        spray.add(player.getLocation().getDirection());
+        spray.normalize();
+
+        snowball.setVelocity(spray.multiply(4));
+        cache.setCone(Math.min(projectileConeMax, cone + coneIncPerBullet));
+        Main.getWeaponManager().getProjectiles().put(snowball, new ProjectileStats(name, player.getLocation(),
+                dropoffPerBlock, damage, armorPen, player));
+    }
+
+    private void shotgun(Player player, boolean moving, GunCache cache) {
+        for(int i = 0; i < bulletsPerShot; i++) {
+            //todo sound here
+            projectile(player, moving, cache);
+        }
+    }
+
+    private double projectileSpray(Player player, boolean isMoving, GunCache cache) {
+        double cone = cache.getCone();
+        if(!player.isOnGround()) {
+            cone += 0.16;
+        } else if(player.isSprinting()) {
+            cone += 0.08;
+        } else if(isMoving) {
+            cone += 0.04;
+        } else if(player.isSneaking()) {
+            cone *= 0.8;
+        }
+        return cone;
+    }
+
+    private boolean hitscanHit(Player player, GunCache gunCache, Location eye, Player p) {
+        return player != p && !gunCache.getGame().getSpectators().contains(p) && !gunCache.getGame().sameTeam(p,
+                player) && (p.getLocation().add(0, 0.2, 0).distance(eye) <= 0.4 || p.getLocation().add(0, 1, 0).distance(eye) <= 0.5 || p.getEyeLocation().distance(eye) <= 0.35 && !p.isDead());
     }
 
     public void setArmorPen(double armorPen) {
         this.armorPen = armorPen;
+    }
+
+    public double getProjectileConeMin() {
+        return projectileConeMin;
+    }
+
+    public void setProjectileConeMin(double projectileConeMin) {
+        this.projectileConeMin = projectileConeMin;
+    }
+
+    public double getProjectileConeMax() {
+        return projectileConeMax;
+    }
+
+    public void setProjectileConeMax(double projectileConeMax) {
+        this.projectileConeMax = projectileConeMax;
+    }
+
+    public double getConeIncPerBullet() {
+        return coneIncPerBullet;
+    }
+
+    public void setConeIncPerBullet(double coneIncPerBullet) {
+        this.coneIncPerBullet = coneIncPerBullet;
     }
 }

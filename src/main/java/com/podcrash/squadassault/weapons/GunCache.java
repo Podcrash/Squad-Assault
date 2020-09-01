@@ -2,7 +2,7 @@ package com.podcrash.squadassault.weapons;
 
 import com.podcrash.squadassault.game.SAGame;
 
-public class HitscanCache {
+public class GunCache {
     private int ticks;
     private int rounds;
     private final SAGame game;
@@ -11,8 +11,9 @@ public class HitscanCache {
     private float accuracyYaw;
     private float accuracyPitch;
     private boolean firstShot;
+    private double cone;
 
-    public HitscanCache(SAGame game, int rounds) {
+    public GunCache(SAGame game, int rounds, double cone) {
         this.ticks = 0;
         this.rounds = rounds;
         this.game = game;
@@ -21,6 +22,7 @@ public class HitscanCache {
         this.accuracyYaw = 0;
         this.accuracyPitch = 0;
         this.firstShot = true;
+        this.cone = cone;
     }
 
 
@@ -82,5 +84,13 @@ public class HitscanCache {
 
     public void setFirstShot(boolean firstShot) {
         this.firstShot = firstShot;
+    }
+
+    public double getCone() {
+        return cone;
+    }
+
+    public void setCone(double cone) {
+        this.cone = cone;
     }
 }

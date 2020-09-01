@@ -1,21 +1,26 @@
 package com.podcrash.squadassault.game;
 
 import com.podcrash.squadassault.Main;
+import com.podcrash.squadassault.game.events.GunDamageEvent;
 import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.shop.ItemType;
 import com.podcrash.squadassault.shop.PlayerShopItem;
 import com.podcrash.squadassault.util.ItemBuilder;
 import com.podcrash.squadassault.util.Message;
+import com.podcrash.squadassault.util.Utils;
 import com.podcrash.squadassault.weapons.Grenade;
 import com.podcrash.squadassault.weapons.GrenadeType;
 import com.podcrash.squadassault.weapons.Gun;
+import com.podcrash.squadassault.weapons.ProjectileStats;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -652,6 +657,69 @@ public class GameListener implements Listener {
         if(event.getBlock().getType() == Material.CROPS) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void projectileDamage(EntityDamageByEntityEvent event) {
+        if(!(event.getDamager() instanceof Snowball) || !(event.getEntity() instanceof Player)) {
+            return;
+        }
+        Snowball snowball = (Snowball) event.getDamager();
+
+        ProjectileStats stats = Main.getWeaponManager().getProjectiles().get(snowball);
+        if(stats == null) {
+            return;
+        }
+        Player damaged = (Player) event.getEntity();
+        if(Main.getGameManager().getGame(damaged).sameTeam(damaged,stats.getShooter())) {
+            event.setCancelled(true);
+            return;
+        }
+        boolean hs = snowballHeadshot(damaged, snowball);
+        if(hs) {
+            double armorPen = damaged.getInventory().getChestplate().getType() == Material.LEATHER_HELMET ? 0 : stats.getArmorPen();
+            double rangeFalloff = 1/(stats.getDropoff() * (100-(damaged.getLocation().distance(stats.getLocation()))));
+            double damage = stats.getDamage()*2.5;
+            double finalDamage = damage - (armorPen * damage) - (rangeFalloff * damage);
+            Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, true, stats.getShooter(), damaged));
+            Main.getGameManager().damage(Main.getGameManager().getGame(damaged), stats.getShooter(), damaged,
+                    finalDamage, stats.getGunName() + " headshot");
+        } else {
+            double armorPen = damaged.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 0 : stats.getArmorPen();
+            double rangeFalloff = 1/(stats.getDropoff() * (100-(damaged.getLocation().distance(stats.getLocation()))));
+            double damage = stats.getDamage();
+            double finalDamage = damage - (armorPen * damage) - (rangeFalloff * damage);
+            Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, false, stats.getShooter(), damaged));
+            Main.getGameManager().damage(Main.getGameManager().getGame(damaged), stats.getShooter(), damaged,
+                    finalDamage, stats.getGunName());
+        }
+
+    }
+
+    private boolean snowballHeadshot(Player damaged, Snowball snowball) {
+        Location start = snowball.getLocation();
+        Location location = start.clone();
+
+        while(!hitHead(damaged, location) && !hitBody(damaged, location) && Utils.offset(damaged.getLocation().toVector(), location.toVector()) < 6) {
+            location.add(snowball.getVelocity().clone().multiply(0.1));
+        }
+
+        if(hitBody(damaged, location))
+            return false;
+
+        return hitHead(damaged, location);
+    }
+
+    private boolean hitBody(Player player, Location location) {
+        return Utils.offset2d(location.toVector(), player.getLocation().toVector()) < 0.6 &&
+                location.getY() > player.getLocation().getY() &&
+                location.getY() < player.getEyeLocation().getY() - 0.1;
+    }
+
+    private boolean hitHead(Player player, Location location) {
+        return Utils.offset2d(location.toVector(), player.getLocation().toVector()) < 0.25 &&
+                location.getY() >= player.getEyeLocation().getY() - 0.1 &&
+                location.getY() < player.getEyeLocation().getY() + 0.1;
     }
 
 }

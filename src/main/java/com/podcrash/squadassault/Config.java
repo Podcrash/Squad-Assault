@@ -140,7 +140,7 @@ public class Config {
                     (byte)guns.getInt("Guns."+gun+".ItemInfo.Data"),guns.getString("Guns."+gun+".ItemInfo.Name")),
                     GunHotbarType.valueOf(guns.getString("Guns."+gun+".ItemInfo.HotbarType")),
                     guns.getBoolean("Guns."+gun+".Shoot.Projectile"), guns.getString("Guns."+gun+".Shoot.Sound"),
-                    guns.getString("Guns."+gun+".Reload.Sound"));
+                    guns.getString("Guns."+gun+".Reload.Sound"), guns.getBoolean("Guns."+gun+".ItemInfo.IsShotgun"));
             gunObj.setBulletsPerPitch(guns.getInt("Guns." + gun + ".Burst.BulletsPerPitch"));
             gunObj.setBulletsPerYaw(guns.getInt("Guns." + gun + ".Burst.BulletsPerYaw"));
             gunObj.setDelayBullets(guns.getInt("Guns." + gun + ".Burst.DelayBullets"));
@@ -156,6 +156,9 @@ public class Config {
             gunObj.setDelayPerShot(guns.getInt("Guns." + gun + ".Shoot.Delay"));
             gunObj.setKillReward(guns.getInt("Guns."+gun+".ItemInfo.KillReward"));
             gunObj.setArmorPen(guns.getInt("Guns."+gun+".Shoot.ArmorPen"));
+            gunObj.setConeIncPerBullet(guns.getInt("Guns."+gun+".Burst.ProjectileConeIncrease"));
+            gunObj.setProjectileConeMin(guns.getInt("Guns."+gun+".Burst.ProjectileConeMin"));
+            gunObj.setProjectileConeMax(guns.getInt("Guns."+gun+".Burst.ProjectileConeMax"));
             Main.getWeaponManager().addGun(gunObj);
         }
     }
