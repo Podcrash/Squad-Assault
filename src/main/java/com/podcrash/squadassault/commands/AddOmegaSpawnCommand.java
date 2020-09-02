@@ -1,12 +1,12 @@
 package com.podcrash.squadassault.commands;
 
-import com.podcrash.api.commands.CommandBase;
 import com.podcrash.squadassault.Main;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class AddOmegaSpawnCommand extends CommandBase {
+public class AddOmegaSpawnCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if(commandSender.hasPermission("podcrash.admin") && commandSender instanceof Player) {
