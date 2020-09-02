@@ -50,11 +50,13 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
         instance = this;
+        config = new Config();
         gameManager = new SAGameManager();
         task = new GameTask();
         weaponManager = new WeaponManager();
         shopManager = new ShopManager();
-        config = new Config();
+
+        config.startConfig();
         registerCommands();
         getServer().getPluginManager().registerEvents(listener = new GameListener(), this);
     }

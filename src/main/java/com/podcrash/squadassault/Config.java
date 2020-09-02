@@ -22,7 +22,7 @@ public class Config {
     private YamlConfiguration shop;
     private YamlConfiguration maps;
 
-    public Config() {
+    public void startConfig() {
         File dataFolder = Main.getInstance().getDataFolder();
         dataFolder.mkdirs();
         log("Loading config.yml");
@@ -181,10 +181,6 @@ public class Config {
 
     public YamlConfiguration getMaps() {
         return maps;
-    }
-
-    public int getLobbyTime() {
-        return 0;
     }
 
     public void loadConfig() {

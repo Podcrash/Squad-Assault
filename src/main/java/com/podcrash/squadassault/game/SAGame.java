@@ -85,7 +85,7 @@ public class SAGame {
         queue = new HashMap<>();
         defusing = new HashMap<>();
         scoreboards = new HashMap<>();
-        timer = Main.getSAConfig().getLobbyTime();
+        timer = 30;
         maxPlayers = alphaSpawns.size() + omegaSpawns.size();
         bar = NmsUtils.createBossbar(Message.BOSSBAR_WAITING.getMsg().replace("%name%", mapName));
     }
