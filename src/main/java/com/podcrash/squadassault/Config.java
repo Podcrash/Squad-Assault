@@ -124,8 +124,8 @@ public class Config {
                             "Game." + id + ".Min"),
                             Utils.getDeserializedLocations(maps.getStringList("Game." + id + ".AlphaSpawns")),
                             Utils.getDeserializedLocations(maps.getStringList("Game." + id + ".OmegaSpawns")),
-                            Utils.getDeserializedLocation("Game." + id + ".BombA"),
-                            Utils.getDeserializedLocation("Game." + id + ".BombB")));
+                            Utils.getDeserializedLocation(maps.getString("Game." + id + ".BombA")),
+                            Utils.getDeserializedLocation(maps.getString("Game." + id + ".BombB"))));
                 } catch (Exception e) {
                     error("Error loading game with ID " + id);
                     e.printStackTrace();
