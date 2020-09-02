@@ -395,8 +395,12 @@ public class GameListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         //TODO: When we make this work properly with bungeecord, lots has to be changed probably
         for(SAGame game : Main.getGameManager().getGames()) {
-            game.getTeamA().getPlayers().forEach(player -> player.hidePlayer(event.getPlayer()));
-            game.getTeamB().getPlayers().forEach(player -> player.hidePlayer(event.getPlayer()));
+            for (Player player : game.getTeamA().getPlayers()) {
+                player.hidePlayer(event.getPlayer());
+            }
+            for (Player player : game.getTeamB().getPlayers()) {
+                player.hidePlayer(event.getPlayer());
+            }
         }
     }
 
