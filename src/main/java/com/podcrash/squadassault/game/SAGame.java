@@ -266,11 +266,13 @@ public class SAGame {
     }
 
     public void addTeamA(Player player) {
+        teamA.addPlayer(player);
         teamB.removePlayer(player);
         teamA.addPlayer(player);
     }
 
     public void addTeamB(Player player) {
+        teamB.addPlayer(player);
         teamA.removePlayer(player);
         teamB.addPlayer(player);
     }
