@@ -392,9 +392,9 @@ public class SAGameManager {
             player.getInventory().setItem(8, ItemBuilder.create(Material.GHAST_TEAR, 1, "Shop", false));
             player.teleport(game.getAlphaSpawns().get(Randomizer.randomInt(game.getAlphaSpawns().size())));
             if(player.getInventory().getHeldItemSlot() == 2) {
-                player.setWalkSpeed(1.05f);
+                player.setWalkSpeed(0.25f);
             } else {
-                player.setWalkSpeed(1);
+                player.setWalkSpeed(0.2f);
             }
 
             if(player.getInventory().getHelmet() == null || game.getRound() == 15) {
@@ -467,9 +467,9 @@ public class SAGameManager {
             player.getInventory().setItem(8, ItemBuilder.create(Material.GHAST_TEAR, 1, "Shop", false));
             player.teleport(game.getAlphaSpawns().get(Randomizer.randomInt(game.getOmegaSpawns().size())));
             if(player.getInventory().getHeldItemSlot() == 2) {
-                player.setWalkSpeed(1.05f);
+                player.setWalkSpeed(0.25f);
             } else {
-                player.setWalkSpeed(1);
+                player.setWalkSpeed(0.2f);
             }
 
             if(player.getInventory().getHelmet() == null || game.getRound() == 15) {

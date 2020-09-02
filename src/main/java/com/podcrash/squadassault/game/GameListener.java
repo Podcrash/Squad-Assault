@@ -242,9 +242,9 @@ public class GameListener implements Listener {
         }
         if(!event.isCancelled()) {
             if(event.getNewSlot() == 2) {
-                player.setWalkSpeed(1.05f);
+                player.setWalkSpeed(0.25f);
             } else {
-                player.setWalkSpeed(1);
+                player.setWalkSpeed(0.2f);
             }
         }
     }
