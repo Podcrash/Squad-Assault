@@ -72,7 +72,7 @@ public class Config {
                 continue;
             }
             int price = shop.getInt("ShopGuns."+gun+".Price");
-            SATeam.Team side = SATeam.Team.valueOf(shop.getString("ShopGuns."+gun+".Side"));
+            SATeam.Team side = Utils.nullSafeValueOf(shop.getString("ShopGuns."+gun+".Side"));
             String name = shop.getString("ShopGuns."+gun+".ItemName");
             String lore = shop.getString("ShopGuns."+gun+".ItemLore");
             int slot = shop.getInt("ShopGuns."+gun+".Slot");
@@ -95,7 +95,7 @@ public class Config {
             int slotPlace = shop.getInt("ShopItems."+item+".SlotPlace");
             String name = shop.getString("ShopItems."+item+".ItemName");
             String lore = shop.getString("ShopItems."+item+".ItemLore");
-            SATeam.Team side = SATeam.Team.valueOf(shop.getString("ShopItems."+item+".Side"));
+            SATeam.Team side = Utils.nullSafeValueOf(shop.getString("ShopItems."+item+".Side"));
             Material material = Material.getMaterial(shop.getString("ShopItems."+item+".Material"));
             Main.getShopManager().addShop(new PlayerShopItem(slot, slotPlace, name, material, price, lore, side, item));
         }
@@ -156,9 +156,9 @@ public class Config {
             gunObj.setDelayPerShot(guns.getInt("Guns." + gun + ".Shoot.Delay"));
             gunObj.setKillReward(guns.getInt("Guns."+gun+".ItemInfo.KillReward"));
             gunObj.setArmorPen(guns.getInt("Guns."+gun+".Shoot.ArmorPen"));
-            gunObj.setConeIncPerBullet(guns.getInt("Guns."+gun+".Burst.ProjectileConeIncrease"));
-            gunObj.setProjectileConeMin(guns.getInt("Guns."+gun+".Burst.ProjectileConeMin"));
-            gunObj.setProjectileConeMax(guns.getInt("Guns."+gun+".Burst.ProjectileConeMax"));
+            gunObj.setConeIncPerBullet(guns.getDouble("Guns."+gun+".Burst.ProjectileConeIncrease"));
+            gunObj.setProjectileConeMin(guns.getDouble("Guns."+gun+".Burst.ProjectileConeMin"));
+            gunObj.setProjectileConeMax(guns.getDouble("Guns."+gun+".Burst.ProjectileConeMax"));
             Main.getWeaponManager().addGun(gunObj);
         }
     }

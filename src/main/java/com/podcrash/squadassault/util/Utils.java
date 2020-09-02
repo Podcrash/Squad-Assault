@@ -1,5 +1,6 @@
 package com.podcrash.squadassault.util;
 
+import com.podcrash.squadassault.game.SATeam;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -50,6 +51,17 @@ public final class Utils {
             list2.add(getSerializedLocation(location));
         }
         return list2;
+    }
+
+    public static SATeam.Team nullSafeValueOf(String s) {
+        SATeam.Team[] values;
+        for (int length = (values = SATeam.Team.values()).length, i = 0; i < length; ++i) {
+            final SATeam.Team team = values[i];
+            if (team.name().equals(s)) {
+                return team;
+            }
+        }
+        return null;
     }
 
 

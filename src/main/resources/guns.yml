@@ -1,0 +1,122 @@
+# this is the default guns.yml file, to be tuned later
+Guns:
+  ExampleHitscan:
+    ItemInfo:
+      Type: GOLDEN_HOE
+      Data: 0
+      Name: 'Example Hitscan'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: FALSE
+      Sound: 'squadassault.shootxd'
+      Scope: TRUE
+      Damage: 5.0
+      Accuracy: 0.2
+      DropoffPerBlock: 0.08
+      Delay: 5
+      BulletsPerShot: 1
+      ArmorPen: 0.85
+    Burst:
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+    Reload:
+      Duration: 20
+      Amount: 10
+      TotalAmount: 60
+      ProjectileConeMax: 0.0
+      ProjectileConeMin: 0.0
+      ProjectileConeIncrease: 0.0
+  ExampleProjectile:
+    ItemInfo:
+      Type: GOLDEN_SWORD
+      Data: 0
+      Name: 'Example Projectile'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'squadassault.shootxd'
+      Scope: FALSE
+      Damage: 5.0
+      Accuracy: 0.2
+      Delay: 5
+      DropoffPerBlock: 0.08
+      BulletsPerShot: 1
+      ArmorPen: 0.85
+    Burst:
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+    Reload:
+      Duration: 20
+      Amount: 10
+      TotalAmount: 60
+      ProjectileConeMax: 0.5
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.1
+  Glock-18: #these are not accurate stats
+    ItemInfo:
+      Type: STONE_HOE
+      Data: 0
+      Name: 'Glock-18'
+      HotbarType: SECONDARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'squadassault.shootxd'
+      Scope: FALSE
+      Damage: 5.0
+      Accuracy: 0.2
+      Delay: 8
+      BulletsPerShot: 1
+      DropoffPerBlock: 0.08
+      ArmorPen: 0.85
+    Burst:
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+    Reload:
+      Duration: 20
+      Amount: 10
+      TotalAmount: 60
+      ProjectileConeMax: 0.5
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.1
+  USP-S: #these are not accurate stats
+    ItemInfo:
+      Type: WOOD_HOE
+      Data: 0
+      Name: 'USP-S'
+      HotbarType: SECONDARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'squadassault.shootxd'
+      Scope: FALSE
+      Damage: 5.0
+      Accuracy: 0.2
+      Delay: 8
+      BulletsPerShot: 1
+      DropoffPerBlock: 0.08
+      ArmorPen: 0.85
+    Burst:
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+    Reload:
+      Duration: 20
+      Amount: 10
+      TotalAmount: 60
+      ProjectileConeMax: 0.5
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.1

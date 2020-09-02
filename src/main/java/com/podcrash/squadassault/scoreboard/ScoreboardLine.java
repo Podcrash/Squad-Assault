@@ -37,7 +37,7 @@ public class ScoreboardLine {
             name = line;
             String substring = (line.length() >= 16) ? line.substring(0, 16) : line;
             boolean b = false;
-            if (substring.length() > 0 && substring.charAt(substring.length() - 1) == '§') {
+            if (substring.length() > 0 && substring.charAt(substring.length() - 1) == '\u00a7') {
                 substring = substring.substring(0, substring.length() - 1);
                 b = true;
             }
