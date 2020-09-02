@@ -37,6 +37,7 @@ public class Grenade {
         this.duration = duration;
         this.throwSpeed = throwSpeed;
         this.effectPower = effectPower;
+        played = new ArrayList<>();
     }
 
     public Item getItem() {
