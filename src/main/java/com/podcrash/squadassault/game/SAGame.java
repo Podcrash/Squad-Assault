@@ -377,6 +377,7 @@ public class SAGame {
         }
         //bomb planted
         if(bomb.isPlanted()) {
+            int timer = bomb.getTimer();
             bomb.setTimer(bomb.getTimer() - 1);
             //TODO tick sound/notifs
             //probably send a title with like 5s left or smth
@@ -398,7 +399,7 @@ public class SAGame {
                 }
                 NmsUtils.sendTitle(player, 0, 40, 0, Message.BOMB_DEFUSE.toString(), String.valueOf(defusing.get(player).getTime()));
                 //defused
-                if(defusing.get(player).getTime() == -1 && !roundEnding) {
+                if(entry.getValue().getTime() == -1 && !roundEnding) {
                     round++;
                     moneyManager.addMoneyEndRound(this, ALPHA, true, MoneyManager.RoundEndType.DEFUSED);
                     for(Player p : teamA.getPlayers()) {
@@ -411,7 +412,7 @@ public class SAGame {
                         NmsUtils.sendTitle(p, 0, 60, 0, Message.BOMB_DEFUSED.toString(), player.getName());
                         p.sendMessage(Message.ROUND_WINNER_ALPHA.toString());
                     }
-                    timer = 7;
+                    this.timer = 7;
                     if(teamA.getTeam() == ALPHA) {
                         addRoundTeamA();
                     } else {
@@ -433,7 +434,7 @@ public class SAGame {
             if(timer == 0 && bomb.isPlanted()) {
                 round++;
                 moneyManager.addMoneyEndRound(this, OMEGA, true, MoneyManager.RoundEndType.BOMB);
-                timer = 7;
+                this.timer = 7;
                 if(teamA.getTeam() == OMEGA) {
                     addRoundTeamA();
                 } else {

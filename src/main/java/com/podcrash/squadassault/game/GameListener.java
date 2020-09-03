@@ -370,7 +370,7 @@ public class GameListener implements Listener {
 
     private int findNadeSlot(Player player) {
         for(int i = 3; i < 8; i++) {
-            if(player.getInventory().getItem(i).getType() == null) {
+            if(player.getInventory().getItem(i) == null) {
                 return i;
             }
         }
@@ -430,7 +430,7 @@ public class GameListener implements Listener {
         if(game == null) {
             return;
         }
-        if(game.getState() == SAGameState.ROUND_START && !game.getSpectators().contains(player)) {
+        if(game.getState() == SAGameState.ROUND_START && !game.getSpectators().contains(player) && (event.getTo().getX() != event.getFrom().getX() || event.getTo().getZ() != event.getFrom().getZ())) {
             event.setTo(event.getFrom());
             return;
         }
@@ -440,7 +440,7 @@ public class GameListener implements Listener {
         if(player.getFallDistance() >= 6 && !game.getSpectators().contains(player) && player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
             Main.getGameManager().damage(game, null, player, player.getFallDistance(), "Fall");
         }
-        if(!game.getBomb().getCarrier().equals(player) && (event.getFrom().getBlockX() != event.getTo().getBlockX() || event.getFrom().getBlockZ() != event.getTo().getBlockZ())) {
+        if((event.getFrom().getBlockX() != event.getTo().getBlockX() || event.getFrom().getBlockZ() != event.getTo().getBlockZ()) && game.getBomb().getCarrier() == player) {
             ItemStack itemStack = player.getInventory().getItem(7);
             if(itemStack != null) {
                 if(game.isAtBombsite(event.getTo())) {
@@ -458,7 +458,7 @@ public class GameListener implements Listener {
                 }
             }
         }
-        //todo callouts & movement inaccuracy
+        //todo callouts
     }
 
     @EventHandler

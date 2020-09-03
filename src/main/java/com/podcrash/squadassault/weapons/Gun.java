@@ -289,7 +289,7 @@ public class Gun {
                                     return;
                                 }
                                 if (player.getItemInHand().getAmount() == 1) {
-                                    cache.remove(entry.getKey());
+                                    iterator.remove();
                                     reload(player, getType().ordinal());
 
                                     //play sound
