@@ -241,12 +241,17 @@ public class SAGameManager {
             list.addAll(game.getTeamA().getPlayers());
             list.addAll(game.getTeamB().getPlayers());
         }
-        for (Player player : game.getTeamA().getPlayers()) {
-            removePlayer(game, player, autoJoin, false);
+        if (game.getTeamA().size() > 0) {
+            for (int i = 0; i < game.getTeamA().size(); --i, ++i) {
+                removePlayer(game, game.getTeamA().getPlayers().get(i), autoJoin, false);
+            }
         }
-        for (Player player : game.getTeamB().getPlayers()) {
-            removePlayer(game, player, autoJoin, false);
+        if (game.getTeamB().size() > 0) {
+            for (int i = 0; i < game.getTeamB().size(); --i, ++i) {
+                removePlayer(game, game.getTeamB().getPlayers().get(i), autoJoin, false);
+            }
         }
+
 
         //todo bungee code here
 
