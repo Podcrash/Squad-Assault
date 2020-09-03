@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -48,7 +49,6 @@ public class Gun {
     private final Map<UUID, Long> delay;
     private final Map<UUID, GunCache> cache;
     private final Map<UUID, GunReload> reloading;
-    //todo shooting cache stuff
 
     public Gun(String name, Item item, GunHotbarType type, boolean projectile, String shootSound, String reloadSound,
      boolean isShotgun) {
@@ -261,101 +261,105 @@ public class Gun {
             }
         }
         if(!delay.isEmpty()) {
-            for(Map.Entry<UUID, Long> entry : delay.entrySet()) {
+            Iterator<Map.Entry<UUID, Long>> iterator = delay.entrySet().iterator();
+            while(iterator.hasNext()) {
+                Map.Entry<UUID, Long> entry = iterator.next();
                 Player player = Bukkit.getPlayer(entry.getKey());
                 long del = System.currentTimeMillis() / 49;
-                if(player == null || player.isDead() || Main.getGameManager().getGame(player) == null || del - entry.getValue() > delayPerShot) {
-                    delay.remove(entry.getKey());
+                if(player == null || player.isDead() || !player.isOnline() || Main.getGameManager().getGame(player) == null || del - entry.getValue() > delayPerShot) {
+                    iterator.remove();
                 }
             }
         }
         if(!cache.isEmpty()) {
-            for(Map.Entry<UUID, GunCache> entry : cache.entrySet()) {
+            Iterator<Map.Entry<UUID, GunCache>> iterator = cache.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<UUID, GunCache> entry = iterator.next();
                 Player player = Bukkit.getPlayer(entry.getKey());
                 GunCache gunCache = entry.getValue();
-                if(reloading.containsKey(entry.getKey())) {
-                    cache.remove(entry.getKey());
-                    continue;
-                }
-                if(player == null || player.isDead() || !player.isOnline() || gunCache.getGame() == null) {
-                    cache.remove(entry.getKey());
-                    continue;
-                }
-                if(gunCache.getGame().getSpectators().contains(player)) {
-                    cache.remove(entry.getKey());
-                    continue;
-                }
-                gunCache.setTicksLeft(gunCache.getTicksLeft() - 1);
-                if(gunCache.getRounds() > 0 && item.equals(player.getItemInHand())) {
-                    gunCache.setTicks(gunCache.getTicks() + 1);
-                    if(gunCache.isFirstShot()) {
-                        gunCache.setFirstShot(false);
-                    } else if(gunCache.getTicks() % delayBullets != 0) {
-                        return;
-                    }
-                    if(player.getItemInHand().getAmount() == 1) {
-                        cache.remove(entry.getKey());
-                        reload(player, getType().ordinal());
+                if (!reloading.containsKey(entry.getKey())) {
+                    if (player != null && !player.isDead() && player.isOnline() && gunCache.getGame() != null) {
+                        if (!gunCache.getGame().getSpectators().contains(player)) {
+                            gunCache.setTicksLeft(gunCache.getTicksLeft() - 1);
+                            if (gunCache.getRounds() > 0 && item.equals(player.getInventory().getItemInHand())) {
+                                gunCache.setTicks(gunCache.getTicks() + 1);
+                                if (gunCache.isFirstShot()) {
+                                    gunCache.setFirstShot(false);
+                                } else if (gunCache.getTicks() % delayBullets != 0) {
+                                    return;
+                                }
+                                if (player.getItemInHand().getAmount() == 1) {
+                                    cache.remove(entry.getKey());
+                                    reload(player, getType().ordinal());
 
-                        //play sound
-                    } else {
-                        gunCache.setRounds(gunCache.getRounds() - 1);
-                        player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
-                    }
-                    Location eye = player.getLocation();
-                    boolean isMoving = player.getVelocity().equals(new Vector());
-                    if(player.isSneaking()) {
-                        eye.subtract(0, 0.03, 0);
-                    } else {
-                        eye.subtract(0,0.1,0);
-                    }
-                    //play sound
+                                    //play sound
+                                } else {
+                                    gunCache.setRounds(gunCache.getRounds() - 1);
+                                    player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
+                                }
+                                Location eye = player.getLocation();
+                                boolean isMoving = player.getVelocity().equals(new Vector());
+                                if (player.isSneaking()) {
+                                    eye.subtract(0, 0.03, 0);
+                                } else {
+                                    eye.subtract(0, 0.1, 0);
+                                }
+                                //play sound
 
-                    if(accuracy == 0) {
-                        gunCache.setAccuracyPitch(0);
-                        gunCache.setAccuracyYaw(0);
-                    }
-                    float yaw = eye.getYaw();
-                    float pitch = eye.getPitch();
-                    double x = eye.getX();
-                    double y = eye.getY();
-                    double z = eye.getZ();
-                    if(isMoving) {
-                        gunCache.setAccuracyYaw(Randomizer.randomRange((int)(-accuracy*10),
-                                (int)(accuracy*10))+0.5f);
-                        gunCache.setAccuracyPitch(Randomizer.randomRange((int)(-accuracy*10),
-                                (int)(accuracy*10))+0.5f);
-                    } else if(scope && player.isSneaking()) {
-                        gunCache.setAccuracyYaw(0);
-                        gunCache.setAccuracyPitch(0);
-                    } else if(scope && !player.isSneaking()) {
-                        gunCache.setAccuracyYaw(Randomizer.randomRange((int)(-accuracy),
-                                (int)(accuracy))+0.5f);
-                        gunCache.setAccuracyPitch(Randomizer.randomRange((int)(-accuracy),
-                                (int)(accuracy))+0.5f);
-                    }
-                    double yawRad = Math.toRadians(Utils.dumbMinecraftDegrees(yaw + 0.6) + gunCache.getAccuracyYaw() + 90);
-                    double pitchRad = Math.toRadians(pitch + gunCache.getAccuracyPitch() + 90);
-                    double cot = Math.sin(pitchRad) * Math.cos(yawRad);
-                    double cos = Math.cos(pitchRad);
-                    double sin2 = Math.sin(pitchRad) * Math.sin(yawRad);
-                    if(projectile) {
-                        if(isShotgun) {
-                            shotgun(player, isMoving, gunCache);
+                                if (accuracy == 0) {
+                                    gunCache.setAccuracyPitch(0);
+                                    gunCache.setAccuracyYaw(0);
+                                }
+                                float yaw = eye.getYaw();
+                                float pitch = eye.getPitch();
+                                double x = eye.getX();
+                                double y = eye.getY();
+                                double z = eye.getZ();
+                                if (isMoving) {
+                                    gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy * 10),
+                                            (int) (accuracy * 10)) + 0.5f);
+                                    gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 10),
+                                            (int) (accuracy * 10)) + 0.5f);
+                                } else if (scope && player.isSneaking()) {
+                                    gunCache.setAccuracyYaw(0);
+                                    gunCache.setAccuracyPitch(0);
+                                } else if (scope && !player.isSneaking()) {
+                                    gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy),
+                                            (int) (accuracy)) + 0.5f);
+                                    gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy),
+                                            (int) (accuracy)) + 0.5f);
+                                }
+                                double yawRad = Math.toRadians(Utils.dumbMinecraftDegrees(yaw + 0.6) + gunCache.getAccuracyYaw() + 90);
+                                double pitchRad = Math.toRadians(pitch + gunCache.getAccuracyPitch() + 90);
+                                double cot = Math.sin(pitchRad) * Math.cos(yawRad);
+                                double cos = Math.cos(pitchRad);
+                                double sin2 = Math.sin(pitchRad) * Math.sin(yawRad);
+                                if (projectile) {
+                                    if (isShotgun) {
+                                        shotgun(player, isMoving, gunCache);
+                                    } else {
+                                        projectile(player, isMoving, gunCache);
+                                    }
+                                } else {
+                                    hitscan(player, eye, x, y, z, cot, cos, sin2, gunCache);
+                                }
+                                eye.setX(x);
+                                eye.setY(y);
+                                eye.setZ(sin2);
+                            } else {
+                                if (gunCache.getTicksLeft() > 0) {
+                                    continue;
+                                }
+                                iterator.remove();
+                            }
                         } else {
-                            projectile(player, isMoving, gunCache);
+                            iterator.remove();
                         }
                     } else {
-                        hitscan(player, eye, x, y, z, cot, cos, sin2, gunCache);
+                        iterator.remove();
                     }
-                    eye.setX(x);
-                    eye.setY(y);
-                    eye.setZ(sin2);
                 } else {
-                    if(gunCache.getTicksLeft() > 0) {
-                        continue;
-                    }
-                    cache.remove(entry.getKey());
+                    iterator.remove();
                 }
             }
         }

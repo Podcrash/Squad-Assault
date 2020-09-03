@@ -382,15 +382,18 @@ public class SAGame {
             //probably send a title with like 5s left or smth
 
             //defusing
-            for(Player player : defusing.keySet()) {
+            Iterator<Map.Entry<Player, Defuse>> iterator = defusing.entrySet().iterator();
+            while(iterator.hasNext()) {
+                Map.Entry<Player, Defuse> entry = iterator.next();
+                Player player = entry.getKey();
                 if(spectators.contains(player) || !gameStarted) {
-                    defusing.remove(player);
+                    iterator.remove();
                     break;
                 }
                 //todo there might be a bug here in regard to still in range but not looking
                 if(player.getLocation().distance(bomb.getLocation()) > 3) {
                     NmsUtils.sendTitle(player, 0, 40, 0, "", Message.CANCEL_DEFUSE.toString());
-                    defusing.remove(player);
+                    iterator.remove();
                     break;
                 }
                 NmsUtils.sendTitle(player, 0, 40, 0, Message.BOMB_DEFUSE.toString(), String.valueOf(defusing.get(player).getTime()));
@@ -414,7 +417,7 @@ public class SAGame {
                     } else {
                         addRoundTeamB();
                     }
-                    defusing.remove(player);
+                    iterator.remove();
                     money.put(player.getUniqueId(), money.get(player.getUniqueId())+300);
                     bomb.reset();
                     for(Grenade grenade : Main.getWeaponManager().getGrenades()) {
@@ -423,7 +426,7 @@ public class SAGame {
                     roundEnding = true;
                     break;
                 }
-                defusing.get(player).setTime(defusing.get(player).getTime() - 1);
+                entry.getValue().setTime(entry.getValue().getTime() - 1);
             }
 
             //bomb explode

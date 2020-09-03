@@ -192,7 +192,7 @@ public class SAGameManager {
             } else if(game.getBomb().isPlanted()) {
                 status.updateLine(14, "OBJECTIVE:");
                 status.updateLine(13, "Protect the bomb");
-            } else if(game.getBomb().getCarrier().equals(player)) {
+            } else if(game.getBomb().getCarrier() == player) {
                 status.updateLine(14, "OBJECTIVE:");
                 status.updateLine(13, "Plant the bomb");
             } else {

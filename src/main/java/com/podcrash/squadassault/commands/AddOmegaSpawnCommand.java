@@ -15,7 +15,7 @@ public class AddOmegaSpawnCommand implements CommandExecutor {
                 commandSender.sendMessage("use /creategame first");
                 return true;
             }
-            setup.getOmegaSpawns().add(((Player)commandSender).getLocation().clone());
+            setup.getOmegaSpawns().add(((Player)commandSender).getLocation().clone().add(0,1,0));
             commandSender.sendMessage("spawn " + setup.getOmegaSpawns().size() + " added");
             return true;
         }

@@ -15,7 +15,7 @@ public class AddAlphaSpawnCommand implements CommandExecutor {
                 commandSender.sendMessage("use /creategame first");
                 return true;
             }
-            setup.getAlphaSpawns().add(((Player)commandSender).getLocation().clone());
+            setup.getAlphaSpawns().add(((Player)commandSender).getLocation().clone().add(0,1,0));
             commandSender.sendMessage("spawn " + setup.getAlphaSpawns().size() + " added");
             return true;
         }

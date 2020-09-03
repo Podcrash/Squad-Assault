@@ -7,6 +7,7 @@ import com.podcrash.squadassault.weapons.Gun;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -27,11 +28,13 @@ public class GameTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        for(Map.Entry<UUID, Integer> entry : delay.entrySet()) {
+        Iterator<Map.Entry<UUID, Integer>> iterator = delay.entrySet().iterator();
+        while(iterator.hasNext()) {
+            Map.Entry<UUID, Integer> entry = iterator.next();
             if(entry.getValue() > 0) {
                 entry.setValue(entry.getValue() - 1);
             } else {
-                delay.remove(entry.getKey());
+                iterator.remove();
             }
         }
 
