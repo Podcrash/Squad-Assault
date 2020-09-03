@@ -39,16 +39,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 @SuppressWarnings("unused")
 public class GameListener implements Listener {
 
     private final Inventory selector;
-
+    private ConcurrentMap<SAGame, Boolean> bombPlants;
     public GameListener() {
         selector = Bukkit.createInventory(null, 27, "Team Selector");
         selector.setItem(11, ItemBuilder.create(Material.WOOL, 1, (short)14, "Team A", "Click to join Team A"));
         selector.setItem(13, ItemBuilder.create(Material.WOOL, 1, (short)8, "Random", "Click to join a random team"));
         selector.setItem(15, ItemBuilder.create(Material.WOOL, 1, (short)10, "Team B", "Click to join Team B"));
+        bombPlants = new ConcurrentHashMap<>();
     }
 
     @EventHandler
@@ -102,8 +106,9 @@ public class GameListener implements Listener {
                     if((inHand.getType() == Material.SHEARS || inHand.getType() == Material.GOLD_NUGGET) && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.CROPS) {
                         addDefuse(event, player, game, inHand);
                     }
-                    if(inHand.getType() == Material.GOLDEN_APPLE && game.getState() == SAGameState.ROUND_LIVE && !game.isRoundEnding() && player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
+                    if(inHand.getType() == Material.GOLDEN_APPLE && game.getState() == SAGameState.ROUND_LIVE && !game.isRoundEnding() && player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid() && bombPlants.get(game) == null) {
                         event.setCancelled(true);
+                        bombPlants.put(game, true);
                         new BukkitRunnable() {
                             public void run() {
                                 if(!game.isAtBombsite(player.getLocation())) {
@@ -128,6 +133,7 @@ public class GameListener implements Listener {
                                         NmsUtils.sendTitle(alpha,0,23,0,"","BOMB PLANTED");
                                     }
                                 }
+                                bombPlants.remove(game);
                             }
                         }.runTaskLater(Main.getInstance(), 60);
                         return;
