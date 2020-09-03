@@ -678,6 +678,7 @@ public class GameListener implements Listener {
 
         ProjectileStats stats = Main.getWeaponManager().getProjectiles().get(snowball);
         if(stats == null) {
+            event.setCancelled(true);
             return;
         }
         Player damaged = (Player) event.getEntity();
@@ -687,7 +688,7 @@ public class GameListener implements Listener {
         }
         boolean hs = snowballHeadshot(damaged, snowball);
         if(hs) {
-            double armorPen = damaged.getInventory().getChestplate().getType() == Material.LEATHER_HELMET ? 1 :
+            double armorPen = damaged.getInventory().getHelmet().getType() == Material.LEATHER_HELMET ? 1 :
                     stats.getArmorPen();
             double rangeFalloff = (stats.getDropoff() * damaged.getLocation().distance(stats.getLocation()));
             double damage = stats.getDamage()*2.5;
