@@ -37,6 +37,9 @@ commands:
   setlobby:
     description: sets the lobby of a game.
     usage: /setlobby
+  joingame:
+    description: joins a game
+    usage: /joingame <id>
 permissions:
   squadassault.admin:
     description: permission to use admin gamesetup/enable/disable/reload commands

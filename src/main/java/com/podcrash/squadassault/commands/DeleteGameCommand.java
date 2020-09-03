@@ -1,12 +1,12 @@
 package com.podcrash.squadassault.commands;
 
-import com.podcrash.api.commands.CommandBase;
 import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SAGame;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class DeleteGameCommand extends CommandBase {
+public class DeleteGameCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if(commandSender.hasPermission("podcrash.admin") && strings.length == 1) {

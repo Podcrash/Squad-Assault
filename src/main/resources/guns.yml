@@ -2,7 +2,7 @@
 Guns:
   ExampleHitscan:
     ItemInfo:
-      Type: GOLDEN_HOE
+      Type: GOLD_HOE
       Data: 0
       Name: 'Example Hitscan'
       HotbarType: PRIMARY
@@ -32,7 +32,7 @@ Guns:
       ProjectileConeIncrease: 0.0
   ExampleProjectile:
     ItemInfo:
-      Type: GOLDEN_SWORD
+      Type: GOLD_SWORD
       Data: 0
       Name: 'Example Projectile'
       HotbarType: PRIMARY

@@ -1,11 +1,11 @@
 package com.podcrash.squadassault.commands;
 
-import com.podcrash.api.commands.CommandBase;
 import com.podcrash.squadassault.Main;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class ReloadPluginCommand extends CommandBase {
+public class ReloadPluginCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {

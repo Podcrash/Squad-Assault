@@ -1,14 +1,14 @@
 package com.podcrash.squadassault.commands;
 
-import com.podcrash.api.commands.CommandBase;
 import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.util.Utils;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class FinishCreationCommand extends CommandBase {
+public class FinishCreationCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if(commandSender.hasPermission("podcrash.admin") && commandSender instanceof Player) {

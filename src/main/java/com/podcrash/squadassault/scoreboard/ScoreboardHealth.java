@@ -17,7 +17,7 @@ public class ScoreboardHealth {
     public ScoreboardHealth(SAGame game, SAScoreboard scoreboard) {
         scores = new ArrayList<>();
         (this.objective = scoreboard.getScoreboard().registerNewObjective("health", "dummy")).setDisplaySlot(DisplaySlot.BELOW_NAME);
-        this.objective.setDisplayName("probably should put something here");
+        this.objective.setDisplayName("yeet");
         for(Player player : game.getTeamA().getPlayers()) {
             Score score = objective.getScore(player.getName());
             score.setScore((int)(player.getHealth() / player.getMaxHealth() * 100));

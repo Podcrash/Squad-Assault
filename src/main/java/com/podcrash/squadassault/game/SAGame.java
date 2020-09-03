@@ -85,7 +85,7 @@ public class SAGame {
         queue = new HashMap<>();
         defusing = new HashMap<>();
         scoreboards = new HashMap<>();
-        timer = Main.getSAConfig().getLobbyTime();
+        timer = 30;
         maxPlayers = alphaSpawns.size() + omegaSpawns.size();
         bar = NmsUtils.createBossbar(Message.BOSSBAR_WAITING.getMsg().replace("%name%", mapName));
     }
@@ -266,11 +266,13 @@ public class SAGame {
     }
 
     public void addTeamA(Player player) {
+        teamA.removePlayer(player);
         teamB.removePlayer(player);
         teamA.addPlayer(player);
     }
 
     public void addTeamB(Player player) {
+        teamB.removePlayer(player);
         teamA.removePlayer(player);
         teamB.addPlayer(player);
     }
@@ -375,25 +377,29 @@ public class SAGame {
         }
         //bomb planted
         if(bomb.isPlanted()) {
+            int timer = bomb.getTimer();
             bomb.setTimer(bomb.getTimer() - 1);
             //TODO tick sound/notifs
             //probably send a title with like 5s left or smth
 
             //defusing
-            for(Player player : defusing.keySet()) {
+            Iterator<Map.Entry<Player, Defuse>> iterator = defusing.entrySet().iterator();
+            while(iterator.hasNext()) {
+                Map.Entry<Player, Defuse> entry = iterator.next();
+                Player player = entry.getKey();
                 if(spectators.contains(player) || !gameStarted) {
-                    defusing.remove(player);
+                    iterator.remove();
                     break;
                 }
                 //todo there might be a bug here in regard to still in range but not looking
                 if(player.getLocation().distance(bomb.getLocation()) > 3) {
                     NmsUtils.sendTitle(player, 0, 40, 0, "", Message.CANCEL_DEFUSE.toString());
-                    defusing.remove(player);
+                    iterator.remove();
                     break;
                 }
                 NmsUtils.sendTitle(player, 0, 40, 0, Message.BOMB_DEFUSE.toString(), String.valueOf(defusing.get(player).getTime()));
                 //defused
-                if(defusing.get(player).getTime() == -1 && !roundEnding) {
+                if(entry.getValue().getTime() == -1 && !roundEnding) {
                     round++;
                     moneyManager.addMoneyEndRound(this, ALPHA, true, MoneyManager.RoundEndType.DEFUSED);
                     for(Player p : teamA.getPlayers()) {
@@ -406,13 +412,13 @@ public class SAGame {
                         NmsUtils.sendTitle(p, 0, 60, 0, Message.BOMB_DEFUSED.toString(), player.getName());
                         p.sendMessage(Message.ROUND_WINNER_ALPHA.toString());
                     }
-                    timer = 7;
+                    this.timer = 7;
                     if(teamA.getTeam() == ALPHA) {
                         addRoundTeamA();
                     } else {
                         addRoundTeamB();
                     }
-                    defusing.remove(player);
+                    iterator.remove();
                     money.put(player.getUniqueId(), money.get(player.getUniqueId())+300);
                     bomb.reset();
                     for(Grenade grenade : Main.getWeaponManager().getGrenades()) {
@@ -421,14 +427,14 @@ public class SAGame {
                     roundEnding = true;
                     break;
                 }
-                defusing.get(player).setTime(defusing.get(player).getTime() - 1);
+                entry.getValue().setTime(entry.getValue().getTime() - 1);
             }
 
             //bomb explode
             if(timer == 0 && bomb.isPlanted()) {
                 round++;
                 moneyManager.addMoneyEndRound(this, OMEGA, true, MoneyManager.RoundEndType.BOMB);
-                timer = 7;
+                this.timer = 7;
                 if(teamA.getTeam() == OMEGA) {
                     addRoundTeamA();
                 } else {
@@ -438,24 +444,8 @@ public class SAGame {
                 Main.getInstance().getServer().getPluginManager().callEvent(new BombExplodeEvent(bomb.getLocation()));
                 bomb.getLocation().getWorld().playSound(bomb.getLocation(), Sound.EXPLODE, 5, 5);
                 bomb.getLocation().getWorld().playEffect(bomb.getLocation(), Effect.EXPLOSION_HUGE, 15);
-                teamA.getPlayers().forEach(player -> {
-                    if(spectators.contains(player)) {
-                        return;
-                    }
-                    double distance = player.getLocation().distance(bomb.getLocation());
-                    if(distance >= 48) {
-                        return;
-                    }
-                    if(distance <= 16) {
-                        Main.getGameManager().damage(this, null, player, 20.0,
-                                "Bomb");
-                    }
-                    double range = (distance-16.0) / 32.0;
-                    double damage = 0.0062 / range;
-
-                    Main.getGameManager().damage(this, null, player, damage,
-                                "Bomb");
-                });
+                bomb(teamA);
+                bomb(teamB);
                 if(!roundEnding) {
                     //todo sounds
                     for(Player p : teamA.getPlayers()) {
@@ -510,18 +500,18 @@ public class SAGame {
                     initShop(ALPHA);
                 }
                 if(queue.size() > 0) {
-                    teamA.getPlayers().forEach(player -> {
+                    for (Player player : teamA.getPlayers()) {
                         player.sendMessage("Following players joined the game:");
-                        for(UUID uuid : queue.keySet()) {
+                        for (UUID uuid : queue.keySet()) {
                             player.sendMessage(Bukkit.getPlayer(uuid) + " joined as " + queue.get(uuid).getTeam());
                         }
-                    });
-                    teamB.getPlayers().forEach(player -> {
+                    }
+                    for (Player player : teamB.getPlayers()) {
                         player.sendMessage("Following players joined the game:");
-                        for(UUID uuid : queue.keySet()) {
+                        for (UUID uuid : queue.keySet()) {
                             player.sendMessage(Bukkit.getPlayer(uuid) + " joined as " + queue.get(uuid).getTeam());
                         }
-                    });
+                    }
                 }
 
                 queue.clear();
@@ -531,34 +521,69 @@ public class SAGame {
             }
         } else {
             if(!bomb.isPlanted()) {
-                Main.getGameManager().getTeam(this, OMEGA).getPlayers().forEach(player -> player.setCompassTarget(bomb.getLocation()));
+                for (Player player : Main.getGameManager().getTeam(this, OMEGA).getPlayers()) {
+                    player.setCompassTarget(bomb.getLocation());
+                }
             }
             //rounds won on kills
             if(spectators.containsAll(Main.getGameManager().getTeam(this, ALPHA).getPlayers())) {
-                Main.getGameManager().getTeam(this, ALPHA).getPlayers().forEach(player -> player.sendMessage("You lose the round (deaths)"));
-                Main.getGameManager().getTeam(this, OMEGA).getPlayers().forEach(player -> player.sendMessage("You win the round (kills)"));
+                for (Player player1 : Main.getGameManager().getTeam(this, ALPHA).getPlayers()) {
+                    player1.sendMessage("You lose the round (deaths)");
+                }
+                for (Player player : Main.getGameManager().getTeam(this, OMEGA).getPlayers()) {
+                    player.sendMessage("You win the round (kills)");
+                }
                 finalizeRoundKills(OMEGA);
                 return;
             }
             if(spectators.containsAll(Main.getGameManager().getTeam(this, OMEGA).getPlayers()) && !bomb.isPlanted()) {
-                Main.getGameManager().getTeam(this, ALPHA).getPlayers().forEach(player -> player.sendMessage("You win" +
-                        " the round (kills)"));
-                Main.getGameManager().getTeam(this, OMEGA).getPlayers().forEach(player -> player.sendMessage("You " +
-                        "lose" +
-                        " the round (deaths)"));
+                for (Player player : Main.getGameManager().getTeam(this, ALPHA).getPlayers()) {
+                    player.sendMessage("You win" +
+                            " the round (kills)");
+                }
+                for (Player player : Main.getGameManager().getTeam(this, OMEGA).getPlayers()) {
+                    player.sendMessage("You " +
+                            "lose" +
+                            " the round (deaths)");
+                }
                 finalizeRoundKills(ALPHA);
                 return;
             }
 
             //timer expires, CTs win
             if(timer == 0) {
-                Main.getGameManager().getTeam(this, ALPHA).getPlayers().forEach(player -> player.sendMessage("You " +
-                        "win on time"));
-                Main.getGameManager().getTeam(this, OMEGA).getPlayers().forEach(player -> player.sendMessage("You " +
-                        "lose on time"));
+                for (Player player : Main.getGameManager().getTeam(this, ALPHA).getPlayers()) {
+                    player.sendMessage("You " +
+                            "win on time");
+                }
+                for (Player player : Main.getGameManager().getTeam(this, OMEGA).getPlayers()) {
+                    player.sendMessage("You " +
+                            "lose on time");
+                }
                 moneyManager.addMoneyEndRound(this, ALPHA, false, MoneyManager.RoundEndType.TIME);
                 finalizeRound(ALPHA);
             }
+        }
+    }
+
+    private void bomb(SATeam teamB) {
+        for (Player player : teamB.getPlayers()) {
+            if (spectators.contains(player)) {
+                continue;
+            }
+            double distance = player.getLocation().distance(bomb.getLocation());
+            if (distance >= 48) {
+                continue;
+            }
+            if (distance <= 16) {
+                Main.getGameManager().damage(this, null, player, 20.0,
+                        "Bomb");
+            }
+            double range = (distance - 16.0) / 32.0;
+            double damage = 0.0062 / range;
+
+            Main.getGameManager().damage(this, null, player, damage,
+                    "Bomb");
         }
     }
 
@@ -584,26 +609,42 @@ public class SAGame {
 
     private void runRoundStart() {
         if(round == 15 && timer >= 11) {
-            teamA.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 40, 0, "team swap yeet", ""));
-            teamB.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 40, 0, "team swap yeet", ""));
+            for (Player player : teamA.getPlayers()) {
+                NmsUtils.sendTitle(player, 0, 40, 0, "team swap yeet", "");
+            }
+            for (Player player : teamB.getPlayers()) {
+                NmsUtils.sendTitle(player, 0, 40, 0, "team swap yeet", "");
+            }
             return;
         }
         if(timer == 0) {
-            teamA.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 30, 0, "round start go", ""));
-            teamB.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 30, 0, "round start go", ""));
+            for (Player player : teamA.getPlayers()) {
+                NmsUtils.sendTitle(player, 0, 30, 0, "round start go", "");
+            }
+            for (Player player : teamB.getPlayers()) {
+                NmsUtils.sendTitle(player, 0, 30, 0, "round start go", "");
+            }
             timer = 115;
             setState(SAGameState.ROUND_LIVE);
             return;
         }
-        teamA.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 30, 0, "buy stuff", ""));
-        teamB.getPlayers().forEach(player -> NmsUtils.sendTitle(player,0, 30, 0, "buy stuff", ""));
+        for (Player player : teamA.getPlayers()) {
+            NmsUtils.sendTitle(player, 0, 30, 0, "buy stuff", "");
+        }
+        for (Player player : teamB.getPlayers()) {
+            NmsUtils.sendTitle(player, 0, 30, 0, "buy stuff", "");
+        }
     }
 
     private void runWaiting() {
         if(teamA.getPlayers().size() + teamB.getPlayers().size() < minPlayers) {
             stop();
-            teamA.getPlayers().forEach(player -> player.sendMessage("Not enough players, cancelling game"));
-            teamB.getPlayers().forEach(player -> player.sendMessage("Not enough players, cancelling game"));
+            for (Player player : teamA.getPlayers()) {
+                player.sendMessage("Not enough players, cancelling game");
+            }
+            for (Player player : teamB.getPlayers()) {
+                player.sendMessage("Not enough players, cancelling game");
+            }
             timer = 30;
             for(SAScoreboard scoreboard : scoreboards.values()) {
                 Main.getGameManager().updateStatus(this, scoreboard.getStatus());
@@ -653,16 +694,16 @@ public class SAGame {
             setState(SAGameState.ROUND_START);
             return;
         }
-        teamA.getPlayers().forEach(player -> {
-            if(timer <= 5 || timer % 10 == 0) {
+        for (Player player : teamA.getPlayers()) {
+            if (timer <= 5 || timer % 10 == 0) {
                 player.sendMessage(String.valueOf(timer));
             }
-        });
-        teamB.getPlayers().forEach(player -> {
-            if(timer <= 5 || timer % 10 == 0) {
+        }
+        for (Player player : teamB.getPlayers()) {
+            if (timer <= 5 || timer % 10 == 0) {
                 player.sendMessage(String.valueOf(timer));
             }
-        });
+        }
     }
 
     private void initShop(SATeam.Team team) {
@@ -672,29 +713,29 @@ public class SAGame {
         }
     }
 
-    private void initShopWaiting(SATeam.Team alpha) {
-        for(Player player : Main.getGameManager().getTeam(this, alpha).getPlayers()) {
+    private void initShopWaiting(SATeam.Team team) {
+        for(Player player : Main.getGameManager().getTeam(this, team).getPlayers()) {
             Inventory inventory = Bukkit.createInventory(null, 45, "Shop");
-            initShopInventory(alpha, inventory);
+            initShopInventory(team, inventory);
             shops.put(player.getUniqueId(), inventory);
             scoreboards.get(player.getUniqueId()).showTeams(this);
             scoreboards.get(player.getUniqueId()).showHealth(this);
         }
     }
 
-    private void initShopInventory(SATeam.Team alpha, Inventory inventory) {
+    private void initShopInventory(SATeam.Team team, Inventory inventory) {
         inventory.clear();
         for(PlayerShopItem shop : Main.getShopManager().getShops()) {
             if(shop.getType() == ItemType.GRENADE) {
                 Grenade grenade = Main.getWeaponManager().getGrenade(shop.getWeaponName());
                 inventory.setItem(shop.getShopSlot(), ItemBuilder.create(grenade.getItem().getType(),
                         1, grenade.getItem().getData(), shop.getName(),shop.getLore()));
-            } else if(shop.getType() == ItemType.GUN && (shop.getTeam() == null || shop.getTeam() == alpha)) {
+            } else if(shop.getType() == ItemType.GUN && (shop.getTeam() == null || shop.getTeam() == team)) {
                 Gun gun = Main.getWeaponManager().getGun(shop.getWeaponName());
                 inventory.setItem(shop.getShopSlot(), ItemBuilder.create(gun.getItem().getType(), 1,
                         gun.getItem().getData(), shop.getName(), shop.getLore()));
             } else {
-                if(shop.getTeam() != null && shop.getTeam() != alpha) {
+                if(shop.getTeam() != null && shop.getTeam() != team) {
                     continue;
                 }
                 inventory.setItem(shop.getShopSlot(), ItemBuilder.create(shop.getMaterial(), 1, shop.getName(), shop.getLore()));

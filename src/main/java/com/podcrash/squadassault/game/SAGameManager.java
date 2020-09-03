@@ -192,7 +192,7 @@ public class SAGameManager {
             } else if(game.getBomb().isPlanted()) {
                 status.updateLine(14, "OBJECTIVE:");
                 status.updateLine(13, "Protect the bomb");
-            } else if(game.getBomb().getCarrier().equals(player)) {
+            } else if(game.getBomb().getCarrier() == player) {
                 status.updateLine(14, "OBJECTIVE:");
                 status.updateLine(13, "Plant the bomb");
             } else {
@@ -241,8 +241,12 @@ public class SAGameManager {
             list.addAll(game.getTeamA().getPlayers());
             list.addAll(game.getTeamB().getPlayers());
         }
-        game.getTeamA().getPlayers().forEach(player -> removePlayer(game, player, autoJoin, false));
-        game.getTeamB().getPlayers().forEach(player -> removePlayer(game, player, autoJoin, false));
+        for (Player player : game.getTeamA().getPlayers()) {
+            removePlayer(game, player, autoJoin, false);
+        }
+        for (Player player : game.getTeamB().getPlayers()) {
+            removePlayer(game, player, autoJoin, false);
+        }
 
         //todo bungee code here
 
@@ -268,7 +272,9 @@ public class SAGameManager {
     public void endRound(SAGame game) {
         game.getDrops().clear();
         if(game.getState() == SAGameState.ROUND_START) {
-            game.getSpectators().forEach(player -> player.setGameMode(GameMode.ADVENTURE));
+            for (Player player : game.getSpectators()) {
+                player.setGameMode(GameMode.ADVENTURE);
+            }
         }
         game.resetDefusers();
         game.getBomb().reset();
@@ -386,9 +392,9 @@ public class SAGameManager {
             player.getInventory().setItem(8, ItemBuilder.create(Material.GHAST_TEAR, 1, "Shop", false));
             player.teleport(game.getAlphaSpawns().get(Randomizer.randomInt(game.getAlphaSpawns().size())));
             if(player.getInventory().getHeldItemSlot() == 2) {
-                player.setWalkSpeed(1.05f);
+                player.setWalkSpeed(0.25f);
             } else {
-                player.setWalkSpeed(1);
+                player.setWalkSpeed(0.2f);
             }
 
             if(player.getInventory().getHelmet() == null || game.getRound() == 15) {
@@ -461,9 +467,9 @@ public class SAGameManager {
             player.getInventory().setItem(8, ItemBuilder.create(Material.GHAST_TEAR, 1, "Shop", false));
             player.teleport(game.getAlphaSpawns().get(Randomizer.randomInt(game.getOmegaSpawns().size())));
             if(player.getInventory().getHeldItemSlot() == 2) {
-                player.setWalkSpeed(1.05f);
+                player.setWalkSpeed(0.25f);
             } else {
-                player.setWalkSpeed(1);
+                player.setWalkSpeed(0.2f);
             }
 
             if(player.getInventory().getHelmet() == null || game.getRound() == 15) {
@@ -536,22 +542,22 @@ public class SAGameManager {
                     game.getBomb().setDrop(dropItemNaturally);
                 }
             }
-            game.getTeamA().getPlayers().forEach(player -> {
-                SAScoreboard scoreboard = game.getScoreboards().get(player.getUniqueId());
-                if(damager != null) {
+            for (Player player1 : game.getTeamA().getPlayers()) {
+                SAScoreboard scoreboard = game.getScoreboards().get(player1.getUniqueId());
+                if (damager != null) {
                     scoreboard.getTeams().update(game, damager);
                 }
                 scoreboard.getTeams().update(game, damaged);
                 NmsUtils.sendInvisibility(scoreboard, game);
-            });
-            game.getTeamB().getPlayers().forEach(player -> {
+            }
+            for (Player player : game.getTeamB().getPlayers()) {
                 SAScoreboard scoreboard = game.getScoreboards().get(player.getUniqueId());
-                if(damager != null) {
+                if (damager != null) {
                     scoreboard.getTeams().update(game, damager);
                 }
                 scoreboard.getTeams().update(game, damaged);
                 NmsUtils.sendInvisibility(scoreboard, game);
-            });
+            }
             clearPlayer(damaged);
             damaged.updateInventory();
             damaged.setGameMode(GameMode.SPECTATOR);
@@ -575,8 +581,12 @@ public class SAGameManager {
             damaged.setNoDamageTicks(1);
         }
         damaged.setHealth(damaged.getHealth() - damage);
-        game.getTeamA().getPlayers().forEach(player -> game.getScoreboards().get(player.getUniqueId()).getHealth().update(damaged));
-        game.getTeamB().getPlayers().forEach(player -> game.getScoreboards().get(player.getUniqueId()).getHealth().update(damaged));
+        for (Player player : game.getTeamA().getPlayers()) {
+            game.getScoreboards().get(player.getUniqueId()).getHealth().update(damaged);
+        }
+        for (Player player : game.getTeamB().getPlayers()) {
+            game.getScoreboards().get(player.getUniqueId()).getHealth().update(damaged);
+        }
         return false;
     }
 

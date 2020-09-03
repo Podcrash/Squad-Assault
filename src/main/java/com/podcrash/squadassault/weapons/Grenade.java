@@ -16,6 +16,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Grenade {
@@ -37,6 +38,7 @@ public class Grenade {
         this.duration = duration;
         this.throwSpeed = throwSpeed;
         this.effectPower = effectPower;
+        played = new ArrayList<>();
     }
 
     public Item getItem() {
@@ -89,7 +91,9 @@ public class Grenade {
 
     @SuppressWarnings("deprecation")
     public void tick(long ticks) {
-        for(GrenadeCache cache : played) {
+        Iterator<GrenadeCache> iterator = played.iterator();
+        while(iterator.hasNext()) {
+            GrenadeCache cache = iterator.next();
             if ((System.currentTimeMillis() - cache.getTime()) / 1000L < delay) {
                 continue;
             }
@@ -128,7 +132,7 @@ public class Grenade {
                 }
                 if((System.currentTimeMillis() - cache.getDuration()) / 1000L >= duration) {
                     cache.getGrenade().remove();
-                    played.remove(cache);
+                    iterator.remove();
                 } else {
                     //play sound
                 }
@@ -160,7 +164,7 @@ public class Grenade {
                             block.setType(Material.AIR);
                         }
                         cache.getBlocks().clear();
-                        played.remove(cache);
+                        iterator.remove();
                     } else {
                         if(ticks % 15 != 0) {
                             continue;
@@ -200,9 +204,12 @@ public class Grenade {
                 }
             } else {
                 cache.getGrenade().remove();
-                played.remove(cache);
+                iterator.remove();
             }
 
+
+        }
+        for(GrenadeCache cache : played) {
         }
     }
 
@@ -221,25 +228,29 @@ public class Grenade {
     }
 
     public void remove(SAGame game) {
-        for(GrenadeCache cache : played) {
+        Iterator<GrenadeCache> iterator = played.iterator();
+        while(iterator.hasNext()) {
+            GrenadeCache cache = iterator.next();
             if(cache.getGame() == game) {
                 for(Block block : cache.getBlocks()) {
                     block.setType(Material.AIR);
                 }
                 cache.getGrenade().remove();
-                played.remove(cache);
+                iterator.remove();
             }
         }
     }
 
     public void removePlayer(Player player) {
-        for(GrenadeCache cache : played) {
+        Iterator<GrenadeCache> iterator = played.iterator();
+        while(iterator.hasNext()) {
+            GrenadeCache cache = iterator.next();
             if(cache.getPlayer() == player) {
                 for(Block block : cache.getBlocks()) {
                     block.setType(Material.AIR);
                 }
                 cache.getGrenade().remove();
-                played.remove(cache);
+                iterator.remove();
             }
         }
     }

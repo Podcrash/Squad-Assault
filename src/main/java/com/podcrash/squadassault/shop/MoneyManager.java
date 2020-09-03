@@ -39,7 +39,9 @@ public class MoneyManager {
 
     private void addMoneyTeam(SAGame game, SATeam.Team team, int money) {
         SATeam saTeam = Main.getGameManager().getTeam(game,team);
-        saTeam.getPlayers().forEach(player -> game.setMoney(player, game.getMoney(player)+money));
+        for (Player player : saTeam.getPlayers()) {
+            game.setMoney(player, game.getMoney(player) + money);
+        }
     }
 
     private void addMoney(Player player, int money) {

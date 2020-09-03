@@ -1,13 +1,13 @@
 package com.podcrash.squadassault.commands;
 
-import com.podcrash.api.commands.CommandBase;
 import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SAGame;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class QuitCommand extends CommandBase {
+public class QuitCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if(!(commandSender instanceof Player)) {

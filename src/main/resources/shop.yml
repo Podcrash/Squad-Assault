@@ -1,6 +1,6 @@
 ShopGuns:
   ExampleHitscan:
-    Slot: 2
+    Slot: 3
     ItemName: 'Example Hitscan'
     ItemLore: 'buy me'
     Price: 400
@@ -11,12 +11,12 @@ ShopGuns:
     Price: 400
     Side: Alpha
   ExampleProjectile:
-    Slot: 2
+    Slot: 4
     ItemName: 'Example Projectile'
     ItemLore: 'buy me'
     Price: 400
   Glock-18:
-    Slot: 2
+    Slot: 5
     ItemName: 'Glock-18'
     ItemLore: 'buy me'
     Price: 400
@@ -62,24 +62,24 @@ ShopItems:
     SlotPlace: 38
     Side: ALPHA
     Material: IRON_CHESTPLATE
-    Item-Name: "Kevlar"
-    Item-Lore: 'buy me'
+    ItemName: "Kevlar"
+    ItemLore: 'buy me'
   AlphaHelmet:
     Slot: 35
     Price: 350
     SlotPlace: 39
     Side: ALPHA
-    Item-Material: IRON_HELMET
-    Item-Name: "Alpha Helmet"
-    Item-Lore: 'buy me'
+    Material: IRON_HELMET
+    ItemName: "Alpha Helmet"
+    ItemLore: 'buy me'
   OmegaKevlar:
     Slot: 34
     Price: 650
     SlotPlace: 38
     Side: OMEGA
-    Item-Material: CHAINMAIL_CHESTPLATE
-    Item-Name: "Kevlar"
-    Item-Lore: 'buy me'
+    Material: CHAINMAIL_CHESTPLATE
+    ItemName: "Kevlar"
+    ItemLore: 'buy me'
   OmegaHelmet:
     Slot: 35
     Price: 300

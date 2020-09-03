@@ -23,7 +23,7 @@ public class SAScoreboardTeam {
     }
 
     public void registerSides(SAGame game) {
-        for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
+        for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers()) {
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
             registerNewTeam.setPrefix("Ω");
             registerNewTeam.setSuffix("kills - deaths"); //kills - deaths ? todo
