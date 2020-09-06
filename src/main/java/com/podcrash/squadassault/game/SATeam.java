@@ -8,7 +8,7 @@ import java.util.List;
 public class SATeam {
 
     private Team team;
-    private List<Player> players;
+    private final List<Player> players;
 
     public SATeam(List<Player> players) {
         this.players = players;
