@@ -197,7 +197,7 @@ public class GameListener implements Listener {
             if(damager.getLocation().distance(damaged.getLocation()) <= 1.7 || angle <= 1.5) {
                 Main.getGameManager().damage(game, damager, damaged, 3, "Knife");
             } else {
-                Main.getGameManager().damage(game, damager, damaged, 20, "Knife");
+                Main.getGameManager().damage(game, damager, damaged, 20, "Knife Backstab");
             }
             Main.getUpdateTask().getDelay().put(damaged.getUniqueId(), 35);
         }
