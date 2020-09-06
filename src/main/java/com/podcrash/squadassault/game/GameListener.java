@@ -46,7 +46,8 @@ import java.util.concurrent.ConcurrentMap;
 public class GameListener implements Listener {
 
     private final Inventory selector;
-    private ConcurrentMap<SAGame, Boolean> bombPlants;
+    private final ConcurrentMap<SAGame, Boolean> bombPlants;
+
     public GameListener() {
         selector = Bukkit.createInventory(null, 27, "Team Selector");
         selector.setItem(11, ItemBuilder.create(Material.WOOL, 1, (short)14, "Team A", "Click to join Team A"));
