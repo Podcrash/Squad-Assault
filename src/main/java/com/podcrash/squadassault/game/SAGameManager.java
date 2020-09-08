@@ -27,12 +27,14 @@ import java.util.Map;
 
 public class SAGameManager {
 
-    private List<SAGame> games;
-    private Map<Player, GameSetup> setup;
+    private final List<SAGame> games;
+    private final Map<Player, GameSetup> setup;
+    private final Map<Player, List<Player>> assists;
 
     public SAGameManager() {
         games = new ArrayList<>();
         setup = new HashMap<>();
+        assists = new HashMap<>();
     }
 
     public SAGame findQuickGame(Player player) {
@@ -69,6 +71,7 @@ public class SAGameManager {
         player.teleport(game.getLobby());
         game.getScoreboards().put(player.getUniqueId(), new SAScoreboard(player));
         player.getInventory().setItem(0, ItemBuilder.create(Material.DIAMOND, 1, "Team Selector", "Select a team"));
+        game.getStats().put(player.getUniqueId(), new PlayerStats(player.getName()));
         //TODO leave game item
         player.updateInventory();
         game.sendToAll(player.getDisplayName() + " joined the game. " + game.getSize() + "/" + game.getMaxPlayers());
@@ -118,6 +121,7 @@ public class SAGameManager {
             updateStatus(game, scoreboard.getStatus());
             player.getInventory().setItem(0, ItemBuilder.create(Material.DIAMOND, 1, "Team Selector", "Select a team"));
         } else {
+            game.getStats().remove(player.getUniqueId());
             SAScoreboard scoreboard = game.getScoreboards().remove(player.getUniqueId());
             if(game.getState() != SAGameState.WAITING) {
                 for(SAScoreboard saScoreboard : game.getScoreboards().values()) {
@@ -218,9 +222,9 @@ public class SAGameManager {
             ItemStack chest = player.getInventory().getHelmet();
             status.updateLine(8,
                     ((helmet != null && helmet.getType() != Material.LEATHER_HELMET) ? "helmet " : " ") + ((chest != null && chest.getType() != Material.LEATHER_CHESTPLATE) ? "kevlar" : ""));
-            status.updateLine(7, "kills - deaths");
-            //todo maybe cooler stats like adr or rating
-            status.updateLine(6, "");
+            status.updateLine(7,
+                    "K/D/A/ADR:");
+            status.updateLine(6, game.getStats().get(player.getUniqueId()).getKills() + "/" + game.getStats().get(player.getUniqueId()).getDeaths() + "/" + game.getStats().get(player.getUniqueId()).getAssists()+ "/" + game.getStats().get(player.getUniqueId()).getADR());
             status.updateLine(5, "");
             status.updateLine(4, "Alpha Alive: " + getAlivePlayers(game, getTeam(game, SATeam.Team.ALPHA)));
             status.updateLine(3, "Omega Alive: " + getAlivePlayers(game, getTeam(game, SATeam.Team.OMEGA)));
@@ -275,11 +279,26 @@ public class SAGameManager {
     }
 
     public void endRound(SAGame game) {
+        for(Grenade grenade : Main.getWeaponManager().getGrenades()) {
+            grenade.remove(game);
+        }
+        for(Item drop : game.getDrops().keySet()) {
+            drop.remove();
+        }
         game.getDrops().clear();
         if(game.getState() == SAGameState.ROUND_START) {
             for (Player player : game.getSpectators()) {
                 player.setGameMode(GameMode.ADVENTURE);
             }
+        }
+        for(Player player : game.getTeamA().getPlayers()) {
+            assists.remove(player);
+        }
+        for(Player player : game.getTeamB().getPlayers()) {
+            assists.remove(player);
+        }
+        for(PlayerStats stats : game.getStats().values()) {
+            stats.addRoundsPlayed(1);
         }
         game.resetDefusers();
         game.getBomb().reset();
@@ -502,7 +521,17 @@ public class SAGameManager {
     }
 
     public boolean damage(SAGame game, Player damager, Player damaged, double damage, String cause) {
+        if(damager != null && !assists.containsKey(damaged)) {
+            assists.put(damaged, new ArrayList<>());
+        }
+        if(damager != null && !assists.get(damaged).contains(damager)) {
+            assists.get(damaged).add(damager);
+        }
         if(damaged.getHealth() <= damage) { //they die
+            if(damager != null) {
+                game.getStats().get(damager.getUniqueId()).addDamage((int) damaged.getHealth());
+                //todo normalize to 100 health
+            }
             damaged.setHealth(5); //do this so they experience the hit effect
             damaged.damage(4);
             damaged.setHealth(20);
@@ -571,10 +600,21 @@ public class SAGameManager {
                         (damager.getInventory().getHeldItemSlot() == 2 ? 1500 :
                                 Main.getWeaponManager().getGun(damager.getItemInHand()) != null ?
                                         Main.getWeaponManager().getGun(damager.getItemInHand()).getKillReward() : 300));
-                game.sendToAll(damager.getDisplayName() + " killed " + damaged.getDisplayName() + " via " + cause);
+                game.sendToAll(damager.getDisplayName() + " killed " + damaged.getDisplayName() + " via " + cause +
+                        ", assisted by " + listStringAssists(assists.get(damaged), damager));
+                game.getStats().get(damager.getUniqueId()).addKills(1);
+
             } else {
-                game.sendToAll(damaged.getDisplayName() + " died to " + cause);
+                game.sendToAll(damaged.getDisplayName() + " died to " + cause +
+                        ", assisted by " + listStringAssists(assists.getOrDefault(damaged, new ArrayList<>()), null));
             }
+            for(Player assisted : assists.get(damaged)) {
+                if (assisted != damager) {
+                    game.getStats().get(assisted.getUniqueId()).addAssists(1);
+                }
+            }
+            assists.remove(damaged);
+            game.getStats().get(damaged.getUniqueId()).addDeaths(1);
             NmsUtils.sendTitle(damaged, 0, 100, 0, "You died", damager != null ? damager.getDisplayName() : "");
             return true;
         }
@@ -584,6 +624,9 @@ public class SAGameManager {
             damaged.damage(4);
             damaged.setHealth(health);
             damaged.setNoDamageTicks(1);
+        }
+        if(damager != null) {
+            game.getStats().get(damager.getUniqueId()).addDamage((int) damage);
         }
         damaged.setHealth(damaged.getHealth() - damage);
         for (Player player : game.getTeamA().getPlayers()) {
@@ -623,5 +666,15 @@ public class SAGameManager {
 
     public Map<Player, GameSetup> getSetup() {
         return setup;
+    }
+
+    private String listStringAssists(List<Player> list, Player damager) {
+        StringBuilder builder = new StringBuilder();
+        for(Player player : list) {
+            if(player != damager) {
+                builder.append(player.getDisplayName()).append(" ");
+            }
+        }
+        return builder.toString();
     }
 }
