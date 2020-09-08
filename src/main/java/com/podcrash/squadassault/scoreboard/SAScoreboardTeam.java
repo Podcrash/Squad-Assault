@@ -1,6 +1,7 @@
 package com.podcrash.squadassault.scoreboard;
 
 import com.podcrash.squadassault.Main;
+import com.podcrash.squadassault.game.PlayerStats;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.SATeam;
 import com.podcrash.squadassault.nms.NmsUtils;
@@ -13,8 +14,8 @@ import java.util.List;
 
 public class SAScoreboardTeam {
 
-    private Scoreboard scoreboard;
-    private List<Team> teams;
+    private final Scoreboard scoreboard;
+    private final List<Team> teams;
 
     public SAScoreboardTeam(SAGame game, Scoreboard scoreboard) {
         teams = new ArrayList<>();
@@ -24,17 +25,19 @@ public class SAScoreboardTeam {
 
     public void registerSides(SAGame game) {
         for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers()) {
+            PlayerStats stats = game.getStats().get(player.getUniqueId());
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
             registerNewTeam.setPrefix("Ω");
-            registerNewTeam.setSuffix("kills - deaths"); //kills - deaths ? todo
+            registerNewTeam.setSuffix(stats.getKills() + " - " + stats.getDeaths());
             NmsUtils.hideNametag(registerNewTeam);
             registerNewTeam.addEntry(player.getName());
             teams.add(registerNewTeam);
         }
         for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
+            PlayerStats stats = game.getStats().get(player.getUniqueId());
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
             registerNewTeam.setPrefix("α");
-            registerNewTeam.setSuffix("kills - deaths"); //kills - deaths ? todo
+            registerNewTeam.setSuffix(stats.getKills() + " - " + stats.getDeaths());
             NmsUtils.hideNametag(registerNewTeam);
             registerNewTeam.addEntry(player.getName());
             teams.add(registerNewTeam);
@@ -42,9 +45,10 @@ public class SAScoreboardTeam {
     }
 
     public void add(SAGame game, Player player) {
+        PlayerStats stats = game.getStats().get(player.getUniqueId());
         Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
         registerNewTeam.setPrefix(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA ? "Ω" : "α");
-        registerNewTeam.setSuffix("kills - deaths"); //kills - deaths ? todo
+        registerNewTeam.setSuffix(stats.getKills() + " - " + stats.getDeaths());
         NmsUtils.hideNametag(registerNewTeam);
         registerNewTeam.addEntry(player.getName());
         teams.add(registerNewTeam);
@@ -63,9 +67,10 @@ public class SAScoreboardTeam {
     }
 
     public void update(SAGame game, Player player) {
+        PlayerStats stats = game.getStats().get(player.getUniqueId());
         Team team = scoreboard.getTeam(player.getName());
         team.setPrefix(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA ? "Ω" : "α");
-        team.setSuffix("kills - deaths"); //kills - deaths ? todo
+        team.setSuffix(stats.getKills() + " - " + stats.getDeaths());
         NmsUtils.hideNametag(team);
     }
 }

@@ -471,6 +471,7 @@ public class Gun {
             double damage = getDamage()*2.5;
             double finalDamage = Math.max(0,armorPen*(damage - rangeFalloff));
             Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, true, player, hit));
+            gunCache.getGame().getStats().get(player.getUniqueId()).addHeadshots(1);
             Main.getGameManager().damage(gunCache.getGame(), player, hit,
                     finalDamage, name + " headshot");
             break;

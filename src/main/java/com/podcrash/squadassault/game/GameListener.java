@@ -124,6 +124,7 @@ public class GameListener implements Listener {
                                     game.getBomb().setTimer(40);
                                     game.getBomb().setPlanted(true);
                                     game.setMoney(player, game.getMoney(player)+300);
+                                    game.getStats().get(player.getUniqueId()).addBombPlants(1);
                                     for(Player omega : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
                                         omega.setCompassTarget(game.getBomb().getLocation());
                                         //todo play sound
@@ -695,6 +696,7 @@ public class GameListener implements Listener {
             double damage = stats.getDamage()*2.5;
             double finalDamage = Math.max(0,armorPen*(damage - rangeFalloff));
             Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, true, stats.getShooter(), damaged));
+            Main.getGameManager().getGame(damaged).getStats().get(stats.getShooter().getUniqueId()).addHeadshots(1);
             Main.getGameManager().damage(Main.getGameManager().getGame(damaged), stats.getShooter(), damaged,
                     finalDamage, stats.getGunName() + " headshot");
         } else {

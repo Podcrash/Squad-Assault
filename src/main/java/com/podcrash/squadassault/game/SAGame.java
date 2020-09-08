@@ -58,6 +58,7 @@ public class SAGame {
     private Map<Player, Defuse> defusing;
     private Map<UUID, SAScoreboard> scoreboards;
     private Map<UUID, SATeam> queue;
+    private Map<UUID, PlayerStats> stats;
 
     public SAGame(String id, String mapName, Location lobby, int minPlayers, List<Location> alphaSpawns,
                   List<Location> omegaSpawns, Location bombA, Location bombB) {
@@ -85,6 +86,7 @@ public class SAGame {
         queue = new HashMap<>();
         defusing = new HashMap<>();
         scoreboards = new HashMap<>();
+        stats = new HashMap<>();
         timer = 30;
         maxPlayers = alphaSpawns.size() + omegaSpawns.size();
         bar = NmsUtils.createBossbar(Message.BOSSBAR_WAITING.getMsg().replace("%name%", mapName));
@@ -401,6 +403,7 @@ public class SAGame {
                 //defused
                 if(entry.getValue().getTime() == -1 && !roundEnding) {
                     round++;
+                    stats.get(player.getUniqueId()).addBombDefuses(1);
                     moneyManager.addMoneyEndRound(this, ALPHA, true, MoneyManager.RoundEndType.DEFUSED);
                     for(Player p : teamA.getPlayers()) {
                         //play sound? todo
@@ -777,4 +780,7 @@ public class SAGame {
         return location.distance(bombA) <= 4 || location.distance(bombB) <= 4;
     }
 
+    public Map<UUID, PlayerStats> getStats() {
+        return stats;
+    }
 }
