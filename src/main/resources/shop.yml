@@ -2,23 +2,23 @@ ShopGuns:
   ExampleHitscan:
     Slot: 3
     ItemName: 'Example Hitscan'
-    ItemLore: 'buy me'
+    ItemLore: 'Reserve Ammo: 100'
     Price: 400
   USP-S:
     Slot: 2
     ItemName: 'USP-S'
-    ItemLore: 'buy me'
+    ItemLore: 'Reserve Ammo: 100'
     Price: 400
     Side: Alpha
   ExampleProjectile:
     Slot: 4
     ItemName: 'Example Projectile'
-    ItemLore: 'buy me'
+    ItemLore: 'Reserve Ammo: 100'
     Price: 400
   Glock-18:
     Slot: 5
     ItemName: 'Glock-18'
-    ItemLore: 'buy me'
+    ItemLore: 'Reserve Ammo: 100'
     Price: 400
     Side: OMEGA
 ShopGrenades:

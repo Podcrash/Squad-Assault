@@ -1,12 +1,16 @@
 package com.podcrash.squadassault.util;
 
+import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SATeam;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 
 public final class Utils {
@@ -64,5 +68,26 @@ public final class Utils {
         return null;
     }
 
+    public static int getReserveAmmo(ItemStack stack) {
+        ItemMeta meta = stack.getItemMeta();
+        List<String> lore = meta.getLore();
+        String line = lore.get(0);
+        if(line.contains("Reserve Ammo: ")) {
+            try {
+                return Integer.parseInt(line.substring(line.indexOf(": ")+2));
+            } catch (NumberFormatException e) {
+                Main.getInstance().getLogger().log(Level.SEVERE, "invalid item meta " + line + " belonging to " + stack.getType());
+                return -1;
+            }
+        } else {
+            return -1;
+        }
+    }
+
+    public static void setReserveAmmo(ItemStack stack, int ammo) {
+        ItemMeta meta = stack.getItemMeta();
+        meta.getLore().set(0, "Reserve Ammo: " + ammo);
+        stack.setItemMeta(meta);
+    }
 
 }

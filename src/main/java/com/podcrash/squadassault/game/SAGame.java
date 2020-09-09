@@ -12,12 +12,14 @@ import com.podcrash.squadassault.shop.PlayerShopItem;
 import com.podcrash.squadassault.util.ItemBuilder;
 import com.podcrash.squadassault.util.Message;
 import com.podcrash.squadassault.util.Randomizer;
+import com.podcrash.squadassault.util.Utils;
 import com.podcrash.squadassault.weapons.Grenade;
 import com.podcrash.squadassault.weapons.Gun;
 import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -600,7 +602,25 @@ public class SAGame {
         for(Grenade grenade : Main.getWeaponManager().getGrenades()) {
             grenade.remove(this);
         }
+
         roundEnding = true;
+    }
+
+    private void resetReserveAmmo(Player player) {
+        ItemStack stack = player.getInventory().getItem(0);
+        Gun primary = Main.getWeaponManager().getGun(stack);
+        if(primary != null) {
+            Utils.setReserveAmmo(stack, primary.getTotalAmmoSize());
+            NmsUtils.sendActionBar(player,
+                    stack.getAmount() + " / " + Utils.getReserveAmmo(stack));
+        }
+        stack = player.getInventory().getItem(1);
+        Gun secondary = Main.getWeaponManager().getGun(stack);
+        if(secondary != null) {
+            Utils.setReserveAmmo(stack, secondary.getTotalAmmoSize());
+            NmsUtils.sendActionBar(player,
+                    stack.getAmount() + " / " + Utils.getReserveAmmo(stack));
+        }
     }
 
     private void finalizeRoundKills(SATeam.Team winner) {
@@ -611,6 +631,12 @@ public class SAGame {
     }
 
     private void runRoundStart() {
+        for(Player player : teamA.getPlayers()) {
+            resetReserveAmmo(player);
+        }
+        for(Player player : teamB.getPlayers()) {
+            resetReserveAmmo(player);
+        }
         if(round == 15 && timer >= 11) {
             for (Player player : teamA.getPlayers()) {
                 NmsUtils.sendTitle(player, 0, 40, 0, "team swap yeet", "");
