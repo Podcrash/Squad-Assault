@@ -587,8 +587,6 @@ public class GameListener implements Listener {
         int amount = player.getItemInHand().getAmount();
         if(game.getState() == SAGameState.ROUND_LIVE || game.getState() == SAGameState.ROUND_START) {
             if(itemStack.getType() == Material.SHEARS) {
-                game.getDrops().put(event.getItemDrop(), 1);
-                player.getInventory().setItem(7, ItemBuilder.create(Material.GOLD_NUGGET, 1,"Wire Cutters", false));
                 return;
             }
             if(itemStack.getType() == Material.QUARTZ || itemStack.getType() == Material.GOLDEN_APPLE) {
