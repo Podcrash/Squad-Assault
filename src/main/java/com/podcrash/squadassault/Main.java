@@ -92,5 +92,6 @@ public class Main extends JavaPlugin {
         getCommand("setlobby").setExecutor(new SetLobbyCommand());
         getCommand("deletegame").setExecutor(new DeleteGameCommand());
         getCommand("joingame").setExecutor(new JoinGameCommand());
+        getCommand("listgames").setExecutor(new ListGamesCommand());
     }
 }
