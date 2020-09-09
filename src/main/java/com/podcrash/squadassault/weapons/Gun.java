@@ -3,6 +3,7 @@ package com.podcrash.squadassault.weapons;
 import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.events.GunDamageEvent;
+import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.util.Item;
 import com.podcrash.squadassault.util.Randomizer;
 import com.podcrash.squadassault.util.Utils;
@@ -213,7 +214,12 @@ public class Gun {
 
     public void reload(Player player, int slot) {
         ItemStack itemStack = player.getInventory().getItem(slot);
-        if (!item.equals(itemStack) || itemStack.getAmount() >= magSize || !reloading.containsKey(player.getUniqueId())) {
+        if (!item.equals(itemStack) || itemStack.getAmount() >= magSize || reloading.containsKey(player.getUniqueId())) {
+            return;
+        }
+        if(Utils.getReserveAmmo(itemStack) <= 0) {
+            NmsUtils.sendActionBar(player, itemStack.getAmount() + " / " + Utils.getReserveAmmo(itemStack));
+            //play sound;
             return;
         }
         //play sound
@@ -247,7 +253,15 @@ public class Gun {
                         player.getItemInHand().setDurability((short)(entry.getValue().getLeft() / entry.getValue().getDuration() * player.getItemInHand().getType().getMaxDurability()));
                         if(entry.getValue().getLeft() <= 0) {
                             reloading.remove(entry.getKey());
-                            player.getItemInHand().setAmount(magSize);
+                            int oldAmount = player.getItemInHand().getAmount();
+                            int newAmount =
+                                    Utils.getReserveAmmo(player.getItemInHand()) >= magSize || Utils.getReserveAmmo(player.getItemInHand()) >= magSize - oldAmount ?
+                                    magSize :
+                                    Utils.getReserveAmmo(player.getItemInHand()) + oldAmount;
+                            Utils.setReserveAmmo(player.getItemInHand(),
+                                    Utils.getReserveAmmo(player.getItemInHand()) - newAmount);
+                            NmsUtils.sendActionBar(player, newAmount + " / " + Utils.getReserveAmmo(player.getItemInHand()));
+                            player.getItemInHand().setAmount(newAmount);
                             player.getItemInHand().setDurability((short) 0);
                             //play sound?
                         }

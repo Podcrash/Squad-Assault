@@ -159,7 +159,7 @@ public class Grenade {
                 }
             } else if (type == GrenadeType.FIRE) {
                 if(cache.getGrenade().isRemoved()) {
-                    if((System.currentTimeMillis() - cache.getDuration()) / 1000 > duration) {
+                    if((System.currentTimeMillis() - cache.getDuration()) / 1000 >= duration) {
                         for(Block block : cache.getBlocks()) {
                             block.setType(Material.AIR);
                         }
@@ -206,10 +206,6 @@ public class Grenade {
                 cache.getGrenade().remove();
                 iterator.remove();
             }
-
-
-        }
-        for(GrenadeCache cache : played) {
         }
     }
 
