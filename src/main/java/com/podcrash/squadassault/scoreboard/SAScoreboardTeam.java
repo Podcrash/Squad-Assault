@@ -24,7 +24,7 @@ public class SAScoreboardTeam {
     }
 
     public void registerSides(SAGame game) {
-        for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers()) {
+        for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
             PlayerStats stats = game.getStats().get(player.getUniqueId());
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
             registerNewTeam.setPrefix("Ω");
@@ -33,7 +33,7 @@ public class SAScoreboardTeam {
             registerNewTeam.addEntry(player.getName());
             teams.add(registerNewTeam);
         }
-        for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
+        for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers()) {
             PlayerStats stats = game.getStats().get(player.getUniqueId());
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
             registerNewTeam.setPrefix("α");
