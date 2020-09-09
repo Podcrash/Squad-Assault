@@ -565,7 +565,7 @@ public class GameListener implements Listener {
                 return;
             }
             int gunSlot = gun.getType().ordinal();
-            if(player.getInventory().getItem(gunSlot) != null) {
+            if(player.getInventory().getItem(gunSlot) == null) {
                 event.setCancelled(true);
                 itemStack.setAmount(n + 1);
                 player.getInventory().setItem(gunSlot, itemStack);
