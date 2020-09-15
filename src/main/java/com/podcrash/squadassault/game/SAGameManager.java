@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -219,12 +220,14 @@ public class SAGameManager {
             status.updateLine(10, "");
             status.updateLine(9, "Money: $" + game.getMoney(player));
             ItemStack helmet = player.getInventory().getHelmet();
-            ItemStack chest = player.getInventory().getHelmet();
+            ItemStack chest = player.getInventory().getChestplate();
             status.updateLine(8,
                     ((helmet != null && helmet.getType() != Material.LEATHER_HELMET) ? "helmet " : " ") + ((chest != null && chest.getType() != Material.LEATHER_CHESTPLATE) ? "kevlar" : ""));
             status.updateLine(7,
                     "K/D/A/ADR:");
-            status.updateLine(6, game.getStats().get(player.getUniqueId()).getKills() + "/" + game.getStats().get(player.getUniqueId()).getDeaths() + "/" + game.getStats().get(player.getUniqueId()).getAssists()+ "/" + game.getStats().get(player.getUniqueId()).getADR());
+            String adr = new DecimalFormat("##.#").format(game.getStats().get(player.getUniqueId()).getADR());
+            status.updateLine(6,
+                    game.getStats().get(player.getUniqueId()).getKills() + "/" + game.getStats().get(player.getUniqueId()).getDeaths() + "/" + game.getStats().get(player.getUniqueId()).getAssists()+ "/" + adr);
             status.updateLine(5, "");
             status.updateLine(4, "Alpha Alive: " + getAlivePlayers(game, getTeam(game, SATeam.Team.ALPHA)));
             status.updateLine(3, "Omega Alive: " + getAlivePlayers(game, getTeam(game, SATeam.Team.OMEGA)));
@@ -489,7 +492,7 @@ public class SAGameManager {
             NmsUtils.sendInvisibility(scoreboard, game);
             player.getInventory().setItem(7, ItemBuilder.create(Material.COMPASS, 1, "Bomb Locator", false));
             player.getInventory().setItem(8, ItemBuilder.create(Material.GHAST_TEAR, 1, "Shop", false));
-            player.teleport(game.getAlphaSpawns().get(Randomizer.randomInt(game.getOmegaSpawns().size())));
+            player.teleport(game.getOmegaSpawns().get(Randomizer.randomInt(game.getOmegaSpawns().size())));
             if(player.getInventory().getHeldItemSlot() == 2) {
                 player.setWalkSpeed(0.25f);
             } else {
@@ -529,6 +532,9 @@ public class SAGameManager {
         }
         if(damaged.getHealth() <= damage) { //they die
             if(damager != null) {
+                if(game.getStats().get(damager.getUniqueId()) == null) {
+                    game.getStats().put(damager.getUniqueId(), new PlayerStats(damager.getName()));
+                }
                 game.getStats().get(damager.getUniqueId()).addDamage((int) damaged.getHealth());
                 //todo normalize to 100 health
             }
@@ -626,6 +632,9 @@ public class SAGameManager {
             damaged.setNoDamageTicks(1);
         }
         if(damager != null) {
+            if(game.getStats().get(damager.getUniqueId()) == null) {
+                game.getStats().put(damager.getUniqueId(), new PlayerStats(damager.getName()));
+            }
             game.getStats().get(damager.getUniqueId()).addDamage((int) damage);
         }
         damaged.setHealth(damaged.getHealth() - damage);
@@ -657,7 +666,7 @@ public class SAGameManager {
 
     public SAGame getGame(String id) {
         for (SAGame game : games) {
-            if (game.getId().equals(id)) {
+            if (game.getId().equalsIgnoreCase(id)) {
                 return game;
             }
         }

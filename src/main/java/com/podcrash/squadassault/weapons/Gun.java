@@ -246,18 +246,20 @@ public class Gun {
 
     public void tick() {
         if(!reloading.isEmpty()) {
-            for(Map.Entry<UUID, GunReload> entry : reloading.entrySet()) {
+            Iterator<Map.Entry<UUID, GunReload>> iterator = reloading.entrySet().iterator();
+            while(iterator.hasNext()) {
+                Map.Entry<UUID, GunReload> entry = iterator.next();
                 Player player = Bukkit.getPlayer(entry.getKey());
                 if(player != null && !player.isDead() && player.isOnline() && Main.getGameManager().getGame(player) != null) {
                     if(item.equals(player.getItemInHand())) {
                         player.getItemInHand().setDurability((short)(entry.getValue().getLeft() / entry.getValue().getDuration() * player.getItemInHand().getType().getMaxDurability()));
                         if(entry.getValue().getLeft() <= 0) {
-                            reloading.remove(entry.getKey());
+                            iterator.remove();
                             int oldAmount = player.getItemInHand().getAmount();
                             int newAmount =
                                     Utils.getReserveAmmo(player.getItemInHand()) >= magSize || Utils.getReserveAmmo(player.getItemInHand()) >= magSize - oldAmount ?
-                                    magSize :
-                                    Utils.getReserveAmmo(player.getItemInHand()) + oldAmount;
+                                            magSize :
+                                            Utils.getReserveAmmo(player.getItemInHand()) + oldAmount;
                             Utils.setReserveAmmo(player.getItemInHand(),
                                     Utils.getReserveAmmo(player.getItemInHand()) - newAmount);
                             NmsUtils.sendActionBar(player, newAmount + " / " + Utils.getReserveAmmo(player.getItemInHand()));
@@ -267,10 +269,10 @@ public class Gun {
                         }
                         entry.getValue().setLeft(entry.getValue().getLeft() - 1);
                     } else {
-                        reloading.remove(entry.getKey());
+                        iterator.remove();
                     }
                 } else {
-                    reloading.remove(entry.getKey());
+                    iterator.remove();
                 }
             }
         }
@@ -509,6 +511,7 @@ public class Gun {
         cache.setCone(Math.min(projectileConeMax, cone + coneIncPerBullet));
         Main.getWeaponManager().getProjectiles().put(snowball, new ProjectileStats(name, player.getLocation(),
                 dropoffPerBlock, damage, armorPen, player));
+        System.out.println(armorPen);
     }
 
     private void shotgun(Player player, boolean moving, GunCache cache) {
