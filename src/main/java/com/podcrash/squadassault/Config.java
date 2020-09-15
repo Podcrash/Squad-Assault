@@ -155,7 +155,7 @@ public class Config {
             gunObj.setBulletsPerShot(guns.getInt("Guns." + gun + ".Shoot.BulletsPerShot"));
             gunObj.setDelayPerShot(guns.getInt("Guns." + gun + ".Shoot.Delay"));
             gunObj.setKillReward(guns.getInt("Guns."+gun+".ItemInfo.KillReward"));
-            gunObj.setArmorPen(guns.getInt("Guns."+gun+".Shoot.ArmorPen"));
+            gunObj.setArmorPen(guns.getDouble("Guns."+gun+".Shoot.ArmorPen"));
             gunObj.setConeIncPerBullet(guns.getDouble("Guns."+gun+".Burst.ProjectileConeIncrease"));
             gunObj.setProjectileConeMin(guns.getDouble("Guns."+gun+".Burst.ProjectileConeMin"));
             gunObj.setProjectileConeMax(guns.getDouble("Guns."+gun+".Burst.ProjectileConeMax"));
