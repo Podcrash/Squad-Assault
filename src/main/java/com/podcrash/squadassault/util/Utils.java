@@ -9,6 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -70,6 +71,9 @@ public final class Utils {
 
     public static int getReserveAmmo(ItemStack stack) {
         ItemMeta meta = stack.getItemMeta();
+        if(meta == null || meta.getLore() == null) {
+            return -1;
+        }
         List<String> lore = meta.getLore();
         String line = lore.get(0);
         if(line.contains("Reserve Ammo: ")) {
@@ -86,8 +90,14 @@ public final class Utils {
 
     public static void setReserveAmmo(ItemStack stack, int ammo) {
         ItemMeta meta = stack.getItemMeta();
-        meta.getLore().set(0, "Reserve Ammo: " + ammo);
-        stack.setItemMeta(meta);
+        if(meta != null) {
+            if(meta.getLore() == null) {
+                meta.setLore(new ArrayList<>(Collections.singletonList("Reserve Ammo: " + ammo)));
+            } else {
+                meta.getLore().set(0, "Reserve Ammo: " + ammo);
+            }
+            stack.setItemMeta(meta);
+        }
     }
 
 }

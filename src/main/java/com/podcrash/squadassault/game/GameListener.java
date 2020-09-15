@@ -188,7 +188,7 @@ public class GameListener implements Listener {
         Player damaged = (Player) event.getEntity();
         Player damager = (Player) event.getDamager();
         SAGame game = Main.getGameManager().getGame(damaged);
-        if(game == null) {
+        if(game == null || damaged == null || damager == null) {
             return;
         }
         event.setCancelled(true);
@@ -517,55 +517,48 @@ public class GameListener implements Listener {
         }
         Item item = event.getItem();
         ItemStack itemStack = item.getItemStack();
-        if(itemStack.getType() == Material.SHEARS && Main.getGameManager().getTeam(game,player) == SATeam.Team.ALPHA && player.getInventory().getItem(7).getType() == Material.GOLD_NUGGET) {
+        if((itemStack.getType() == Material.QUARTZ || itemStack.getType() == Material.GOLDEN_APPLE) && Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA) {
             item.remove();
             game.getDrops().remove(item);
+            if(itemStack.getType() == Material.QUARTZ && game.isAtBombsite(item.getLocation())) {
+                ItemMeta meta = itemStack.getItemMeta();
+                meta.setDisplayName("Bomb - Right Click");
+                itemStack.setItemMeta(meta);
+                itemStack.setType(Material.GOLDEN_APPLE);
+            }
+            if(itemStack.getType() == Material.GOLDEN_APPLE && !game.isAtBombsite(item.getLocation())) {
+                ItemMeta meta = itemStack.getItemMeta();
+                meta.setDisplayName("Bomb");
+                itemStack.setItemMeta(meta);
+                itemStack.setType(Material.QUARTZ);
+            }
+            game.getBomb().setCarrier(player);
             player.getInventory().setItem(7, itemStack);
-        } else {
-            if((itemStack.getType() == Material.QUARTZ || itemStack.getType() == Material.GOLDEN_APPLE) && Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA) {
-                item.remove();
+            return;
+        }
+        Grenade grenade = Main.getWeaponManager().getGrenade(itemStack);
+        if(grenade != null && game.getDrops().get(item) != null) {
+            int slot = findNadeSlot(player);
+            int current = 0;
+            GrenadeType type = grenade.getType();
+            int max = type.getMax();
+            for(int i = 3; i < 8; i++) {
+                if(Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)) != null && Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)).getType() ==type) {
+                    current++;
+                }
+            }
+            if (slot != -1 && current != max) {
+                event.setCancelled(true);
+                player.getInventory().setItem(slot, itemStack);
                 game.getDrops().remove(item);
-                if(itemStack.getType() == Material.QUARTZ && game.isAtBombsite(item.getLocation())) {
-                    ItemMeta meta = itemStack.getItemMeta();
-                    meta.setDisplayName("Bomb - Right Click");
-                    itemStack.setItemMeta(meta);
-                    itemStack.setType(Material.GOLDEN_APPLE);
-                }
-                if(itemStack.getType() == Material.GOLDEN_APPLE && !game.isAtBombsite(item.getLocation())) {
-                    ItemMeta meta = itemStack.getItemMeta();
-                    meta.setDisplayName("Bomb");
-                    itemStack.setItemMeta(meta);
-                    itemStack.setType(Material.QUARTZ);
-                }
-                game.getBomb().setCarrier(player);
-                player.getInventory().setItem(7, itemStack);
-                return;
+                item.remove();
             }
-            Grenade grenade = Main.getWeaponManager().getGrenade(itemStack);
-            if(grenade != null && game.getDrops().get(item) != null) {
-                int slot = findNadeSlot(player);
-                int current = 0;
-                GrenadeType type = grenade.getType();
-                int max = type.getMax();
-                for(int i = 3; i < 8; i++) {
-                    if(Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)) != null && Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)).getType() == type) {
-                        current++;
-                    }
-                }
-                if (slot != -1 && current != max) {
-                    event.setCancelled(true);
-                    player.getInventory().setItem(slot, itemStack);
-                    game.getDrops().remove(item);
-                    item.remove();
-                }
-            }
-            Gun gun = Main.getWeaponManager().getGun(itemStack);
-            Integer n = game.getDrops().get(item);
-            if (gun == null || n == null) {
-                return;
-            }
+        }
+        Gun gun = Main.getWeaponManager().getGun(itemStack);
+        Integer n = game.getDrops().get(item);
+        if (gun != null && n != null) {
             int gunSlot = gun.getType().ordinal();
-            if(player.getInventory().getItem(gunSlot) == null) {
+            if (player.getInventory().getItem(gunSlot) == null) {
                 event.setCancelled(true);
                 itemStack.setAmount(n + 1);
                 player.getInventory().setItem(gunSlot, itemStack);
@@ -587,6 +580,7 @@ public class GameListener implements Listener {
         int amount = player.getItemInHand().getAmount();
         if(game.getState() == SAGameState.ROUND_LIVE || game.getState() == SAGameState.ROUND_START) {
             if(itemStack.getType() == Material.SHEARS) {
+                event.setCancelled(true);
                 return;
             }
             if(itemStack.getType() == Material.QUARTZ || itemStack.getType() == Material.GOLDEN_APPLE) {
