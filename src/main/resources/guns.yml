@@ -113,10 +113,10 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
+      ProjectileConeMax: 0.5
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.1
     Reload:
       Duration: 20
       Amount: 10
       TotalAmount: 60
-      ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.02
-      ProjectileConeIncrease: 0.1
