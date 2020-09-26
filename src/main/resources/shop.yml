@@ -7,9 +7,9 @@ ShopGuns:
   USP-S:
     Slot: 2
     ItemName: 'USP-S'
-    ItemLore: 'Reserve Ammo: 100'
-    Price: 400
-    Side: Alpha
+    ItemLore: 'Reserve Ammo: 60'
+    Price: 200
+    Side: ALPHA
   ExampleProjectile:
     Slot: 4
     ItemName: 'Example Projectile'
@@ -18,8 +18,8 @@ ShopGuns:
   Glock-18:
     Slot: 5
     ItemName: 'Glock-18'
-    ItemLore: 'Reserve Ammo: 100'
-    Price: 400
+    ItemLore: 'Reserve Ammo: 60'
+    Price: 200
     Side: OMEGA
 ShopGrenades:
   HighExplosive:
