@@ -187,7 +187,7 @@ public class SAGame {
         this.money.put(player.getUniqueId(), money);
     }
 
-    public int getMoney(Player player) {
+    public Integer getMoney(Player player) {
         return money.get(player.getUniqueId());
     }
 
@@ -320,6 +320,7 @@ public class SAGame {
         scoreTeamB = 0;
         teamA.setTeam(null);
         teamB.setTeam(null);
+        money.clear();
         gameStarted = false;
     }
 

@@ -94,5 +94,6 @@ public class Main extends JavaPlugin {
         getCommand("joingame").setExecutor(new JoinGameCommand());
         getCommand("stopgame").setExecutor(new StopGame());
         getCommand("listgames").setExecutor(new ListGamesCommand());
+        getCommand("announce").setExecutor(new AnnounceCommand());
     }
 }

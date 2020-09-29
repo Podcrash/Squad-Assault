@@ -174,6 +174,9 @@ public class SAGameManager {
 
     public void updateStatus(SAGame game, ScoreboardStatus status) {
         Player player = status.getPlayer();
+        if(player == null) {
+            return;
+        }
         if(game.getState() == SAGameState.WAITING || game.isGameEnding()) {
             status.updateLine(7, "");
             status.updateLine(6, game.getMapName());
@@ -220,7 +223,9 @@ public class SAGameManager {
             }
             status.updateLine(11,"");
             status.updateLine(10, "");
-            status.updateLine(9, "Money: $" + game.getMoney(player));
+            if(game.getMoney(player) != null) {
+                status.updateLine(9, "Money: $" + game.getMoney(player));
+            }
             ItemStack helmet = player.getInventory().getHelmet();
             ItemStack chest = player.getInventory().getChestplate();
             status.updateLine(8,
