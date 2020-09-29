@@ -17,4 +17,3 @@ public class ListGamesCommand implements CommandExecutor {
         return true;
     }
 }
-
