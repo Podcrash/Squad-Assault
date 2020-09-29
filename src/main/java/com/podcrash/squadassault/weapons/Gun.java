@@ -269,6 +269,8 @@ public class Gun {
                             int oldAmount = player.getItemInHand().getAmount();
                             int needed = magSize - oldAmount;
                             int newAmount = Math.min(needed, Utils.getReserveAmmo(player.getItemInHand()));
+                            int left = Utils.getReserveAmmo(player.getItemInHand()) - newAmount;
+                            Utils.setReserveAmmo(player.getItemInHand(), left);
                             NmsUtils.sendActionBar(player, newAmount + " / " + Utils.getReserveAmmo(player.getItemInHand()));
                             player.getItemInHand().setAmount(newAmount);
                             player.getItemInHand().setDurability((short) 0);
