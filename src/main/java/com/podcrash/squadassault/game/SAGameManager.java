@@ -68,6 +68,8 @@ public class SAGameManager {
             player.sendMessage("full");
             return;
         }
+        player.getInventory().clear();
+        player.setGameMode(GameMode.ADVENTURE);
         game.randomTeam(player);
         player.teleport(game.getLobby());
         game.getScoreboards().put(player.getUniqueId(), new SAScoreboard(player));
@@ -345,7 +347,7 @@ public class SAGameManager {
         player.setFallDistance(0.0f);
         player.setAllowFlight(false);
         player.getInventory().clear();
-        player.setGameMode(GameMode.SURVIVAL);
+        player.setGameMode(GameMode.ADVENTURE);
         player.getInventory().setArmorContents(null);
         if (player.isInsideVehicle()) {
             player.leaveVehicle();
@@ -380,13 +382,13 @@ public class SAGameManager {
                 player.getInventory().setItem(4, null);
                 player.getInventory().setItem(5, null);
                 player.getInventory().setItem(6, null);
-                Gun gun = Main.getWeaponManager().getGun("USP-S");
+                Gun gun = Main.getWeaponManager().getGun("P2000");
                 player.getInventory().setItem(1, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                         gun.getItem().getData(), gun.getItem().getName()));
                 player.getInventory().setItem(2, ItemBuilder.create(Material.WOOD_SWORD, 1, "Knife", true));
             }
             if(player.getInventory().getItem(1) == null) {
-                Gun gun = Main.getWeaponManager().getGun("USP-S");
+                Gun gun = Main.getWeaponManager().getGun("P2000");
                 player.getInventory().setItem(1, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                         gun.getItem().getData(), gun.getItem().getName()));
             }
@@ -606,13 +608,11 @@ public class SAGameManager {
                         (damager.getInventory().getHeldItemSlot() == 2 ? 1500 :
                                 Main.getWeaponManager().getGun(damager.getItemInHand()) != null ?
                                         Main.getWeaponManager().getGun(damager.getItemInHand()).getKillReward() : 300));
-                game.sendToAll(damager.getDisplayName() + " killed " + damaged.getDisplayName() + " via " + cause +
-                        ", assisted by " + listStringAssists(assists.get(damaged), damager));
+                game.sendToAll(damager.getDisplayName() + " killed " + damaged.getDisplayName() + " via " + cause + listStringAssists(assists.get(damaged), damager));
                 game.getStats().get(damager.getUniqueId()).addKills(1);
 
             } else {
-                game.sendToAll(damaged.getDisplayName() + " died to " + cause +
-                        ", assisted by " + listStringAssists(assists.getOrDefault(damaged, new ArrayList<>()), null));
+                game.sendToAll(damaged.getDisplayName() + " died to " + cause + listStringAssists(assists.getOrDefault(damaged, new ArrayList<>()), null));
             }
             for(Player assisted : assists.get(damaged)) {
                 if (assisted != damager) {
@@ -679,6 +679,9 @@ public class SAGameManager {
 
     private String listStringAssists(List<Player> list, Player damager) {
         StringBuilder builder = new StringBuilder();
+        if(list.size() > 1) {
+            builder.append(", assisted by ");
+        }
         for(Player player : list) {
             if(player != damager) {
                 builder.append(player.getDisplayName()).append(" ");

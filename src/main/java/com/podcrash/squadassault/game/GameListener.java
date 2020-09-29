@@ -34,6 +34,7 @@ import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
+import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -344,7 +345,7 @@ public class GameListener implements Listener {
                         game.setMoney(player, game.getMoney(player) - shop.getPrice());
                         player.getInventory().setItem(gun.getType().ordinal(),
                                 ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
-                                        gun.getItem().getData(), gun.getItem().getName()));
+                                        gun.getItem().getData(), gun.getItem().getName(), shop.getLore()));
                         break;
                     } else {
                         if(shop.getTeam() != null && Main.getGameManager().getTeam(game, player) != shop.getTeam()) {
@@ -602,7 +603,8 @@ public class GameListener implements Listener {
                 itemStack.setAmount(1);
                 gun.resetDelay(player);
                 event.getItemDrop().setItemStack(ItemBuilder.create(itemStack.getType(), 1, gun.getItem().getData(),
-                        itemStack.getItemMeta().getDisplayName()));
+                        itemStack.getItemMeta().getDisplayName(),
+                        itemStack.getItemMeta().getLore().toArray(new String[0])));
                 player.getInventory().setItem(heldItemSlot, null);
                 if(gun.hasScope()) {
                     NmsUtils.sendFakeItem(player, 5, player.getInventory().getHelmet());
@@ -705,6 +707,11 @@ public class GameListener implements Listener {
 
     }
 
+    @EventHandler
+    public void onWeatherChange(WeatherChangeEvent event) {
+        event.setCancelled(true);
+    }
+
     private boolean snowballHeadshot(Player damaged, Snowball snowball) {
         Location start = snowball.getLocation();
         Location location = start.clone();
@@ -726,9 +733,10 @@ public class GameListener implements Listener {
     }
 
     private boolean hitHead(Player player, Location location) {
-        return Utils.offset2d(location.toVector(), player.getLocation().toVector()) < 0.25 &&
-                location.getY() >= player.getEyeLocation().getY() - 0.1 &&
-                location.getY() < player.getEyeLocation().getY() + 0.1;
+        return Utils.offset2d(location.toVector(), player.getLocation().toVector()) < 0.4 &&
+                location.getY() >= player.getEyeLocation().getY() - 0.0 &&
+                location.getY() < player.getEyeLocation().getY() + 0.4;
     }
+
 
 }
