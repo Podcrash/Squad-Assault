@@ -306,7 +306,7 @@ public class GameListener implements Listener {
         if(event.getClickedInventory().getName().equals("Shop")) {
             for(PlayerShopItem shop : Main.getShopManager().getShops()) {
                 if(event.getSlot() == shop.getShopSlot() && (shop.getTeam() == null || Main.getGameManager().getTeam(game, player) == shop.getTeam())) {
-                    if(shop.getPrice() > game.getMoney(player)) {
+                    if(game.getMoney(player) != null && shop.getPrice() > game.getMoney(player)) {
                         player.closeInventory();
                         player.sendMessage("not enough money");
                         break;
@@ -735,7 +735,7 @@ public class GameListener implements Listener {
     private boolean hitHead(Player player, Location location) {
         return Utils.offset2d(location.toVector(), player.getLocation().toVector()) < 0.4 &&
                 location.getY() >= player.getEyeLocation().getY() - 0.0 &&
-                location.getY() < player.getEyeLocation().getY() + 0.4;
+                location.getY() < player.getEyeLocation().getY() + 0.42;
     }
 
 

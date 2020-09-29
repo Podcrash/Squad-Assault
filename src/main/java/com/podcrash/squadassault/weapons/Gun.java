@@ -257,13 +257,22 @@ public class Gun {
                         player.getItemInHand().setDurability((short)(entry.getValue().getLeft() / entry.getValue().getDuration() * player.getItemInHand().getType().getMaxDurability()));
                         if(entry.getValue().getLeft() <= 0) {
                             iterator.remove();
+                            /*
+                            Get ammo left in gun then deduct from mag size
+                            If there isn't enough in reserves then just give whats left
+                             */
+//                            int oldAmount = player.getItemInHand().getAmount();
+//                            int newAmount =
+//                                    Utils.getReserveAmmo(player.getItemInHand()) >= magSize || Utils.getReserveAmmo(player.getItemInHand()) >= magSize - oldAmount ?
+//                                            magSize :
+//                                            Utils.getReserveAmmo(player.getItemInHand()) + oldAmount;
+//                            Utils.setReserveAmmo(player.getItemInHand(),
+//                                    Utils.getReserveAmmo(player.getItemInHand()) - newAmount);
                             int oldAmount = entry.getValue().getOldAmount();
-                            int newAmount =
-                                    Utils.getReserveAmmo(player.getItemInHand()) >= magSize || Utils.getReserveAmmo(player.getItemInHand()) >= magSize - oldAmount ?
-                                            magSize :
-                                            Utils.getReserveAmmo(player.getItemInHand()) + oldAmount;
-                            Utils.setReserveAmmo(player.getItemInHand(),
-                                    Utils.getReserveAmmo(player.getItemInHand()) - newAmount);
+                            int needed = magSize - oldAmount;
+                            int newAmount = Math.min(needed, Utils.getReserveAmmo(player.getItemInHand()));
+                            int left = Utils.getReserveAmmo(player.getItemInHand()) - newAmount;
+                            Utils.setReserveAmmo(player.getItemInHand(), left);
                             NmsUtils.sendActionBar(player, newAmount + " / " + Utils.getReserveAmmo(player.getItemInHand()));
                             player.getItemInHand().setAmount(newAmount);
                             player.getItemInHand().setDurability((short) 0);
@@ -533,12 +542,14 @@ public class Gun {
         }
     }
 
+    //TODO fix nbt tag not initially existing and
+
     private double projectileSpray(Player player, boolean isMoving, GunCache cache) {
         double cone = cache.getCone();
         if(!player.isOnGround()) {
-            cone += 0.12;
+            cone += 0.08;
         } else if(player.isSprinting()) {
-            cone += 0.06;
+            cone += 0.02;
         } else if(player.isSneaking()) {
             cone *= 0.8;
         }

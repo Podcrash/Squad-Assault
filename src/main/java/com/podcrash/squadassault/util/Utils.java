@@ -1,7 +1,7 @@
 package com.podcrash.squadassault.util;
 
-import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SATeam;
+import com.podcrash.squadassault.nms.NmsUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -11,7 +11,6 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 
 
 public final class Utils {
@@ -70,25 +69,35 @@ public final class Utils {
     }
 
     public static int getReserveAmmo(ItemStack stack) {
-        ItemMeta meta = stack.getItemMeta();
-        if(meta == null || meta.getLore() == null) {
-            return -1;
-        }
-        List<String> lore = meta.getLore();
-        String line = lore.get(0);
-        if(line.contains("Reserve Ammo: ")) {
-            try {
-                return Integer.parseInt(line.substring(line.indexOf(": ")+2));
-            } catch (NumberFormatException e) {
-                Main.getInstance().getLogger().log(Level.SEVERE, "invalid item meta " + line + " belonging to " + stack.getType());
-                return -1;
-            }
-        } else {
-            return -1;
-        }
+        return NmsUtils.getNBTInteger(stack, "reserve");
     }
 
+
+    //    public static int getReserveAmmo(ItemStack stack) {
+//        ItemMeta meta = stack.getItemMeta();
+//        if(meta == null || meta.getLore() == null) {
+//            return -1;
+//        }
+//        List<String> lore = meta.getLore();
+//        String line = lore.get(0);
+//        if(line.contains("Reserve Ammo: ")) {
+//            try {
+//                return Integer.parseInt(line.substring(line.indexOf(": ")+2));
+//            } catch (NumberFormatException e) {
+//                Main.getInstance().getLogger().log(Level.SEVERE, "invalid item meta " + line + " belonging to " + stack.getType());
+//                return -1;
+//            }
+//        } else {
+//            return -1;
+//        }
+//    }
+
     public static void setReserveAmmo(ItemStack stack, int ammo) {
+        NmsUtils.addNBTInteger(stack, "reserve", ammo);
+        setReserveAmmoLore(stack, ammo);
+    }
+
+    public static void setReserveAmmoLore(ItemStack stack, int ammo) {
         ItemMeta meta = stack.getItemMeta();
         if(meta != null) {
             if(meta.getLore() == null) {
@@ -99,5 +108,4 @@ public final class Utils {
             stack.setItemMeta(meta);
         }
     }
-
 }

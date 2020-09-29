@@ -14,7 +14,7 @@ Guns:
       Scope: FALSE
       Damage: 5.8
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 4    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.0390243  #NEEDS WORK
       ArmorPen: 0.47
@@ -23,10 +23,10 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.25
+      ProjectileConeMax: 0.2
       ProjectileConeMin: 0.00
-      ProjectileConeIncrease: 0.021
-      Reset: 0.1
+      ProjectileConeIncrease: 0.05
+      Reset: 0.05
     Reload:
       Duration: 44
       Amount: 20
@@ -45,7 +45,7 @@ Guns:
       Scope: FALSE
       Damage: 6.8 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 5    #check math on this (5.88333 shot per sec divide by 20)
+      Delay: 4    #check math on this (5.88333 shot per sec divide by 20)
       BulletsPerShot: 1
       DropoffPerBlock: 0.0341463  #NEEDS WORK
       ArmorPen: 0.51
@@ -54,10 +54,10 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.22
+      ProjectileConeMax: 0.15
       ProjectileConeMin: 0.00
       ProjectileConeIncrease: 0.015
-      Reset: 0.1
+      Reset: 0.05
     Reload:
       Duration: 44
       Amount: 12
@@ -76,7 +76,7 @@ Guns:
       Scope: FALSE
       Damage: 7.4 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 5    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.039024  #NEEDS WORK
       ArmorPen: 0.64
@@ -88,7 +88,7 @@ Guns:
       ProjectileConeMax: 0.2
       ProjectileConeMin: 0.00
       ProjectileConeIncrease: 0.02
-      Reset: 0.03
+      Reset: 0.015
     Reload:
       Duration: 44
       Amount: 13
@@ -116,10 +116,10 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.35
+      ProjectileConeMax: 0.225
       ProjectileConeMin: 0.01
       ProjectileConeIncrease: 0.04
-      Reset: 0.05
+      Reset: 0.01
     Reload:
       Duration: 44
       Amount: 20
@@ -138,7 +138,7 @@ Guns:
       Scope: FALSE
       Damage: 6.2 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 4   #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3   #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.07317  #NEEDS WORK
       ArmorPen: 0.90
@@ -147,10 +147,10 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.35
+      ProjectileConeMax: 0.25
       ProjectileConeMin: 0.01
       ProjectileConeIncrease: 0.04
-      Reset: 0.05
+      Reset: 0.01
     Reload:
       Duration: 50
       Amount: 18
@@ -169,7 +169,7 @@ Guns:
       Scope: FALSE
       Damage: 6.4 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 2    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 1    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.053658  #NEEDS WORK
       ArmorPen: 0.78
@@ -178,9 +178,9 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.35
-      ProjectileConeMin: 0.02
-      ProjectileConeIncrease: 0.08
+      ProjectileConeMax: 0.3
+      ProjectileConeMin: 0.01
+      ProjectileConeIncrease: 0.07
       Reset: 0.08
     Reload:
       Duration: 56
@@ -200,7 +200,7 @@ Guns:
       Scope: FALSE
       Damage: 12.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 7    #check math on this
+      Delay: 6    #check math on this
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.121951  #should be right, might tweak
       ArmorPen: 0.93
@@ -209,9 +209,9 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.35
-      ProjectileConeMin: 0.02
-      ProjectileConeIncrease: 0.1
+      ProjectileConeMax: 0.3
+      ProjectileConeMin: 0.01
+      ProjectileConeIncrease: 0.065
       Reset: 0.0075
     Reload:
       Duration: 44

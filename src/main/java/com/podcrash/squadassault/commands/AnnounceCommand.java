@@ -13,7 +13,7 @@ public class AnnounceCommand implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         StringBuilder builder = new StringBuilder();
         for(String string : strings) {
-            builder.append(string);
+            builder.append(string).append(" ");
         }
         Bukkit.broadcastMessage(builder.toString());
         return true;
