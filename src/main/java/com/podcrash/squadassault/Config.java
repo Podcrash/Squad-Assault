@@ -67,7 +67,7 @@ public class Config {
     private void loadShop() {
         WeaponManager manager = Main.getWeaponManager();
         for(String gun : shop.getConfigurationSection("ShopGuns").getKeys(false)) {
-            if(manager.getGun(gun) == null) {
+            if(manager.getGun(shop.getString("ShopGuns."+gun+".ItemName")) == null) {
                 log(gun + " in shop.yml doesn't exist in guns.yml");
                 continue;
             }
@@ -76,7 +76,8 @@ public class Config {
             String name = shop.getString("ShopGuns."+gun+".ItemName");
             String lore = shop.getString("ShopGuns."+gun+".ItemLore");
             int slot = shop.getInt("ShopGuns."+gun+".Slot");
-            Main.getShopManager().addShop(new PlayerShopItem(gun, name, slot, price, lore, side));
+            Main.getShopManager().addShop(new PlayerShopItem(shop.getString("ShopGuns."+gun+".ItemName"), name, slot,
+                    price, lore, side));
         }
         for(String grenade : shop.getConfigurationSection("ShopGrenades").getKeys(false)) {
             if(manager.getGrenade(grenade) == null) {
@@ -136,7 +137,7 @@ public class Config {
 
     private void loadGuns() {
         for(String gun : guns.getConfigurationSection("Guns").getKeys(false)) {
-            Gun gunObj = new Gun(gun, new Item(Material.valueOf(guns.getString("Guns."+gun+".ItemInfo.Type")),
+            Gun gunObj = new Gun(guns.getString("Guns."+gun+".ItemInfo.Name"), new Item(Material.valueOf(guns.getString("Guns."+gun+".ItemInfo.Type")),
                     (byte)guns.getInt("Guns."+gun+".ItemInfo.Data"),guns.getString("Guns."+gun+".ItemInfo.Name")),
                     GunHotbarType.valueOf(guns.getString("Guns."+gun+".ItemInfo.HotbarType")),
                     guns.getBoolean("Guns."+gun+".Shoot.Projectile"), guns.getString("Guns."+gun+".Shoot.Sound"),
@@ -145,7 +146,7 @@ public class Config {
             gunObj.setBulletsPerYaw(guns.getInt("Guns." + gun + ".Burst.BulletsPerYaw"));
             gunObj.setDelayBullets(guns.getInt("Guns." + gun + ".Burst.DelayBullets"));
             gunObj.setBulletsPerBurst(guns.getInt("Guns." + gun + ".Burst.BulletsPerBurst"));
-            gunObj.setDropoffPerBlock(guns.getInt("Guns." + gun + ".Shoot.DropoffPerBlock"));
+            gunObj.setDropoffPerBlock(guns.getDouble("Guns." + gun + ".Shoot.DropoffPerBlock"));
             gunObj.setAccuracy((float)guns.getDouble("Guns." + gun + ".Shoot.Accuracy"));
             gunObj.setScope(guns.getBoolean("Guns." + gun + ".Shoot.Scope"));
             gunObj.setDamage(guns.getDouble("Guns." + gun + ".Shoot.Damage"));
@@ -159,6 +160,7 @@ public class Config {
             gunObj.setConeIncPerBullet(guns.getDouble("Guns."+gun+".Burst.ProjectileConeIncrease"));
             gunObj.setProjectileConeMin(guns.getDouble("Guns."+gun+".Burst.ProjectileConeMin"));
             gunObj.setProjectileConeMax(guns.getDouble("Guns."+gun+".Burst.ProjectileConeMax"));
+            gunObj.setResetPerTick(guns.getDouble("Guns."+gun+".Burst.Reset"));
             Main.getWeaponManager().addGun(gunObj);
         }
     }

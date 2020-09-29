@@ -40,6 +40,15 @@ public final class ItemBuilder {
         return itemStack;
     }
 
+    public static ItemStack create(Material material, int n, byte b, String name, String... lore) {
+        ItemStack itemStack = new ItemStack(material, n, b);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(name);
+        itemMeta.setLore(Arrays.asList(lore));
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
     public static ItemStack createItem(Material material, Color color, String s) {
         ItemStack itemStack = new ItemStack(material);
         LeatherArmorMeta itemMeta = (LeatherArmorMeta)itemStack.getItemMeta();
