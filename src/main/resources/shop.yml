@@ -1,26 +1,43 @@
 ShopGuns:
-  ExampleHitscan:
-    Slot: 3
-    ItemName: 'Example Hitscan'
-    ItemLore: 'Reserve Ammo: 100'
-    Price: 400
-  USP-S:
+  P2000:
     Slot: 2
-    ItemName: 'USP-S'
-    ItemLore: 'Reserve Ammo: 60'
+    ItemName: 'P2000'
+    ItemLore: 'Reserve Ammo: 52'
     Price: 200
     Side: ALPHA
-  ExampleProjectile:
-    Slot: 4
-    ItemName: 'Example Projectile'
-    ItemLore: 'Reserve Ammo: 100'
-    Price: 400
   Glock-18:
-    Slot: 5
+    Slot: 2
     ItemName: 'Glock-18'
-    ItemLore: 'Reserve Ammo: 60'
+    ItemLore: 'Reserve Ammo: 120'
     Price: 200
     Side: OMEGA
+  P250:
+    Slot: 3
+    ItemName: 'P250'
+    ItemLore: 'Reserve Ammo: 26'
+    Price: 300
+  Five-Seven:
+    Slot: 4
+    ItemName: 'Five-Seven'
+    ItemLore: 'Reserve Ammo: 40'
+    Price: 500
+    Side: ALPHA
+  Tec-9:
+    Slot: 4
+    ItemName: 'Tec-9'
+    ItemLore: 'Reserve Ammo: 90'
+    Price: 500
+    Side: OMEGA
+  CZ75-Auto:
+    Slot: 5
+    ItemName: 'CZ75-Auto'
+    ItemLore: 'Reserve Ammo: 12'
+    Price: 500
+  Desert Eagle:
+    Slot: 6
+    ItemName: 'Desert Eagle'
+    ItemLore: 'Reserve Ammo: 35'
+    Price: 700
 ShopGrenades:
   HighExplosive:
     Slot: 19

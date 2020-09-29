@@ -1,65 +1,5 @@
 # this is the default guns.yml file, to be tuned later
 Guns:
-  ExampleHitscan:
-    ItemInfo:
-      Type: GOLD_HOE
-      Data: 0
-      Name: 'Example Hitscan'
-      HotbarType: PRIMARY
-      IsShotgun: FALSE
-      KillReward: 300
-    Shoot:
-      Projectile: FALSE
-      Sound: 'squadassault.shootxd'
-      Scope: TRUE
-      Damage: 5.0
-      Accuracy: 0.2
-      DropoffPerBlock: 0.08
-      Delay: 5
-      BulletsPerShot: 1
-      ArmorPen: 0.85
-    Burst:
-      BulletsPerPitch: 7
-      BulletsPerYaw: 0
-      DelayBullets: 2
-      BulletsPerBurst: 1
-    Reload:
-      Duration: 20
-      Amount: 10
-      TotalAmount: 60
-      ProjectileConeMax: 0.0
-      ProjectileConeMin: 0.0
-      ProjectileConeIncrease: 0.0
-  ExampleProjectile:
-    ItemInfo:
-      Type: GOLD_SWORD
-      Data: 0
-      Name: 'Example Projectile'
-      HotbarType: PRIMARY
-      IsShotgun: FALSE
-      KillReward: 300
-    Shoot:
-      Projectile: TRUE
-      Sound: 'squadassault.shootxd'
-      Scope: FALSE
-      Damage: 5.0
-      Accuracy: 0.2
-      Delay: 5
-      DropoffPerBlock: 0.08
-      BulletsPerShot: 1
-      ArmorPen: 0.85
-    Burst:
-      BulletsPerPitch: 7
-      BulletsPerYaw: 0
-      DelayBullets: 2
-      BulletsPerBurst: 1
-    Reload:
-      Duration: 20
-      Amount: 10
-      TotalAmount: 60
-      ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.02
-      ProjectileConeIncrease: 0.1
   Glock-18: #these are not accurate stats
     ItemInfo:
       Type: STONE_HOE
@@ -72,29 +12,29 @@ Guns:
       Projectile: TRUE
       Sound: 'squadassault.shootxd'
       Scope: FALSE
-      Damage: 5.0
-      Accuracy: 0.2
-      Delay: 8
-      BulletsPerShot: 1
-      DropoffPerBlock: 0.08
-      ArmorPen: 0.85
-    Burst:
+      Damage: 5.8
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.0390243  #NEEDS WORK
+      ArmorPen: 0.47
+    Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-    Reload:
-      Duration: 20
-      Amount: 10
-      TotalAmount: 60
       ProjectileConeMax: 0.5
       ProjectileConeMin: 0.02
       ProjectileConeIncrease: 0.1
-  USP-S: #these are not accurate stats
+    Reload:
+      Duration: 44
+      Amount: 20
+      TotalAmount: 120
+  P2000: #these are not accurate stats
     ItemInfo:
       Type: WOOD_HOE
       Data: 0
-      Name: 'USP-S'
+      Name: 'P2000'
       HotbarType: SECONDARY
       IsShotgun: FALSE
       KillReward: 300
@@ -102,13 +42,193 @@ Guns:
       Projectile: TRUE
       Sound: 'squadassault.shootxd'
       Scope: FALSE
-      Damage: 5.0
-      Accuracy: 0.2
-      Delay: 8
+      Damage: 6.8 #DO THIS
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (5.88333 shot per sec divide by 20)
       BulletsPerShot: 1
-      DropoffPerBlock: 0.08
-      ArmorPen: 0.85
-    Burst:
+      DropoffPerBlock: 0.0341463  #NEEDS WORK
+      ArmorPen: 0.51
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.5
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.1
+    Reload:
+      Duration: 44
+      Amount: 12
+      TotalAmount: 52
+  P250: #these are not accurate stats
+    ItemInfo:
+      Type: DIAMOND_HOE
+      Data: 0
+      Name: 'P250'
+      HotbarType: SECONDARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'squadassault.shootxd'
+      Scope: FALSE
+      Damage: 7.4 #DO THIS
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.039024  #NEEDS WORK
+      ArmorPen: 0.64
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.5
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.1
+    Reload:
+      Duration: 44
+      Amount: 13
+      TotalAmount: 26
+  Five-Seven: #needs to be nerfed.  Maybe increase recoil similar to deagle
+    ItemInfo:
+      Type: DIAMOND_SHOVEL
+      Data: 0
+      Name: 'Five-Seven'
+      HotbarType: SECONDARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'squadassault.shootxd'
+      Scope: FALSE
+      Damage: 6.2
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.08  #NEEDS WORK
+      ArmorPen: 0.91
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.5
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.1
+    Reload:
+      Duration: 44
+      Amount: 20
+      TotalAmount: 40
+  Tec-9: #needs nerf as well, high recoil high dmg dropoff
+    ItemInfo:
+      Type: IRON_SHOVEL
+      Data: 0
+      Name: 'Tec-9'
+      HotbarType: SECONDARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'squadassault.shootxd'
+      Scope: FALSE
+      Damage: 5.0 #DO THIS
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3   #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.08  #NEEDS WORK
+      ArmorPen: 0.90
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.5
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.1
+    Reload:
+      Duration: 50
+      Amount: 18
+      TotalAmount: 90
+  CZ75-Auto: #these are not accurate stats
+    ItemInfo:
+      Type: IRON_HOE
+      Data: 0
+      Name: 'CZ75-Auto'
+      HotbarType: SECONDARY
+      IsShotgun: FALSE
+      KillReward: 100
+    Shoot:
+      Projectile: TRUE
+      Sound: 'squadassault.shootxd'
+      Scope: FALSE
+      Damage: 5.0 #DO THIS
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.08  #NEEDS WORK
+      ArmorPen: 0.78
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.5
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.1
+    Reload:
+      Duration: 56
+      Amount: 12
+      TotalAmount: 12
+  Desert_Eagle: #these are not accurate stats
+    ItemInfo:
+      Type: GOLD_HOE
+      Data: 0
+      Name: 'Desert Eagle'
+      HotbarType: SECONDARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'squadassault.shootxd'
+      Scope: FALSE
+      Damage: 12.0
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 5    #check math on this
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.121951  #should be right, might tweak
+      ArmorPen: 0.93
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.5
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.1
+    Reload:
+      Duration: 44
+      Amount: 7
+      TotalAmount: 35
+  MAC-10: #these are not accurate stats
+    ItemInfo:
+      Type: xxxxxx
+      Data: 0
+      Name: 'MAC-10'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 600
+    Shoot:
+      Projectile: TRUE
+      Sound: 'squadassault.shootxd'
+      Scope: FALSE
+      Damage: 5.0 #DO THIS
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.08  #NEEDS WORK
+      ArmorPen: 0.47
+    Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
       DelayBullets: 2

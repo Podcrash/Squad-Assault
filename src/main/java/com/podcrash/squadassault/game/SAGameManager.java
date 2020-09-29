@@ -345,7 +345,7 @@ public class SAGameManager {
         player.setFallDistance(0.0f);
         player.setAllowFlight(false);
         player.getInventory().clear();
-        player.setGameMode(GameMode.SURVIVAL);
+        player.setGameMode(GameMode.ADVENTURE);
         player.getInventory().setArmorContents(null);
         if (player.isInsideVehicle()) {
             player.leaveVehicle();
@@ -380,13 +380,13 @@ public class SAGameManager {
                 player.getInventory().setItem(4, null);
                 player.getInventory().setItem(5, null);
                 player.getInventory().setItem(6, null);
-                Gun gun = Main.getWeaponManager().getGun("USP-S");
+                Gun gun = Main.getWeaponManager().getGun("P2000");
                 player.getInventory().setItem(1, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                         gun.getItem().getData(), gun.getItem().getName()));
                 player.getInventory().setItem(2, ItemBuilder.create(Material.WOOD_SWORD, 1, "Knife", true));
             }
             if(player.getInventory().getItem(1) == null) {
-                Gun gun = Main.getWeaponManager().getGun("USP-S");
+                Gun gun = Main.getWeaponManager().getGun("P2000");
                 player.getInventory().setItem(1, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                         gun.getItem().getData(), gun.getItem().getName()));
             }
