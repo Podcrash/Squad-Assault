@@ -86,4 +86,20 @@ public final class NmsUtils {
         return new PhysicsItem(((CraftPlayer)player).getHandle(), CraftItemStack.asNMSCopy(stack), power);
     }
 
+    public static ItemStack addNBTInteger(ItemStack stack, String key, int value) {
+        net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
+        NBTTagCompound compound = nmsStack.hasTag() ? nmsStack.getTag() : new NBTTagCompound();
+        compound.setInt(key, value);
+        nmsStack.setTag(compound);
+        return CraftItemStack.asBukkitCopy(nmsStack);
+    }
+
+    public static int getNBTInteger(ItemStack stack, String key) {
+        net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
+        NBTTagCompound compound = nmsStack.hasTag() ? nmsStack.getTag() : new NBTTagCompound();
+        if (compound.hasKey(key))
+            throw new NullPointerException("NBT compound key does not exist");
+        return compound.getInt(key);
+    }
+
 }
