@@ -39,6 +39,9 @@ commands:
   joingame:
     description: joins a game
     usage: /joingame <id>
+  stopgame:
+    description: stops all games
+    usage: /stopgame
 permissions:
   squadassault.admin:
     description: permission to use admin gamesetup/enable/disable/reload commands

@@ -14,7 +14,7 @@ ShopGuns:
   P250:
     Slot: 3
     ItemName: 'P250'
-    ItemLore: 'Reserve Ammo: 26'
+    ItemLore: 'Reserve Ammo: 52'
     Price: 300
   Five-Seven:
     Slot: 4
@@ -33,7 +33,7 @@ ShopGuns:
     ItemName: 'CZ75-Auto'
     ItemLore: 'Reserve Ammo: 12'
     Price: 500
-  Desert Eagle:
+  Desert_Eagle:
     Slot: 6
     ItemName: 'Desert Eagle'
     ItemLore: 'Reserve Ammo: 35'
@@ -99,7 +99,7 @@ ShopItems:
     ItemLore: 'buy me'
   OmegaHelmet:
     Slot: 35
-    Price: 300
+    Price: 350
     SlotPlace: 39
     Side: OMEGA
     Material: CHAINMAIL_HELMET

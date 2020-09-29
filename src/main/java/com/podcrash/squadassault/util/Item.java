@@ -26,7 +26,8 @@ public class Item {
     }
 
     public boolean equals(ItemStack itemStack) {
-        return itemStack != null && itemStack.getItemMeta() != null && itemStack.getType() == material && itemStack.getItemMeta().getDisplayName().contains(name);
+        return itemStack != null && itemStack.getItemMeta() != null && itemStack.getItemMeta().getDisplayName() != null && name != null && material != null &&
+                itemStack.getType() == material && itemStack.getItemMeta().getDisplayName().contains(name);
     }
 
     public Material getType() {

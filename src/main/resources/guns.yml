@@ -24,8 +24,9 @@ Guns:
       DelayBullets: 2
       BulletsPerBurst: 1
       ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.02
+      ProjectileConeMin: 0.0
       ProjectileConeIncrease: 0.1
+      Reset: 0.02
     Reload:
       Duration: 44
       Amount: 20
@@ -54,8 +55,9 @@ Guns:
       DelayBullets: 2
       BulletsPerBurst: 1
       ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.02
+      ProjectileConeMin: 0.0
       ProjectileConeIncrease: 0.1
+      Reset: 0.02
     Reload:
       Duration: 44
       Amount: 12
@@ -84,15 +86,16 @@ Guns:
       DelayBullets: 2
       BulletsPerBurst: 1
       ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.02
+      ProjectileConeMin: 0.0
       ProjectileConeIncrease: 0.1
+      Reset: 0.02
     Reload:
       Duration: 44
       Amount: 13
-      TotalAmount: 26
+      TotalAmount: 52
   Five-Seven: #needs to be nerfed.  Maybe increase recoil similar to deagle
     ItemInfo:
-      Type: DIAMOND_SHOVEL
+      Type: DIAMOND_SPADE
       Data: 0
       Name: 'Five-Seven'
       HotbarType: SECONDARY
@@ -114,15 +117,16 @@ Guns:
       DelayBullets: 2
       BulletsPerBurst: 1
       ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.02
+      ProjectileConeMin: 0.0
       ProjectileConeIncrease: 0.1
+      Reset: 0.02
     Reload:
       Duration: 44
       Amount: 20
       TotalAmount: 40
   Tec-9: #needs nerf as well, high recoil high dmg dropoff
     ItemInfo:
-      Type: IRON_SHOVEL
+      Type: IRON_SPADE
       Data: 0
       Name: 'Tec-9'
       HotbarType: SECONDARY
@@ -144,8 +148,9 @@ Guns:
       DelayBullets: 2
       BulletsPerBurst: 1
       ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.02
+      ProjectileConeMin: 0.0
       ProjectileConeIncrease: 0.1
+      Reset: 0.02
     Reload:
       Duration: 50
       Amount: 18
@@ -174,8 +179,9 @@ Guns:
       DelayBullets: 2
       BulletsPerBurst: 1
       ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.02
+      ProjectileConeMin: 0.0
       ProjectileConeIncrease: 0.1
+      Reset: 0.02
     Reload:
       Duration: 56
       Amount: 12
@@ -204,39 +210,10 @@ Guns:
       DelayBullets: 2
       BulletsPerBurst: 1
       ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.02
+      ProjectileConeMin: 0.0
       ProjectileConeIncrease: 0.1
+      Reset: 0.02
     Reload:
       Duration: 44
       Amount: 7
       TotalAmount: 35
-  MAC-10: #these are not accurate stats
-    ItemInfo:
-      Type: xxxxxx
-      Data: 0
-      Name: 'MAC-10'
-      HotbarType: PRIMARY
-      IsShotgun: FALSE
-      KillReward: 600
-    Shoot:
-      Projectile: TRUE
-      Sound: 'squadassault.shootxd'
-      Scope: FALSE
-      Damage: 5.0 #DO THIS
-      Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
-      BulletsPerShot: 1 #DOUBLE CHECK THIS
-      DropoffPerBlock: 0.08  #NEEDS WORK
-      ArmorPen: 0.47
-    Burst:  #DONT DO ANY OF THIS
-      BulletsPerPitch: 7
-      BulletsPerYaw: 0
-      DelayBullets: 2
-      BulletsPerBurst: 1
-      ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.02
-      ProjectileConeIncrease: 0.1
-    Reload:
-      Duration: 20
-      Amount: 10
-      TotalAmount: 60
