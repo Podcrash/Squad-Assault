@@ -7,6 +7,7 @@ import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.SAGameManager;
 import com.podcrash.squadassault.shop.ShopManager;
 import com.podcrash.squadassault.weapons.WeaponManager;
+import me.dpohvar.powernbt.api.NBTManager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.HandlerList;
@@ -20,6 +21,7 @@ public class Main extends JavaPlugin {
     private static WeaponManager weaponManager;
     private static ShopManager shopManager;
     private static GameListener listener;
+    private static NBTManager nbtManager;
     private static GameTask task;
 
     public static Main getInstance() {
@@ -94,5 +96,6 @@ public class Main extends JavaPlugin {
         getCommand("joingame").setExecutor(new JoinGameCommand());
         getCommand("stopgame").setExecutor(new StopGame());
         getCommand("listgames").setExecutor(new ListGamesCommand());
+        getCommand("announce").setExecutor(new AnnounceCommand());
     }
 }

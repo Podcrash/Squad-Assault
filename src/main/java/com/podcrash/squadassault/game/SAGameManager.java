@@ -8,6 +8,7 @@ import com.podcrash.squadassault.scoreboard.ScoreboardStatus;
 import com.podcrash.squadassault.util.ItemBuilder;
 import com.podcrash.squadassault.util.Message;
 import com.podcrash.squadassault.util.Randomizer;
+import com.podcrash.squadassault.util.Utils;
 import com.podcrash.squadassault.weapons.Grenade;
 import com.podcrash.squadassault.weapons.Gun;
 import org.bukkit.Bukkit;
@@ -174,6 +175,9 @@ public class SAGameManager {
 
     public void updateStatus(SAGame game, ScoreboardStatus status) {
         Player player = status.getPlayer();
+        if(player == null) {
+            return;
+        }
         if(game.getState() == SAGameState.WAITING || game.isGameEnding()) {
             status.updateLine(7, "");
             status.updateLine(6, game.getMapName());
@@ -220,7 +224,9 @@ public class SAGameManager {
             }
             status.updateLine(11,"");
             status.updateLine(10, "");
-            status.updateLine(9, "Money: $" + game.getMoney(player));
+            if(game.getMoney(player) != null) {
+                status.updateLine(9, "Money: $" + game.getMoney(player));
+            }
             ItemStack helmet = player.getInventory().getHelmet();
             ItemStack chest = player.getInventory().getChestplate();
             status.updateLine(8,
@@ -383,14 +389,18 @@ public class SAGameManager {
                 player.getInventory().setItem(5, null);
                 player.getInventory().setItem(6, null);
                 Gun gun = Main.getWeaponManager().getGun("P2000");
-                player.getInventory().setItem(1, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
-                        gun.getItem().getData(), gun.getItem().getName()));
+                ItemStack stack =  ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
+                        gun.getItem().getData(), gun.getItem().getName());
+                stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                player.getInventory().setItem(1, stack);
                 player.getInventory().setItem(2, ItemBuilder.create(Material.WOOD_SWORD, 1, "Knife", true));
             }
             if(player.getInventory().getItem(1) == null) {
                 Gun gun = Main.getWeaponManager().getGun("P2000");
-                player.getInventory().setItem(1, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
-                        gun.getItem().getData(), gun.getItem().getName()));
+                ItemStack stack =  ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
+                        gun.getItem().getData(), gun.getItem().getName());
+                stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                player.getInventory().setItem(1, stack);
             }
 
             if(player.getInventory().getItem(2) == null) {
@@ -459,14 +469,18 @@ public class SAGameManager {
                 player.getInventory().setItem(6, null);
                 player.getInventory().setItem(7, ItemBuilder.create(Material.GOLD_NUGGET, 1, "Wire Cutters", true));
                 Gun gun = Main.getWeaponManager().getGun("Glock-18");
-                player.getInventory().setItem(1, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
-                        gun.getItem().getData(), gun.getItem().getName()));
+                ItemStack stack = ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
+                        gun.getItem().getData(), gun.getItem().getName());
+                stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                player.getInventory().setItem(1, stack);
                 player.getInventory().setItem(2, ItemBuilder.create(Material.WOOD_SWORD, 1, "Knife", true));
             }
             if(player.getInventory().getItem(1) == null) {
                 Gun gun = Main.getWeaponManager().getGun("Glock-18");
-                player.getInventory().setItem(1, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
-                        gun.getItem().getData(), gun.getItem().getName()));
+                ItemStack stack = ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
+                        gun.getItem().getData(), gun.getItem().getName());
+                stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                player.getInventory().setItem(1, stack);
             }
             if(player.getInventory().getItem(2) == null) {
                 player.getInventory().setItem(2, ItemBuilder.create(Material.WOOD_SWORD, 1, "Knife", true));
@@ -532,13 +546,12 @@ public class SAGameManager {
         if(damager != null && !assists.get(damaged).contains(damager)) {
             assists.get(damaged).add(damager);
         }
-        if(damaged.getHealth() <= damage) { //they die
+        if(damage >= damaged.getHealth()) { //they die
             if(damager != null) {
                 if(game.getStats().get(damager.getUniqueId()) == null) {
                     game.getStats().put(damager.getUniqueId(), new PlayerStats(damager.getName()));
                 }
-                game.getStats().get(damager.getUniqueId()).addDamage((int) damaged.getHealth());
-                //todo normalize to 100 health
+                game.getStats().get(damager.getUniqueId()).addDamage(damaged.getHealth());
             }
             damaged.setHealth(5); //do this so they experience the hit effect
             damaged.damage(4);
@@ -614,7 +627,7 @@ public class SAGameManager {
             } else {
                 game.sendToAll(damaged.getDisplayName() + " died to " + cause + listStringAssists(assists.getOrDefault(damaged, new ArrayList<>()), null));
             }
-            for(Player assisted : assists.get(damaged)) {
+            for(Player assisted : assists.getOrDefault(damaged, new ArrayList<>())) {
                 if (assisted != damager) {
                     game.getStats().get(assisted.getUniqueId()).addAssists(1);
                 }
@@ -635,7 +648,7 @@ public class SAGameManager {
             if(game.getStats().get(damager.getUniqueId()) == null) {
                 game.getStats().put(damager.getUniqueId(), new PlayerStats(damager.getName()));
             }
-            game.getStats().get(damager.getUniqueId()).addDamage((int) damage);
+            game.getStats().get(damager.getUniqueId()).addDamage(damage);
         }
         damaged.setHealth(damaged.getHealth() - damage);
         for (Player player : game.getTeamA().getPlayers()) {

@@ -38,6 +38,11 @@ ShopGuns:
     ItemName: 'Desert Eagle'
     ItemLore: 'Reserve Ammo: 35'
     Price: 700
+  Test1:
+    Slot: 7
+    ItemName: 'Test1'
+    ItemLore: 'Reserve Ammo: 90'
+    Price: 200
 ShopGrenades:
   HighExplosive:
     Slot: 19

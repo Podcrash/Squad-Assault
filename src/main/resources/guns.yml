@@ -23,10 +23,10 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.0
-      ProjectileConeIncrease: 0.1
-      Reset: 0.02
+      ProjectileConeMax: 0.2
+      ProjectileConeMin: 0.00
+      ProjectileConeIncrease: 0.05
+      Reset: 0.05
     Reload:
       Duration: 44
       Amount: 20
@@ -45,7 +45,7 @@ Guns:
       Scope: FALSE
       Damage: 6.8 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (5.88333 shot per sec divide by 20)
+      Delay: 4    #check math on this (5.88333 shot per sec divide by 20)
       BulletsPerShot: 1
       DropoffPerBlock: 0.0341463  #NEEDS WORK
       ArmorPen: 0.51
@@ -54,10 +54,10 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.0
-      ProjectileConeIncrease: 0.1
-      Reset: 0.02
+      ProjectileConeMax: 0.15
+      ProjectileConeMin: 0.00
+      ProjectileConeIncrease: 0.015
+      Reset: 0.05
     Reload:
       Duration: 44
       Amount: 12
@@ -85,14 +85,14 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.0
-      ProjectileConeIncrease: 0.1
-      Reset: 0.02
+      ProjectileConeMax: 0.2
+      ProjectileConeMin: 0.00
+      ProjectileConeIncrease: 0.02
+      Reset: 0.015
     Reload:
       Duration: 44
       Amount: 13
-      TotalAmount: 52
+      TotalAmount: 39
   Five-Seven: #needs to be nerfed.  Maybe increase recoil similar to deagle
     ItemInfo:
       Type: DIAMOND_SPADE
@@ -107,19 +107,19 @@ Guns:
       Scope: FALSE
       Damage: 6.2
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 4    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
-      DropoffPerBlock: 0.08  #NEEDS WORK
+      DropoffPerBlock: 0.07317  #NEEDS WORK
       ArmorPen: 0.91
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.0
-      ProjectileConeIncrease: 0.1
-      Reset: 0.02
+      ProjectileConeMax: 0.225
+      ProjectileConeMin: 0.01
+      ProjectileConeIncrease: 0.04
+      Reset: 0.01
     Reload:
       Duration: 44
       Amount: 20
@@ -136,25 +136,25 @@ Guns:
       Projectile: TRUE
       Sound: 'squadassault.shootxd'
       Scope: FALSE
-      Damage: 5.0 #DO THIS
+      Damage: 6.2 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
       Delay: 3   #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
-      DropoffPerBlock: 0.08  #NEEDS WORK
+      DropoffPerBlock: 0.07317  #NEEDS WORK
       ArmorPen: 0.90
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.0
-      ProjectileConeIncrease: 0.1
-      Reset: 0.02
+      ProjectileConeMax: 0.25
+      ProjectileConeMin: 0.01
+      ProjectileConeIncrease: 0.04
+      Reset: 0.01
     Reload:
       Duration: 50
       Amount: 18
-      TotalAmount: 90
+      TotalAmount: 54
   CZ75-Auto: #these are not accurate stats
     ItemInfo:
       Type: IRON_HOE
@@ -167,21 +167,21 @@ Guns:
       Projectile: TRUE
       Sound: 'squadassault.shootxd'
       Scope: FALSE
-      Damage: 5.0 #DO THIS
+      Damage: 6.4 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 1    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
-      DropoffPerBlock: 0.08  #NEEDS WORK
+      DropoffPerBlock: 0.053658  #NEEDS WORK
       ArmorPen: 0.78
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.0
-      ProjectileConeIncrease: 0.1
-      Reset: 0.02
+      ProjectileConeMax: 0.3
+      ProjectileConeMin: 0.01
+      ProjectileConeIncrease: 0.07
+      Reset: 0.08
     Reload:
       Duration: 56
       Amount: 12
@@ -200,7 +200,7 @@ Guns:
       Scope: FALSE
       Damage: 12.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 5    #check math on this
+      Delay: 6    #check math on this
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.121951  #should be right, might tweak
       ArmorPen: 0.93
@@ -209,11 +209,42 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.5
-      ProjectileConeMin: 0.0
-      ProjectileConeIncrease: 0.1
-      Reset: 0.02
+      ProjectileConeMax: 0.3
+      ProjectileConeMin: 0.01
+      ProjectileConeIncrease: 0.065
+      Reset: 0.0075
     Reload:
       Duration: 44
       Amount: 7
       TotalAmount: 35
+  Test1: #these are not accurate stats
+    ItemInfo:
+      Type: DIAMOND_PICKAXE
+      Data: 0
+      Name: 'Test1'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'squadassault.shootxd'
+      Scope: FALSE
+      Damage: 2 #DO THIS
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 2    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.08  #NEEDS WORK
+      ArmorPen: 0.47
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.3
+      ProjectileConeMin: 0.005
+      ProjectileConeIncrease: 0.02
+      Reset: .05
+    Reload:
+      Duration: 30
+      Amount: 30
+      TotalAmount: 90

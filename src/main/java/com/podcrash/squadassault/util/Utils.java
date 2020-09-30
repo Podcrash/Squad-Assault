@@ -1,6 +1,5 @@
 package com.podcrash.squadassault.util;
 
-import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SATeam;
 import com.podcrash.squadassault.nms.NmsUtils;
 import org.bukkit.Bukkit;
@@ -12,7 +11,6 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 
 
 public final class Utils {
@@ -74,7 +72,8 @@ public final class Utils {
         return NmsUtils.getNBTInteger(stack, "reserve");
     }
 
-//    public static int getReserveAmmo(ItemStack stack) {
+
+    //    public static int getReserveAmmo(ItemStack stack) {
 //        ItemMeta meta = stack.getItemMeta();
 //        if(meta == null || meta.getLore() == null) {
 //            return -1;
@@ -93,20 +92,21 @@ public final class Utils {
 //        }
 //    }
 
-    public static void setReserveAmmo(ItemStack stack, int ammo) {
-        NmsUtils.addNBTInteger(stack, "reserve", ammo);
+    public static ItemStack setReserveAmmo(ItemStack stack, int ammo) {
+        stack = NmsUtils.addNBTInteger(stack, "reserve", ammo);
+        setReserveAmmoLore(stack, ammo);
+        return stack;
     }
 
-//    public static void setReserveAmmo(ItemStack stack, int ammo) {
-//        ItemMeta meta = stack.getItemMeta();
-//        if(meta != null) {
-//            if(meta.getLore() == null) {
-//                meta.setLore(new ArrayList<>(Collections.singletonList("Reserve Ammo: " + ammo)));
-//            } else {
-//                meta.getLore().set(0, "Reserve Ammo: " + ammo);
-//            }
-//            stack.setItemMeta(meta);
-//        }
-//    }
-
+    public static void setReserveAmmoLore(ItemStack stack, int ammo) {
+        ItemMeta meta = stack.getItemMeta();
+        if(meta != null) {
+            if(meta.getLore() == null) {
+                meta.setLore(new ArrayList<>(Collections.singletonList("Reserve Ammo: " + ammo)));
+            } else {
+                meta.getLore().set(0, "Reserve Ammo: " + ammo);
+            }
+            stack.setItemMeta(meta);
+        }
+    }
 }

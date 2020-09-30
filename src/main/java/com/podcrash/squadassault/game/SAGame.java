@@ -61,6 +61,7 @@ public class SAGame {
     private Map<UUID, SAScoreboard> scoreboards;
     private Map<UUID, SATeam> queue;
     private Map<UUID, PlayerStats> stats;
+    private static final Set<Material> transparentBlocks = new HashSet<>(Arrays.asList(Material.AIR, Material.CROPS));
 
     public SAGame(String id, String mapName, Location lobby, int minPlayers, List<Location> alphaSpawns,
                   List<Location> omegaSpawns, Location bombA, Location bombB) {
@@ -187,7 +188,7 @@ public class SAGame {
         this.money.put(player.getUniqueId(), money);
     }
 
-    public int getMoney(Player player) {
+    public Integer getMoney(Player player) {
         return money.get(player.getUniqueId());
     }
 
@@ -320,6 +321,7 @@ public class SAGame {
         scoreTeamB = 0;
         teamA.setTeam(null);
         teamB.setTeam(null);
+        money.clear();
         gameStarted = false;
     }
 
@@ -395,8 +397,7 @@ public class SAGame {
                     iterator.remove();
                     break;
                 }
-                //todo there might be a bug here in regard to still in range but not looking
-                if(player.getLocation().distance(bomb.getLocation()) > 3) {
+                if(player.getTargetBlock(transparentBlocks, 3).getType() != Material.DAYLIGHT_DETECTOR) {
                     NmsUtils.sendTitle(player, 0, 40, 0, "", Message.CANCEL_DEFUSE.toString());
                     iterator.remove();
                     break;
@@ -571,8 +572,8 @@ public class SAGame {
         }
     }
 
-    private void bomb(SATeam teamB) {
-        for (Player player : teamB.getPlayers()) {
+    private void bomb(SATeam team) {
+        for (Player player : team.getPlayers()) {
             if (spectators.contains(player)) {
                 continue;
             }
@@ -583,9 +584,10 @@ public class SAGame {
             if (distance <= 16) {
                 Main.getGameManager().damage(this, null, player, 20.0,
                         "Bomb");
+                continue;
             }
             double range = (distance - 16.0) / 32.0;
-            double damage = 0.0062 / range;
+            double damage = Math.min(20.0, 0.0062 / range);
 
             Main.getGameManager().damage(this, null, player, damage,
                     "Bomb");
@@ -610,14 +612,16 @@ public class SAGame {
         ItemStack stack = player.getInventory().getItem(0);
         Gun primary = Main.getWeaponManager().getGun(stack);
         if(primary != null) {
-            Utils.setReserveAmmo(stack, primary.getTotalAmmoSize());
+            stack = Utils.setReserveAmmo(stack, primary.getTotalAmmoSize());
+            primary.resetReloading(player, 0);
             NmsUtils.sendActionBar(player,
                     stack.getAmount() + " / " + Utils.getReserveAmmo(stack));
         }
         stack = player.getInventory().getItem(1);
         Gun secondary = Main.getWeaponManager().getGun(stack);
         if(secondary != null) {
-            Utils.setReserveAmmo(stack, secondary.getTotalAmmoSize());
+            stack = Utils.setReserveAmmo(stack, secondary.getTotalAmmoSize());
+            secondary.resetReloading(player, 1);
             NmsUtils.sendActionBar(player,
                     stack.getAmount() + " / " + Utils.getReserveAmmo(stack));
         }
