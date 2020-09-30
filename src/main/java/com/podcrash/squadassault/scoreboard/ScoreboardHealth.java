@@ -18,14 +18,14 @@ public class ScoreboardHealth {
         scores = new ArrayList<>();
         (this.objective = scoreboard.getScoreboard().registerNewObjective("health", "dummy")).setDisplaySlot(DisplaySlot.BELOW_NAME);
         this.objective.setDisplayName("health");
-        for(Player player : game.getTeamA().getPlayers()) {
-            Score score = objective.getScore(player.getName());
-            score.setScore((int)(player.getHealth() / player.getMaxHealth() * 100));
+        for (final Player player : game.getTeamA().getPlayers()) {
+            final Score score = objective.getScore(player.getName());
+            score.setScore((int)(player.getHealth() / player.getMaxHealth() * 100.0));
             scores.add(score);
         }
-        for(Player player : game.getTeamB().getPlayers()) {
+        for (final Player player : game.getTeamB().getPlayers()) {
             Score score = objective.getScore(player.getName());
-            score.setScore((int)(player.getHealth() / player.getMaxHealth() * 100));
+            score.setScore((int)(player.getHealth() / player.getMaxHealth() * 100.0));
             scores.add(score);
         }
     }

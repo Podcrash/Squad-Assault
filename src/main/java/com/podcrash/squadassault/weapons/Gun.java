@@ -7,6 +7,7 @@ import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.util.Item;
 import com.podcrash.squadassault.util.Randomizer;
 import com.podcrash.squadassault.util.Utils;
+import me.dpohvar.powernbt.api.NBTManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -214,23 +215,33 @@ public class Gun {
         delay.put(player.getUniqueId(), del);
     }
 
-    public void reload(Player player, int slot) {
+    public void reload(Player player, int slot, int left) {
         ItemStack itemStack = player.getInventory().getItem(slot);
         if (!item.equals(itemStack) || itemStack.getAmount() >= magSize || reloading.containsKey(player.getUniqueId())) {
             return;
         }
-        if(Utils.getReserveAmmo(itemStack) <= 0) {
-            NmsUtils.sendActionBar(player, itemStack.getAmount() + " / " + Utils.getReserveAmmo(itemStack));
-            //play sound;
+        try {
+            if (Utils.getReserveAmmo(itemStack) <= 0) {
+                NmsUtils.sendActionBar(player, itemStack.getAmount() + " / " + Utils.getReserveAmmo(itemStack));
+                GunReload reload = new GunReload(left, reloadDuration);
+                reload.setOutOfAmmo(true);
+                reloading.put(player.getUniqueId(), reload);
+                return;
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            NBTManager.getInstance().read(itemStack).forEach((key, value) -> System.out.println(key + " " + value));
             return;
         }
         //play sound
 
-        reloading.put(player.getUniqueId(), new GunReload(player.getItemInHand().getAmount(), reloadDuration));
+        reloading.put(player.getUniqueId(), new GunReload(left, reloadDuration));
     }
 
     public void resetPlayer(Player player) {
-        reloading.remove(player.getUniqueId());
+        if(reloading.get(player.getUniqueId()) != null && !reloading.get(player.getUniqueId()).isOutOfAmmo()) {
+            reloading.remove(player.getUniqueId());
+        }
         cache.remove(player.getUniqueId());
     }
 
@@ -251,6 +262,9 @@ public class Gun {
             Iterator<Map.Entry<UUID, GunReload>> iterator = reloading.entrySet().iterator();
             while(iterator.hasNext()) {
                 Map.Entry<UUID, GunReload> entry = iterator.next();
+                if(entry.getValue().isOutOfAmmo()) {
+                    continue;
+                }
                 Player player = Bukkit.getPlayer(entry.getKey());
                 if(player != null && !player.isDead() && player.isOnline() && Main.getGameManager().getGame(player) != null) {
                     if(item.equals(player.getItemInHand())) {
@@ -270,11 +284,13 @@ public class Gun {
 //                                    Utils.getReserveAmmo(player.getItemInHand()) - newAmount);
                             int oldAmount = entry.getValue().getOldAmount();
                             int needed = magSize - oldAmount;
-                            int newAmount = Math.min(needed, Utils.getReserveAmmo(player.getItemInHand()));
-                            int left = Utils.getReserveAmmo(player.getItemInHand()) - newAmount;
-                            Utils.setReserveAmmo(player.getItemInHand(), left);
-                            NmsUtils.sendActionBar(player, newAmount + " / " + Utils.getReserveAmmo(player.getItemInHand()));
-                            player.getItemInHand().setAmount(newAmount);
+                            int reserve = Utils.getReserveAmmo(player.getItemInHand());
+                            int toSet = reserve >= needed ? magSize : oldAmount + reserve;
+                            int reserveLeft = reserve >= needed ? reserve - needed : 0;
+                            ItemStack stack = Utils.setReserveAmmo(player.getItemInHand(), reserveLeft);
+                            player.setItemInHand(stack);
+                            NmsUtils.sendActionBar(player, toSet + " / " + reserveLeft);
+                            player.getItemInHand().setAmount(toSet);
                             player.getItemInHand().setDurability((short) 0);
                             //play sound?
                         }
@@ -325,7 +341,7 @@ public class Gun {
                             }
                             if (player.getItemInHand().getAmount() == 1) {
                                 iterator.remove();
-                                reload(player, getType().ordinal());
+                                reload(player, getType().ordinal(), 0);
 
                                 //play sound
                             } else {
@@ -518,7 +534,7 @@ public class Gun {
 
         double cone = projectileSpray(player, moving, cache);
         Vector spray;
-        if(cache.isFirstShot() && !player.isOnGround()) {
+        if(cache.isFirstShot() && player.isOnGround() && !player.isSprinting()) {
             spray = new Vector(-0.5, -0.5, -0.5);
         } else {
             spray = new Vector(Randomizer.random() - 0.5, (Randomizer.random() - 0.2) * (5d/8d),
@@ -541,8 +557,6 @@ public class Gun {
             projectile(player, moving, cache);
         }
     }
-
-    //TODO fix nbt tag not initially existing and
 
     private double projectileSpray(Player player, boolean isMoving, GunCache cache) {
         double cone = cache.getCone();
@@ -595,5 +609,10 @@ public class Gun {
 
     public void setResetPerTick(double resetPerTick) {
         this.resetPerTick = resetPerTick;
+    }
+
+    public void resetReloading(Player player, int index) {
+        reloading.remove(player.getUniqueId());
+        player.getInventory().getItem(index).setAmount(magSize);
     }
 }

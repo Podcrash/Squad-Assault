@@ -3,6 +3,8 @@ package com.podcrash.squadassault.nms;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.SATeam;
 import com.podcrash.squadassault.scoreboard.SAScoreboard;
+import me.dpohvar.powernbt.api.NBTCompound;
+import me.dpohvar.powernbt.api.NBTManager;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -87,19 +89,17 @@ public final class NmsUtils {
     }
 
     public static ItemStack addNBTInteger(ItemStack stack, String key, int value) {
-        net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
-        NBTTagCompound compound = nmsStack.hasTag() ? nmsStack.getTag() : new NBTTagCompound();
-        compound.setInt(key, value);
-        nmsStack.setTag(compound);
-        return CraftItemStack.asBukkitCopy(nmsStack);
+        NBTManager manager = NBTManager.getInstance();
+        NBTCompound nbtCompound = manager.read(stack);
+        nbtCompound.put(key, value);
+        manager.write(stack, nbtCompound);
+        return stack;
     }
 
     public static int getNBTInteger(ItemStack stack, String key) {
-        net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
-        NBTTagCompound compound = nmsStack.hasTag() ? nmsStack.getTag() : new NBTTagCompound();
-        if (compound.hasKey(key))
-            throw new NullPointerException("NBT compound key does not exist");
-        return compound.getInt(key);
+        NBTManager manager = NBTManager.getInstance();
+        NBTCompound nbtCompound = manager.read(stack);
+        return (int) nbtCompound.get(key);
     }
 
 }

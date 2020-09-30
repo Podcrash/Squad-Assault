@@ -124,6 +124,7 @@ public class GameListener implements Listener {
                                     game.getBomb().setLocation(block.getLocation());
                                     game.getBomb().setTimer(40);
                                     game.getBomb().setPlanted(true);
+                                    game.setGameTimer(game.getBomb().getTimer());
                                     game.setMoney(player, game.getMoney(player)+300);
                                     game.getStats().get(player.getUniqueId()).addBombPlants(1);
                                     for(Player omega : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
@@ -158,7 +159,7 @@ public class GameListener implements Listener {
             if(inHand != null && inHand.getType() != Material.AIR) {
                 Gun gun = Main.getWeaponManager().getGun(inHand);
                 if(gun != null) {
-                    gun.reload(player, player.getInventory().getHeldItemSlot());
+                    gun.reload(player, player.getInventory().getHeldItemSlot(), player.getItemInHand().getAmount());
                     return;
                 }
                 Grenade grenade = Main.getWeaponManager().getGrenade(inHand);
@@ -342,10 +343,15 @@ public class GameListener implements Listener {
                             break;
                         }
                         Gun gun = Main.getWeaponManager().getGun(shop.getWeaponName());
+
+                        //TODO actually drop the pre existing gun here
+
                         game.setMoney(player, game.getMoney(player) - shop.getPrice());
+                        ItemStack stack = ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
+                                gun.getItem().getData(), gun.getItem().getName(), shop.getLore());
+                        stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
                         player.getInventory().setItem(gun.getType().ordinal(),
-                                ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
-                                        gun.getItem().getData(), gun.getItem().getName(), shop.getLore()));
+                                stack);
                         break;
                     } else {
                         if(shop.getTeam() != null && Main.getGameManager().getTeam(game, player) != shop.getTeam()) {
@@ -602,9 +608,11 @@ public class GameListener implements Listener {
                 game.getDrops().put(event.getItemDrop(), amount);
                 itemStack.setAmount(1);
                 gun.resetDelay(player);
-                event.getItemDrop().setItemStack(ItemBuilder.create(itemStack.getType(), 1, gun.getItem().getData(),
+                ItemStack newStack = ItemBuilder.create(itemStack.getType(), 1, gun.getItem().getData(),
                         itemStack.getItemMeta().getDisplayName(),
-                        itemStack.getItemMeta().getLore().toArray(new String[0])));
+                        itemStack.getItemMeta().getLore().toArray(new String[0]));
+                newStack = Utils.setReserveAmmo(newStack, Utils.getReserveAmmo(itemStack));
+                event.getItemDrop().setItemStack(newStack);
                 player.getInventory().setItem(heldItemSlot, null);
                 if(gun.hasScope()) {
                     NmsUtils.sendFakeItem(player, 5, player.getInventory().getHelmet());
@@ -710,6 +718,11 @@ public class GameListener implements Listener {
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent event) {
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onHungerChange(FoodLevelChangeEvent event) {
+        ((Player) event.getEntity()).setFoodLevel(20);
     }
 
     private boolean snowballHeadshot(Player damaged, Snowball snowball) {

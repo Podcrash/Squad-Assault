@@ -92,9 +92,10 @@ public final class Utils {
 //        }
 //    }
 
-    public static void setReserveAmmo(ItemStack stack, int ammo) {
-        NmsUtils.addNBTInteger(stack, "reserve", ammo);
+    public static ItemStack setReserveAmmo(ItemStack stack, int ammo) {
+        stack = NmsUtils.addNBTInteger(stack, "reserve", ammo);
         setReserveAmmoLore(stack, ammo);
+        return stack;
     }
 
     public static void setReserveAmmoLore(ItemStack stack, int ammo) {

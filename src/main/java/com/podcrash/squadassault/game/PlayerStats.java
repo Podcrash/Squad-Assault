@@ -9,7 +9,7 @@ public class PlayerStats {
     private int headshots;
     private int bombPlants;
     private int bombDefuses;
-    private int damage;
+    private double damage;
     private int roundsPlayed;
 
     public PlayerStats(String name) {
@@ -60,11 +60,11 @@ public class PlayerStats {
         this.bombDefuses += bombDefuses;
     }
 
-    public int getDamage() {
+    public double getDamage() {
         return damage;
     }
 
-    public void addDamage(int damage) {
+    public void addDamage(double damage) {
         this.damage += damage;
     }
 
@@ -80,7 +80,8 @@ public class PlayerStats {
         if(roundsPlayed == 0) {
             return damage;
         }
-        return (double) damage / (double) roundsPlayed;
+        double dmg100 = damage / 20 * 100; //normalize
+        return dmg100 / (double) roundsPlayed;
     }
 
     public int getAssists() {
