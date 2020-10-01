@@ -9,8 +9,10 @@ import com.podcrash.squadassault.util.Randomizer;
 import com.podcrash.squadassault.util.Utils;
 import me.dpohvar.powernbt.api.NBTManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.inventory.ItemStack;
@@ -348,8 +350,8 @@ public class Gun {
                                 gunCache.setRounds(gunCache.getRounds() - 1);
                                 player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
                             }
-                            Location eye = player.getLocation();
-                            boolean isMoving = player.getVelocity().equals(new Vector());
+                            Location eye = player.getEyeLocation();
+                            boolean isMoving = !player.getVelocity().equals(new Vector());
                             if (player.isSneaking()) {
                                 eye.subtract(0, 0.03, 0);
                             } else {
@@ -366,37 +368,39 @@ public class Gun {
                             double x = eye.getX();
                             double y = eye.getY();
                             double z = eye.getZ();
-                            if (isMoving) {
-                                gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy * 10),
-                                        (int) (accuracy * 10)) + 0.5f);
-                                gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 10),
-                                        (int) (accuracy * 10)) + 0.5f);
-                            } else if (scope && player.isSneaking()) {
-                                gunCache.setAccuracyYaw(0);
-                                gunCache.setAccuracyPitch(0);
-                            } else if (scope && !player.isSneaking()) {
-                                gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy),
-                                        (int) (accuracy)) + 0.5f);
-                                gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy),
-                                        (int) (accuracy)) + 0.5f);
-                            }
-                            double yawRad = Math.toRadians(Utils.dumbMinecraftDegrees(yaw + 0.6) + gunCache.getAccuracyYaw() + 90);
-                            double pitchRad = Math.toRadians(pitch + gunCache.getAccuracyPitch() + 90);
-                            double cot = Math.sin(pitchRad) * Math.cos(yawRad);
-                            double cos = Math.cos(pitchRad);
-                            double sin2 = Math.sin(pitchRad) * Math.sin(yawRad);
-                            if (projectile) {
-                                if (isShotgun) {
-                                    shotgun(player, isMoving, gunCache);
+                            for(int i = 0; i < bulletsPerBurst; i++) {
+                                if (projectile) {
+                                    if (isShotgun) {
+                                        shotgun(player, isMoving, gunCache);
+                                    } else {
+                                        projectile(player, isMoving, gunCache);
+                                    }
                                 } else {
-                                    projectile(player, isMoving, gunCache);
+                                    if (isMoving) {
+                                        gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy * 3),
+                                                (int) (accuracy * 3)) + 0.5f);
+                                        gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 3),
+                                                (int) (accuracy * 3)) + 0.5f);
+                                    } else if (scope && player.isSneaking()) {
+                                        gunCache.setAccuracyYaw(0);
+                                        gunCache.setAccuracyPitch(0);
+                                    } else if (scope && !player.isSneaking()) {
+                                        gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy),
+                                                (int) (accuracy)) + 0.5f);
+                                        gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy),
+                                                (int) (accuracy)) + 0.5f);
+                                    }
+                                    double yawRad = Math.toRadians(Utils.dumbMinecraftDegrees(yaw + 0.6) + gunCache.getAccuracyYaw() + 90);
+                                    double pitchRad = Math.toRadians(pitch + gunCache.getAccuracyPitch() + 90);
+                                    double cot = Math.sin(pitchRad) * Math.cos(yawRad);
+                                    double cos = Math.cos(pitchRad);
+                                    double sin2 = Math.sin(pitchRad) * Math.sin(yawRad);
+                                    hitscan(player, eye, x, y, z, cot, cos, sin2, gunCache);
+                                    eye.setX(x);
+                                    eye.setY(y);
+                                    eye.setZ(sin2);
                                 }
-                            } else {
-                                hitscan(player, eye, x, y, z, cot, cos, sin2, gunCache);
                             }
-                            eye.setX(x);
-                            eye.setY(y);
-                            eye.setZ(sin2);
                         } else {
                             if (gunCache.getTicksLeft() > 0) {
                                 continue;
@@ -416,117 +420,130 @@ public class Gun {
     }
 
     private void hitscan(Player player, Location eye, double x, double y, double z, double cot, double cos,
-                         double sin2, GunCache gunCache) {
+                             double sin2, GunCache gunCache) {
         double distance = 0.5;
-        while(distance < 100) {
+        while (distance < 100) {
             eye.setX(x + distance * cot);
             eye.setY(y + distance * cos);
             eye.setZ(z + distance * sin2);
-            //particle effect?
-            Material type = eye.getBlock().getType();
-            if(type != Material.CROPS) {
+            if (distance % 1.5 == 0.0) {
+                player.spigot().playEffect(eye, Effect.FLAME, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 1, 20);
+            }
+            if (distance == 0.5) {
+                player.getWorld().playEffect(eye, Effect.SNOWBALL_BREAK, 0, 10);
+                player.getWorld().playEffect(eye, Effect.SNOWBALL_BREAK, 0, 10);
+            }
+            final Material type = eye.getBlock().getType();
+            if (type != Material.CROPS && type != Material.AIR) {
                 int xMod = (int)((eye.getX() - eye.getBlockX()) * 1000.0);
                 int yMod = (int)((eye.getY() - eye.getBlockY()) * 10.0);
                 int zMod = (int)((eye.getZ() - eye.getBlockZ()) * 1000.0);
                 String data = eye.getBlock().getState().getData().toString();
                 boolean inverted = data.contains("inverted");
-                //check non full blocks to see if hit passes
-                if(type.name().contains("FENCE")) {
-                    if(xMod >= 370 && xMod <= 620 && zMod >= 370 && zMod <= 620) {
+                Block block = eye.getBlock();
+                if (type.name().contains("FENCE")) {
+                    if (xMod >= 370 && xMod <= 620 && zMod >= 370 && zMod <= 620) {
+                        player.getWorld().playEffect(eye, Effect.STEP_SOUND, block.getType());
                         break;
                     }
-                } else if(type == Material.COBBLE_WALL) {
-                    if (xMod <= 750 && xMod >= 240 && zMod <= 750) {
+                } else if (type == Material.COBBLE_WALL) {
+                    if (xMod >= 240 && xMod <= 750 && zMod <= 750) {
+                        player.getWorld().playEffect(eye, Effect.STEP_SOUND, block.getType());
                         break;
                     }
                 } else if (type.name().contains("STEP") || type.name().contains("STONE_SLAB2")) {
                     if (inverted) {
                         if (yMod > 5) {
+                            player.getWorld().playEffect(eye, Effect.STEP_SOUND, block.getType());
                             break;
                         }
                     } else if (yMod < 5) {
+                        player.getWorld().playEffect(eye, Effect.STEP_SOUND, block.getType());
                         break;
                     }
                 } else {
                     if (!type.name().contains("STAIRS")) {
+                        player.getWorld().playEffect(eye, Effect.STEP_SOUND, block.getType());
                         break;
                     }
                     if (data.contains("NORTH")) {
-                        if (inverted) {
-                            if (zMod > 500 || (zMod < 500 && yMod >= 5)) {
-                                break;
-                            }
-                        } else if (zMod > 500 || (zMod < 500 && yMod < 5)) {
+                        if (checkDirection(player, eye, yMod, inverted, block, zMod > 500, zMod < 500, zMod))
                             break;
-                        }
                     } else if (data.contains("SOUTH")) {
-                        if (inverted) {
-                            if (zMod < 500 || (zMod > 500 && yMod >= 5)) {
-                                break;
-                            }
-                        } else if (zMod < 500 || (zMod > 500 && yMod < 5)) {
+                        if (checkDirection(player, eye, yMod, inverted, block, zMod < 500, zMod > 500, zMod))
                             break;
-                        }
                     } else if (data.contains("EAST")) {
-                        if (inverted) {
-                            if (xMod < 500 || (xMod > 500 && yMod >= 5)) {
-                                break;
-                            }
-                        } else if (xMod < 500 || (xMod > 500 && yMod < 5)) {
+                        if (checkDirection(player, eye, yMod, inverted, block, xMod < 500, xMod > 500, zMod))
                             break;
-                        }
                     } else if (data.contains("WEST")) {
                         if (inverted) {
                             if (xMod > 500 || (xMod < 500 && yMod >= 5)) {
+                                player.getWorld().playEffect(eye, Effect.STEP_SOUND, block.getType());
                                 break;
                             }
                         } else if (xMod > 500 || (xMod < 500 && yMod < 5)) {
+                            player.getWorld().playEffect(eye, Effect.STEP_SOUND, block.getType());
                             break;
                         }
                     }
                 }
             }
             Player hit = null;
-            for(Player p : gunCache.getGame().getTeamA().getPlayers()) {
+            for (final Player p : gunCache.getGame().getTeamA().getPlayers()) {
                 if (hitscanHit(player, gunCache, eye, p)) {
                     hit = p;
                     break;
                 }
             }
-            for(Player p : gunCache.getGame().getTeamB().getPlayers()) {
+            for (final Player p : gunCache.getGame().getTeamB().getPlayers()) {
                 if (hitscanHit(player, gunCache, eye, p)) {
                     hit = p;
                     break;
                 }
             }
-            if(hit == null) {
-                distance += 0.25;
-                continue;
-            }
-            if((hit.isSneaking() || eye.getY() - hit.getLocation().getY() <= 1.35 || eye.getY() - hit.getLocation().getY() >= 1.9) && (eye.getY() - hit.getLocation().getY() <= 1.27 || eye.getY() - hit.getLocation().getY() >= 1.82)) {
-                double armorPen = hit.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 1 :
+            if (hit != null) {
+                if ((hit.isSneaking() || eye.getY() - hit.getLocation().getY() <= 1.35 || eye.getY() - hit.getLocation().getY() >= 1.9) && (eye.getY() - hit.getLocation().getY() <= 1.27 || eye.getY() - hit.getLocation().getY() >= 1.82)) {
+                    double armorPen = hit.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 1 :
+                            this.armorPen;
+                    double rangeFalloff = (dropoffPerBlock * hit.getLocation().distance(player.getLocation()));
+                    double damage = this.damage;
+                    double finalDamage = Math.max(0,armorPen*(damage - rangeFalloff));
+                    Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, true,
+                            player, hit));
+                    Main.getGameManager().getGame(player).getStats().get(player.getUniqueId()).addHeadshots(1);
+                    Main.getGameManager().damage(Main.getGameManager().getGame(hit), player, hit,
+                            finalDamage, name);
+                    break;
+                }
+                double armorPen = hit.getInventory().getHelmet().getType() == Material.LEATHER_HELMET ? 1 :
                         this.armorPen;
-                double rangeFalloff = (dropoffPerBlock * distance);
-                double damage = getDamage();
+                double rangeFalloff = (dropoffPerBlock * hit.getLocation().distance(player.getLocation()));
+                double damage = this.damage*2.5;
                 double finalDamage = Math.max(0,armorPen*(damage - rangeFalloff));
-
-                Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, false, player, hit));
-                Main.getGameManager().damage(gunCache.getGame(), player, hit,
-                        finalDamage, name);
+                Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, true,
+                        player, hit));
+                Main.getGameManager().getGame(player).getStats().get(player.getUniqueId()).addHeadshots(1);
+                Main.getGameManager().damage(Main.getGameManager().getGame(hit), player, hit,
+                        finalDamage, name + " headshot");
+                //sound
                 break;
+            } else {
+                distance += 0.25;
             }
-            double armorPen = hit.getInventory().getChestplate().getType() == Material.LEATHER_HELMET ? 1 :
-                    this.armorPen;
-            double rangeFalloff = (dropoffPerBlock * distance);
-            double damage = getDamage()*2.5;
-            double finalDamage = Math.max(0,armorPen*(damage - rangeFalloff));
-            Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, true, player, hit));
-            gunCache.getGame().getStats().get(player.getUniqueId()).addHeadshots(1);
-            Main.getGameManager().damage(gunCache.getGame(), player, hit,
-                    finalDamage, name + " headshot");
-            break;
         }
+    }
 
+    private boolean checkDirection(Player player, Location eye, int yMod, boolean inverted, Block block, boolean b, boolean b2, int zMod) {
+        if (inverted) {
+            if (b || (b2 && yMod >= 5)) {
+                player.getWorld().playEffect(eye, Effect.STEP_SOUND, block.getType());
+                return true;
+            }
+        } else if (b || (b2 && yMod < 5)) {
+            player.getWorld().playEffect(eye, Effect.STEP_SOUND, block.getType());
+            return true;
+        }
+        return false;
     }
 
     private void projectile(Player player, boolean moving, GunCache cache) {
@@ -571,8 +588,8 @@ public class Gun {
     }
 
     private boolean hitscanHit(Player player, GunCache gunCache, Location eye, Player p) {
-        return player != p && !gunCache.getGame().getSpectators().contains(p) && !gunCache.getGame().sameTeam(p,
-                player) && (p.getLocation().add(0, 0.2, 0).distance(eye) <= 0.4 || p.getLocation().add(0, 1, 0).distance(eye) <= 0.5 || p.getEyeLocation().distance(eye) <= 0.35 && !p.isDead());
+        return player != p && !gunCache.getGame().getSpectators().contains(p) && !gunCache.getGame().sameTeam(player,
+                p) && (p.getLocation().add(0.0, 0.2, 0.0).distance(eye) <= 0.4 + 0.0 || p.getLocation().add(0.0, 1.0, 0.0).distance(eye) <= 0.5 + 0.0 || p.getEyeLocation().distance(eye) <= 0.35) && !p.isDead();
     }
 
     public void setArmorPen(double armorPen) {

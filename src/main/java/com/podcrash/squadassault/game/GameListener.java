@@ -25,10 +25,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -712,6 +709,21 @@ public class GameListener implements Listener {
                     finalDamage, stats.getGunName());
         }
         Main.getWeaponManager().getProjectiles().remove(snowball);
+
+    }
+
+    @EventHandler
+    public void projectileHitBlock(ProjectileHitEvent event) {
+        if (!(event.getEntity() instanceof Snowball)) {
+            return;
+        }
+        Snowball snowball = (Snowball) event.getEntity();
+        Location location = snowball.getLocation();
+        if (location.getBlock().getType() != Material.CROPS) {
+            return;
+        }
+        ProjectileStats stats = Main.getWeaponManager().getProjectiles().get(snowball);
+
 
     }
 
