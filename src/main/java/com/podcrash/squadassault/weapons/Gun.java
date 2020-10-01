@@ -552,7 +552,7 @@ public class Gun {
         double cone = projectileSpray(player, moving, cache);
         Vector spray;
         if(cache.isFirstShot() && player.isOnGround() && !player.isSprinting()) {
-            spray = new Vector(-0.5, -0.5, -0.5);
+            spray = new Vector(-0.5, -0.2 * 5d/8d, -0.5);
         } else {
             spray = new Vector(Randomizer.random() - 0.5, (Randomizer.random() - 0.2) * (5d/8d),
                     Randomizer.random() - 0.5);

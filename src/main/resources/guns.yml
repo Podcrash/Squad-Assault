@@ -61,7 +61,7 @@ Guns:
     Reload:
       Duration: 44
       Amount: 12
-      TotalAmount: 52
+      TotalAmount: 48
   P250: #these are not accurate stats
     ItemInfo:
       Type: DIAMOND_HOE
@@ -76,7 +76,7 @@ Guns:
       Scope: FALSE
       Damage: 7.4 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 4    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.039024  #NEEDS WORK
       ArmorPen: 0.64
@@ -87,12 +87,12 @@ Guns:
       BulletsPerBurst: 1
       ProjectileConeMax: 0.2
       ProjectileConeMin: 0.00
-      ProjectileConeIncrease: 0.02
-      Reset: 0.015
+      ProjectileConeIncrease: 0.01
+      Reset: 0.02
     Reload:
       Duration: 44
       Amount: 13
-      TotalAmount: 39
+      TotalAmount: 52
   Five-Seven: #needs to be nerfed.  Maybe increase recoil similar to deagle
     ItemInfo:
       Type: DIAMOND_SPADE
@@ -149,7 +149,7 @@ Guns:
       BulletsPerBurst: 1
       ProjectileConeMax: 0.25
       ProjectileConeMin: 0.01
-      ProjectileConeIncrease: 0.04
+      ProjectileConeIncrease: 0.0375
       Reset: 0.01
     Reload:
       Duration: 50
@@ -210,8 +210,8 @@ Guns:
       DelayBullets: 2
       BulletsPerBurst: 1
       ProjectileConeMax: 0.3
-      ProjectileConeMin: 0.01
-      ProjectileConeIncrease: 0.065
+      ProjectileConeMin: 0.00
+      ProjectileConeIncrease: 0.06
       Reset: 0.0075
     Reload:
       Duration: 44
@@ -248,3 +248,33 @@ Guns:
       Duration: 30
       Amount: 30
       TotalAmount: 90
+  AWP: #these are not accurate stats
+    ItemInfo:
+      Type: GOLD_SPADE
+      Data: 0
+      Name: 'AWP'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 100
+    Shoot:
+      Projectile: FALSE
+      Sound: 'squadassault.shootxd'
+      Scope: TRUE
+      Damage: 20.0 #DO THIS
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 12    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.0  #NEEDS WORK
+      ArmorPen: 1.0
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.5
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.1
+    Reload:
+      Duration: 20
+      Amount: 10
+      TotalAmount: 30

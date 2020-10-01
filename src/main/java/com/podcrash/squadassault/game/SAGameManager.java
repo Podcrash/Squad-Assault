@@ -597,8 +597,8 @@ public class SAGameManager {
                     game.getBomb().setDrop(dropItemNaturally);
                 }
             }
-            for (Player player1 : game.getTeamA().getPlayers()) {
-                SAScoreboard scoreboard = game.getScoreboards().get(player1.getUniqueId());
+            for (Player player : game.getTeamA().getPlayers()) {
+                SAScoreboard scoreboard = game.getScoreboards().get(player.getUniqueId());
                 if (damager != null) {
                     scoreboard.getTeams().update(game, damager);
                 }

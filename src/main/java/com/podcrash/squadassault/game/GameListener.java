@@ -714,15 +714,7 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void projectileHitBlock(ProjectileHitEvent event) {
-        if (!(event.getEntity() instanceof Snowball)) {
-            return;
-        }
-        Snowball snowball = (Snowball) event.getEntity();
-        Location location = snowball.getLocation();
-        if (location.getBlock().getType() != Material.CROPS) {
-            return;
-        }
-        ProjectileStats stats = Main.getWeaponManager().getProjectiles().get(snowball);
+        //TODO
 
 
     }
@@ -735,6 +727,14 @@ public class GameListener implements Listener {
     @EventHandler
     public void onHungerChange(FoodLevelChangeEvent event) {
         ((Player) event.getEntity()).setFoodLevel(20);
+    }
+
+    @EventHandler
+    public void onEat(PlayerItemConsumeEvent event) {
+        if(Main.getGameManager().getGame(event.getPlayer()) == null) {
+            return;
+        }
+        event.setCancelled(true);
     }
 
     private boolean snowballHeadshot(Player damaged, Snowball snowball) {
@@ -760,7 +760,7 @@ public class GameListener implements Listener {
     private boolean hitHead(Player player, Location location) {
         return Utils.offset2d(location.toVector(), player.getLocation().toVector()) < 0.4 &&
                 location.getY() >= player.getEyeLocation().getY() - 0.0 &&
-                location.getY() < player.getEyeLocation().getY() + 0.42;
+                location.getY() < player.getEyeLocation().getY() + 0.4;
     }
 
 

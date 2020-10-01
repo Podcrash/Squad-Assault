@@ -74,7 +74,7 @@ public final class NmsUtils {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            sendListPacket(game.getTeamA(), new PacketPlayOutScoreboardTeam(team, 2));
+            sendListPacket(game.getTeamB(), new PacketPlayOutScoreboardTeam(team, 2));
         }
     }
 
