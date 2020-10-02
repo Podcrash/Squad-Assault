@@ -547,12 +547,13 @@ public class GameListener implements Listener {
             GrenadeType type = grenade.getType();
             int max = type.getMax();
             for(int i = 3; i < 8; i++) {
-                if(Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)) != null && Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)).getType() ==type) {
+                if(Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)) != null && Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)).getType() == type) {
                     current++;
                 }
             }
             if (slot != -1 && current != max) {
                 event.setCancelled(true);
+                itemStack.setAmount(1);
                 player.getInventory().setItem(slot, itemStack);
                 game.getDrops().remove(item);
                 item.remove();
@@ -758,7 +759,7 @@ public class GameListener implements Listener {
     }
 
     private boolean hitHead(Player player, Location location) {
-        return Utils.offset2d(location.toVector(), player.getLocation().toVector()) < 0.4 &&
+        return Utils.offset2d(location.toVector(), player.getLocation().toVector()) < 0.2 &&
                 location.getY() >= player.getEyeLocation().getY() - 0.0 &&
                 location.getY() < player.getEyeLocation().getY() + 0.4;
     }
