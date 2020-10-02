@@ -340,8 +340,22 @@ public class GameListener implements Listener {
                             break;
                         }
                         Gun gun = Main.getWeaponManager().getGun(shop.getWeaponName());
+                        if(player.getInventory().getItem(gun.getType().ordinal()) != null) {
+                            ItemStack oldStack = player.getInventory().getItem(gun.getType().ordinal());
 
-                        //TODO actually drop the pre existing gun here
+                            gun.resetDelay(player);
+                            ItemStack newStack = ItemBuilder.create(oldStack.getType(), 1, gun.getItem().getData(),
+                                    oldStack.getItemMeta().getDisplayName(),
+                                    oldStack.getItemMeta().getLore().toArray(new String[0]));
+                            newStack = Utils.setReserveAmmo(newStack, Utils.getReserveAmmo(oldStack));
+                            newStack.setAmount(1);
+                            NmsUtils.addNBTInteger(newStack, "outofammo", NmsUtils.getNBTInteger(oldStack, "outofammo"));
+                            player.getInventory().setItem(gun.getType().ordinal(), null);
+                            game.getDrops().put(player.getWorld().dropItemNaturally(player.getLocation(), newStack), oldStack.getAmount());
+                            if(gun.hasScope()) {
+                                NmsUtils.sendFakeItem(player, 5, player.getInventory().getHelmet());
+                            }
+                        }
 
                         game.setMoney(player, game.getMoney(player) - shop.getPrice());
                         ItemStack stack = ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
@@ -611,7 +625,7 @@ public class GameListener implements Listener {
                         itemStack.getItemMeta().getDisplayName(),
                         itemStack.getItemMeta().getLore().toArray(new String[0]));
                 newStack = Utils.setReserveAmmo(newStack, Utils.getReserveAmmo(itemStack));
-                NmsUtils.addNBTInteger(newStack, "outofammo", 0);
+                NmsUtils.addNBTInteger(newStack, "outofammo", NmsUtils.getNBTInteger(itemStack, "outofammo"));
                 event.getItemDrop().setItemStack(newStack);
                 player.getInventory().setItem(heldItemSlot, null);
                 if(gun.hasScope()) {
