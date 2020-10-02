@@ -51,9 +51,11 @@ public class Gun {
     private double projectileConeMax;
     private double coneIncPerBullet;
     private double resetPerTick;
+    private int scopeDelay;
     private final Map<UUID, Long> delay;
     private final Map<UUID, GunCache> cache;
     private final Map<UUID, GunReload> reloading;
+    private final Map<UUID, Long> scopeDelays;
 
     public Gun(String name, Item item, GunHotbarType type, boolean projectile, String shootSound, String reloadSound,
      boolean isShotgun) {
@@ -67,6 +69,7 @@ public class Gun {
         delay = new HashMap<>();
         reloading = new HashMap<>();
         cache = new HashMap<>();
+        scopeDelays = new HashMap<>();
     }
 
     public void setReloadDuration(int reloadDuration) {
@@ -201,6 +204,9 @@ public class Gun {
         if(player.getInventory().getHeldItemSlot() != type.ordinal()) {
             return;
         }
+        if(NmsUtils.getNBTInteger(player.getItemInHand(), "outofammo") == 1) {
+            NmsUtils.sendActionBar(player, "0 / 0");
+        }
         long del = System.currentTimeMillis() / 49;
         if(delay.get(player.getUniqueId()) == null) {
             delay.put(player.getUniqueId(), del);
@@ -224,9 +230,10 @@ public class Gun {
         }
         try {
             if (Utils.getReserveAmmo(itemStack) <= 0) {
-                NmsUtils.sendActionBar(player, itemStack.getAmount() + " / " + Utils.getReserveAmmo(itemStack));
+                NmsUtils.sendActionBar(player, left + " / " + Utils.getReserveAmmo(itemStack));
                 GunReload reload = new GunReload(left, reloadDuration);
                 reload.setOutOfAmmo(true);
+                NmsUtils.addNBTInteger(itemStack, "outofammo", 1);
                 reloading.put(player.getUniqueId(), reload);
                 return;
             }
@@ -381,17 +388,18 @@ public class Gun {
                                                 (int) (accuracy * 3)) + 0.5f);
                                         gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 3),
                                                 (int) (accuracy * 3)) + 0.5f);
-                                    } else if (scope && player.isSneaking()) {
+                                    } else if (scope && player.isSneaking() && System.currentTimeMillis()-scopeDelays.get(player.getUniqueId()) > scopeDelay*50) {
                                         gunCache.setAccuracyYaw(0);
                                         gunCache.setAccuracyPitch(0);
                                     } else if (scope && !player.isSneaking()) {
-                                        gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy),
-                                                (int) (accuracy)) + 0.5f);
-                                        gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy),
-                                                (int) (accuracy)) + 0.5f);
+                                        gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy * 2),
+                                                (int) (accuracy) * 2) + 0.5f);
+                                        gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 2),
+                                                (int) (accuracy) * 2) + 0.5f);
                                     }
-                                    double yawRad = Math.toRadians(Utils.dumbMinecraftDegrees(yaw + 0.6) + gunCache.getAccuracyYaw() + 90);
-                                    double pitchRad = Math.toRadians(pitch + gunCache.getAccuracyPitch() + 90);
+                                    double yawRad =
+                                            Math.toRadians(Utils.dumbMinecraftDegrees(yaw + 0.6) + gunCache.getAccuracyYaw() + 90.0);
+                                    double pitchRad = Math.toRadians(pitch + gunCache.getAccuracyPitch() + 90.0);
                                     double cot = Math.sin(pitchRad) * Math.cos(yawRad);
                                     double cos = Math.cos(pitchRad);
                                     double sin2 = Math.sin(pitchRad) * Math.sin(yawRad);
@@ -612,6 +620,10 @@ public class Gun {
         this.projectileConeMax = projectileConeMax;
     }
 
+    public void scopeDelay(Player player) {
+        scopeDelays.put(player.getUniqueId(), System.currentTimeMillis());
+    }
+
     public double getConeIncPerBullet() {
         return coneIncPerBullet;
     }
@@ -631,5 +643,13 @@ public class Gun {
     public void resetReloading(Player player, int index) {
         reloading.remove(player.getUniqueId());
         player.getInventory().getItem(index).setAmount(magSize);
+    }
+
+    public int getScopeDelay() {
+        return scopeDelay;
+    }
+
+    public void setScopeDelay(int scopeDelay) {
+        this.scopeDelay = scopeDelay;
     }
 }

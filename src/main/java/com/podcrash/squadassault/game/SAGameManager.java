@@ -392,6 +392,7 @@ public class SAGameManager {
                 ItemStack stack =  ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                         gun.getItem().getData(), gun.getItem().getName());
                 stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                NmsUtils.addNBTInteger(stack, "outofammo", 0);
                 player.getInventory().setItem(1, stack);
                 player.getInventory().setItem(2, ItemBuilder.create(Material.WOOD_SWORD, 1, "Knife", true));
             }
@@ -400,6 +401,7 @@ public class SAGameManager {
                 ItemStack stack =  ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                         gun.getItem().getData(), gun.getItem().getName());
                 stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                NmsUtils.addNBTInteger(stack, "outofammo", 0);
                 player.getInventory().setItem(1, stack);
             }
 
@@ -472,6 +474,7 @@ public class SAGameManager {
                 ItemStack stack = ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                         gun.getItem().getData(), gun.getItem().getName());
                 stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                NmsUtils.addNBTInteger(stack, "outofammo", 0);
                 player.getInventory().setItem(1, stack);
                 player.getInventory().setItem(2, ItemBuilder.create(Material.WOOD_SWORD, 1, "Knife", true));
             }
@@ -480,6 +483,7 @@ public class SAGameManager {
                 ItemStack stack = ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                         gun.getItem().getData(), gun.getItem().getName());
                 stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                NmsUtils.addNBTInteger(stack, "outofammo", 0);
                 player.getInventory().setItem(1, stack);
             }
             if(player.getInventory().getItem(2) == null) {

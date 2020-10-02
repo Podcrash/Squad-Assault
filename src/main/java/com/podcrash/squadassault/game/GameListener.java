@@ -347,6 +347,7 @@ public class GameListener implements Listener {
                         ItemStack stack = ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                                 gun.getItem().getData(), gun.getItem().getName(), shop.getLore());
                         stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                        NmsUtils.addNBTInteger(stack, "outofammo", 0);
                         player.getInventory().setItem(gun.getType().ordinal(),
                                 stack);
                         break;
@@ -610,6 +611,7 @@ public class GameListener implements Listener {
                         itemStack.getItemMeta().getDisplayName(),
                         itemStack.getItemMeta().getLore().toArray(new String[0]));
                 newStack = Utils.setReserveAmmo(newStack, Utils.getReserveAmmo(itemStack));
+                NmsUtils.addNBTInteger(newStack, "outofammo", 0);
                 event.getItemDrop().setItemStack(newStack);
                 player.getInventory().setItem(heldItemSlot, null);
                 if(gun.hasScope()) {
