@@ -3,17 +3,23 @@ package com.podcrash.squadassault.weapons;
 import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.events.GunDamageEvent;
+import com.podcrash.squadassault.nms.BulletSnowball;
 import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.util.Item;
 import com.podcrash.squadassault.util.Randomizer;
 import com.podcrash.squadassault.util.Utils;
 import me.dpohvar.powernbt.api.NBTManager;
+import net.minecraft.server.v1_8_R3.Entity;
+import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -555,7 +561,7 @@ public class Gun {
     }
 
     private void projectile(Player player, boolean moving, GunCache cache) {
-        Snowball snowball = player.launchProjectile(Snowball.class);
+        Projectile projectile = launchProjectile(player, null);
 
         double cone = projectileSpray(player, moving, cache);
         Vector spray;
@@ -570,9 +576,9 @@ public class Gun {
         spray.add(player.getLocation().getDirection());
         spray.normalize();
 
-        snowball.setVelocity(spray.multiply(4));
+        projectile.setVelocity(spray.multiply(4));
         cache.setCone(Math.min(projectileConeMax, cone + coneIncPerBullet));
-        Main.getWeaponManager().getProjectiles().put(snowball, new ProjectileStats(name, player.getLocation().clone(),
+        Main.getWeaponManager().getProjectiles().put(projectile, new ProjectileStats(name, player.getLocation().clone(),
                 dropoffPerBlock, damage, armorPen, player));
     }
 
@@ -651,5 +657,17 @@ public class Gun {
 
     public void setScopeDelay(int scopeDelay) {
         this.scopeDelay = scopeDelay;
+    }
+
+    public static Projectile launchProjectile(Player player, Vector velocity) {
+        Entity launch = new BulletSnowball(((CraftWorld) player.getWorld()).getHandle(),
+                (EntityLiving) ((CraftEntity) player).getHandle());
+        CraftEntity entity = CraftEntity.getEntity(((CraftWorld) player.getWorld()).getHandle().getServer(),
+                launch);
+        if(velocity != null) {
+            entity.setVelocity(velocity);
+        }
+        ((CraftWorld) player.getWorld()).getHandle().addEntity(launch);
+        return (Projectile) entity;
     }
 }

@@ -17,10 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Snowball;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -692,7 +689,7 @@ public class GameListener implements Listener {
         if(!(event.getDamager() instanceof Snowball) || !(event.getEntity() instanceof Player)) {
             return;
         }
-        Snowball snowball = (Snowball) event.getDamager();
+        Projectile snowball = (Projectile) event.getDamager();
 
         ProjectileStats stats = Main.getWeaponManager().getProjectiles().get(snowball);
         if(stats == null) {
@@ -754,7 +751,7 @@ public class GameListener implements Listener {
         event.setCancelled(true);
     }
 
-    private boolean snowballHeadshot(Player damaged, Snowball snowball) {
+    private boolean snowballHeadshot(Player damaged, Projectile snowball) {
         Location start = snowball.getLocation();
         Location location = start.clone();
 

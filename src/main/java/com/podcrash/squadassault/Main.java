@@ -5,9 +5,12 @@ import com.podcrash.squadassault.game.GameListener;
 import com.podcrash.squadassault.game.GameTask;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.SAGameManager;
+import com.podcrash.squadassault.nms.BulletSnowball;
+import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.shop.ShopManager;
 import com.podcrash.squadassault.weapons.WeaponManager;
 import me.dpohvar.powernbt.api.NBTManager;
+import net.minecraft.server.v1_8_R3.EntityTypes;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.HandlerList;
@@ -23,6 +26,7 @@ public class Main extends JavaPlugin {
     private static GameListener listener;
     private static NBTManager nbtManager;
     private static GameTask task;
+    private static EntityTypes bulletSnowball;
 
     public static Main getInstance() {
         return instance;
@@ -46,6 +50,15 @@ public class Main extends JavaPlugin {
 
     public static GameTask getUpdateTask() {
         return task;
+    }
+
+    public static EntityTypes getBulletSnowball() {
+        return bulletSnowball;
+    }
+
+    @Override
+    public void onLoad() {
+        NmsUtils.injectEntity("bullet_snowball", 104, BulletSnowball.class);
     }
 
     @Override
