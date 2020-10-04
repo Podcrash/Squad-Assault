@@ -42,7 +42,7 @@ public class GrenadeCache {
     }
 
     public void setDuration(long duration) {
-        duration = duration;
+        this.duration = duration;
     }
 
     public PhysicsItem getGrenade() {

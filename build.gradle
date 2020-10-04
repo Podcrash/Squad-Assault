@@ -30,8 +30,6 @@ shadowJar {
 dependencies {
     compileOnly fileTree('../libs')
 
-    compile 'com.mojang:datafixerupper:1.0.20-SNAPSHOT'
-
     testImplementation 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
     implementation "org.reflections:reflections:0.9.11"
     implementation 'com.google.code.gson:gson:2.8.6'

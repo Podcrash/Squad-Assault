@@ -4,7 +4,6 @@ import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.util.Item;
-import com.podcrash.squadassault.util.Randomizer;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -144,13 +143,15 @@ public class Grenade {
                     for(Block block : cache.getBlocks()) {
                         block.setType(Material.AIR);
                     }
+                    cache.getBlocks().clear();
+                    iterator.remove();
                 } else {
                     //play sound
                     for(Block block : getBlocks(cache.getGrenade().getLocation().getBlock(), effectPower)) {
                         if(block.getType() == Material.AIR) {
                             cache.getBlocks().add(block);
                             block.setType(Material.CROPS);
-                            block.setData((byte) Randomizer.randomRange(1,3));
+                            block.setData((byte) 7);
                             block.getDrops().clear();
                         }
                     }

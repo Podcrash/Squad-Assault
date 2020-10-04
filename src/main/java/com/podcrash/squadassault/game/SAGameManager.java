@@ -700,6 +700,9 @@ public class SAGameManager {
             builder.append(", assisted by ");
         }
         for(Player player : list) {
+            if(list.size() == 1) {
+                break;
+            }
             if(player != damager) {
                 builder.append(player.getDisplayName()).append(" ");
             }
