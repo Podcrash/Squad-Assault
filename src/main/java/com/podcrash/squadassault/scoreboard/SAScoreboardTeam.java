@@ -6,7 +6,6 @@ import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.SATeam;
 import com.podcrash.squadassault.nms.NmsUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -30,8 +29,7 @@ public class SAScoreboardTeam {
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
             registerNewTeam.setPrefix("O");
             registerNewTeam.setSuffix(stats.getKills() + " - " + stats.getDeaths());
-            registerNewTeam.setNameTagVisibility(NameTagVisibility.HIDE_FOR_OTHER_TEAMS);
-//            NmsUtils.hideNametag(registerNewTeam);
+            NmsUtils.hideNametag(registerNewTeam);
             registerNewTeam.addEntry(player.getName());
             teams.add(registerNewTeam);
         }
@@ -40,8 +38,7 @@ public class SAScoreboardTeam {
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
             registerNewTeam.setPrefix("A");
             registerNewTeam.setSuffix(stats.getKills() + " - " + stats.getDeaths());
-            registerNewTeam.setNameTagVisibility(NameTagVisibility.HIDE_FOR_OTHER_TEAMS);
-//            NmsUtils.hideNametag(registerNewTeam);
+            NmsUtils.hideNametag(registerNewTeam);
             registerNewTeam.addEntry(player.getName());
             teams.add(registerNewTeam);
         }
