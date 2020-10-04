@@ -27,7 +27,7 @@ public class SAScoreboardTeam {
         for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
             PlayerStats stats = game.getStats().get(player.getUniqueId());
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
-            registerNewTeam.setPrefix("O");
+            registerNewTeam.setPrefix("[O]");
             registerNewTeam.setSuffix(stats.getKills() + " - " + stats.getDeaths());
             NmsUtils.hideNametag(registerNewTeam);
             registerNewTeam.addEntry(player.getName());
@@ -36,7 +36,7 @@ public class SAScoreboardTeam {
         for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers()) {
             PlayerStats stats = game.getStats().get(player.getUniqueId());
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
-            registerNewTeam.setPrefix("A");
+            registerNewTeam.setPrefix("[A]");
             registerNewTeam.setSuffix(stats.getKills() + " - " + stats.getDeaths());
             NmsUtils.hideNametag(registerNewTeam);
             registerNewTeam.addEntry(player.getName());
@@ -47,7 +47,7 @@ public class SAScoreboardTeam {
     public void add(SAGame game, Player player) {
         PlayerStats stats = game.getStats().get(player.getUniqueId());
         Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
-        registerNewTeam.setPrefix(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA ? "O" : "A");
+        registerNewTeam.setPrefix(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA ? "[O]" : "[A]");
         registerNewTeam.setSuffix(stats.getKills() + " - " + stats.getDeaths());
         NmsUtils.hideNametag(registerNewTeam);
         registerNewTeam.addEntry(player.getName());
@@ -69,7 +69,7 @@ public class SAScoreboardTeam {
     public void update(SAGame game, Player player) {
         PlayerStats stats = game.getStats().get(player.getUniqueId());
         Team team = scoreboard.getTeam(player.getName());
-        team.setPrefix(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA ? "O" : "A");
+        team.setPrefix(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA ? "[O]" : "[A]");
         team.setSuffix(stats.getKills() + " - " + stats.getDeaths());
         NmsUtils.hideNametag(team);
     }

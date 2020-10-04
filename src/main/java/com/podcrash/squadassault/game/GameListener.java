@@ -17,18 +17,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Snowball;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -343,13 +337,28 @@ public class GameListener implements Listener {
                             break;
                         }
                         Gun gun = Main.getWeaponManager().getGun(shop.getWeaponName());
+                        if(player.getInventory().getItem(gun.getType().ordinal()) != null) {
+                            ItemStack oldStack = player.getInventory().getItem(gun.getType().ordinal());
 
-                        //TODO actually drop the pre existing gun here
+                            gun.resetDelay(player);
+                            ItemStack newStack = ItemBuilder.create(oldStack.getType(), 1, gun.getItem().getData(),
+                                    oldStack.getItemMeta().getDisplayName(),
+                                    oldStack.getItemMeta().getLore().toArray(new String[0]));
+                            newStack = Utils.setReserveAmmo(newStack, Utils.getReserveAmmo(oldStack));
+                            newStack.setAmount(1);
+                            NmsUtils.addNBTInteger(newStack, "outofammo", NmsUtils.getNBTInteger(oldStack, "outofammo"));
+                            player.getInventory().setItem(gun.getType().ordinal(), null);
+                            game.getDrops().put(player.getWorld().dropItemNaturally(player.getLocation(), newStack), oldStack.getAmount());
+                            if(gun.hasScope()) {
+                                NmsUtils.sendFakeItem(player, 5, player.getInventory().getHelmet());
+                            }
+                        }
 
                         game.setMoney(player, game.getMoney(player) - shop.getPrice());
                         ItemStack stack = ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                                 gun.getItem().getData(), gun.getItem().getName(), shop.getLore());
                         stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                        NmsUtils.addNBTInteger(stack, "outofammo", 0);
                         player.getInventory().setItem(gun.getType().ordinal(),
                                 stack);
                         break;
@@ -550,12 +559,13 @@ public class GameListener implements Listener {
             GrenadeType type = grenade.getType();
             int max = type.getMax();
             for(int i = 3; i < 8; i++) {
-                if(Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)) != null && Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)).getType() ==type) {
+                if(Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)) != null && Main.getWeaponManager().getGrenade(player.getInventory().getItem(i)).getType() == type) {
                     current++;
                 }
             }
             if (slot != -1 && current != max) {
                 event.setCancelled(true);
+                itemStack.setAmount(1);
                 player.getInventory().setItem(slot, itemStack);
                 game.getDrops().remove(item);
                 item.remove();
@@ -612,6 +622,7 @@ public class GameListener implements Listener {
                         itemStack.getItemMeta().getDisplayName(),
                         itemStack.getItemMeta().getLore().toArray(new String[0]));
                 newStack = Utils.setReserveAmmo(newStack, Utils.getReserveAmmo(itemStack));
+                NmsUtils.addNBTInteger(newStack, "outofammo", NmsUtils.getNBTInteger(itemStack, "outofammo"));
                 event.getItemDrop().setItemStack(newStack);
                 player.getInventory().setItem(heldItemSlot, null);
                 if(gun.hasScope()) {
@@ -678,7 +689,7 @@ public class GameListener implements Listener {
         if(!(event.getDamager() instanceof Snowball) || !(event.getEntity() instanceof Player)) {
             return;
         }
-        Snowball snowball = (Snowball) event.getDamager();
+        Projectile snowball = (Projectile) event.getDamager();
 
         ProjectileStats stats = Main.getWeaponManager().getProjectiles().get(snowball);
         if(stats == null) {
@@ -716,6 +727,13 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
+    public void projectileHitBlock(ProjectileHitEvent event) {
+        //TODO
+
+
+    }
+
+    @EventHandler
     public void onWeatherChange(WeatherChangeEvent event) {
         event.setCancelled(true);
     }
@@ -725,7 +743,15 @@ public class GameListener implements Listener {
         ((Player) event.getEntity()).setFoodLevel(20);
     }
 
-    private boolean snowballHeadshot(Player damaged, Snowball snowball) {
+    @EventHandler
+    public void onEat(PlayerItemConsumeEvent event) {
+        if(Main.getGameManager().getGame(event.getPlayer()) == null) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
+    private boolean snowballHeadshot(Player damaged, Projectile snowball) {
         Location start = snowball.getLocation();
         Location location = start.clone();
 
@@ -746,9 +772,9 @@ public class GameListener implements Listener {
     }
 
     private boolean hitHead(Player player, Location location) {
-        return Utils.offset2d(location.toVector(), player.getLocation().toVector()) < 0.4 &&
+        return Utils.offset2d(location.toVector(), player.getLocation().toVector()) < 0.2 &&
                 location.getY() >= player.getEyeLocation().getY() - 0.0 &&
-                location.getY() < player.getEyeLocation().getY() + 0.42;
+                location.getY() < player.getEyeLocation().getY() + 0.4;
     }
 
 

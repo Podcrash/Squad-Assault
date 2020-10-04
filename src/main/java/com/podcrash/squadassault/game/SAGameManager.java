@@ -392,6 +392,7 @@ public class SAGameManager {
                 ItemStack stack =  ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                         gun.getItem().getData(), gun.getItem().getName());
                 stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                NmsUtils.addNBTInteger(stack, "outofammo", 0);
                 player.getInventory().setItem(1, stack);
                 player.getInventory().setItem(2, ItemBuilder.create(Material.WOOD_SWORD, 1, "Knife", true));
             }
@@ -400,6 +401,7 @@ public class SAGameManager {
                 ItemStack stack =  ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                         gun.getItem().getData(), gun.getItem().getName());
                 stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                NmsUtils.addNBTInteger(stack, "outofammo", 0);
                 player.getInventory().setItem(1, stack);
             }
 
@@ -472,6 +474,7 @@ public class SAGameManager {
                 ItemStack stack = ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                         gun.getItem().getData(), gun.getItem().getName());
                 stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                NmsUtils.addNBTInteger(stack, "outofammo", 0);
                 player.getInventory().setItem(1, stack);
                 player.getInventory().setItem(2, ItemBuilder.create(Material.WOOD_SWORD, 1, "Knife", true));
             }
@@ -480,6 +483,7 @@ public class SAGameManager {
                 ItemStack stack = ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                         gun.getItem().getData(), gun.getItem().getName());
                 stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
+                NmsUtils.addNBTInteger(stack, "outofammo", 0);
                 player.getInventory().setItem(1, stack);
             }
             if(player.getInventory().getItem(2) == null) {
@@ -597,8 +601,8 @@ public class SAGameManager {
                     game.getBomb().setDrop(dropItemNaturally);
                 }
             }
-            for (Player player1 : game.getTeamA().getPlayers()) {
-                SAScoreboard scoreboard = game.getScoreboards().get(player1.getUniqueId());
+            for (Player player : game.getTeamA().getPlayers()) {
+                SAScoreboard scoreboard = game.getScoreboards().get(player.getUniqueId());
                 if (damager != null) {
                     scoreboard.getTeams().update(game, damager);
                 }
@@ -696,6 +700,9 @@ public class SAGameManager {
             builder.append(", assisted by ");
         }
         for(Player player : list) {
+            if(list.size() == 1) {
+                break;
+            }
             if(player != damager) {
                 builder.append(player.getDisplayName()).append(" ");
             }

@@ -1,6 +1,6 @@
 package com.podcrash.squadassault.weapons;
 
-import org.bukkit.entity.Snowball;
+import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ public class WeaponManager {
 
     private final List<Gun> guns;
     private final List<Grenade> grenades;
-    private final Map<Snowball, ProjectileStats> projectiles;
+    private final Map<Projectile, ProjectileStats> projectiles;
 
     public WeaponManager() {
         guns = new ArrayList<>();
@@ -72,7 +72,7 @@ public class WeaponManager {
         return grenades;
     }
 
-    public Map<Snowball, ProjectileStats> getProjectiles() {
+    public Map<Projectile, ProjectileStats> getProjectiles() {
         return projectiles;
     }
 }

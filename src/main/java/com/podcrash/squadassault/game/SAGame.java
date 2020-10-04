@@ -616,6 +616,7 @@ public class SAGame {
             primary.resetReloading(player, 0);
             NmsUtils.sendActionBar(player,
                     stack.getAmount() + " / " + Utils.getReserveAmmo(stack));
+            NmsUtils.addNBTInteger(stack, "outofammo", 0);
         }
         stack = player.getInventory().getItem(1);
         Gun secondary = Main.getWeaponManager().getGun(stack);
@@ -624,6 +625,7 @@ public class SAGame {
             secondary.resetReloading(player, 1);
             NmsUtils.sendActionBar(player,
                     stack.getAmount() + " / " + Utils.getReserveAmmo(stack));
+            NmsUtils.addNBTInteger(stack, "outofammo", 0);
         }
     }
 
