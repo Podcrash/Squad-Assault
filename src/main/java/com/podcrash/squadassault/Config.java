@@ -147,7 +147,7 @@ public class Config {
             gunObj.setDelayBullets(guns.getInt("Guns." + gun + ".Burst.DelayBullets"));
             gunObj.setBulletsPerBurst(guns.getInt("Guns." + gun + ".Burst.BulletsPerBurst"));
             gunObj.setDropoffPerBlock(guns.getDouble("Guns." + gun + ".Shoot.DropoffPerBlock"));
-            gunObj.setAccuracy((float)guns.getDouble("Guns." + gun + ".Shoot.Accuracy"));
+            gunObj.setAccuracy(guns.getDouble("Guns." + gun + ".Shoot.Accuracy"));
             gunObj.setScope(guns.getBoolean("Guns." + gun + ".Shoot.Scope"));
             gunObj.setDamage(guns.getDouble("Guns." + gun + ".Shoot.Damage"));
             gunObj.setReloadDuration(guns.getInt("Guns." + gun + ".Reload.Duration"));

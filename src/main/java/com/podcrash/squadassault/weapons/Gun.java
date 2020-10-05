@@ -381,9 +381,6 @@ public class Gun {
                             }
                             Location eye = player.getEyeLocation();
                             boolean isMoving = !player.getVelocity().equals(new Vector());
-                            if (player.isSneaking()) {
-                                eye.subtract(0, 0.03, 0);
-                            }
                             //play sound
 
                             if (accuracy == 0) {
@@ -420,18 +417,18 @@ public class Gun {
             }
         } else {
             if (isMoving) {
-                gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy * 3),
-                        (int) (accuracy * 3)) + 0.5f);
-                gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 3),
-                        (int) (accuracy * 3)) + 0.5f);
+                gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy * 5),
+                        (int) (accuracy * 5)) + 0.5f);
+                gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 5),
+                        (int) (accuracy * 5)) + 0.5f);
             } else if (scope && player.isSneaking() && System.currentTimeMillis()-scopeDelays.get(player.getUniqueId()) > scopeDelay*50) {
                 gunCache.setAccuracyYaw(0);
                 gunCache.setAccuracyPitch(0);
             } else if (scope && !player.isSneaking()) {
-                gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy * 2),
-                        (int) (accuracy) * 2) + 0.5f);
-                gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 2),
-                        (int) (accuracy) * 2) + 0.5f);
+                gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy * 5),
+                        (int) (accuracy) * 5) + 0.5f);
+                gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 5),
+                        (int) (accuracy) * 5) + 0.5f);
             }
             double yawRad =
                     Math.toRadians(Utils.dumbMinecraftDegrees(yaw + 0.6) + gunCache.getAccuracyYaw() + 90.0);
