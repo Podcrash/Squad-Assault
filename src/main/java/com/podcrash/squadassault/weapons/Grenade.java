@@ -83,7 +83,7 @@ public class Grenade {
             return;
         } //might be a bug here
         played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnPhysicsItem(player,
-                player.getItemInHand(), throwSpeed/100)));
+                player.getItemInHand(), throwSpeed/20)));
         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), null);
         //play sound
     }
@@ -167,13 +167,10 @@ public class Grenade {
                         cache.getBlocks().clear();
                         iterator.remove();
                     } else {
-                        if(ticks % 15 != 0) {
-                            continue;
-                        }
                         for(Player player : cache.getNearbyToBlockPlayers()) {
                             if((cache.getPlayer() == player || Main.getGameManager().getTeam(cache.getGame(),
                                     cache.getPlayer()) != Main.getGameManager().getTeam(cache.getGame(), player)) && !cache.getGame().getSpectators().contains(player)) {
-                                Main.getGameManager().damage(cache.getGame(), cache.getPlayer(), player, 1.5, "Fire");
+                                Main.getGameManager().damage(cache.getGame(), cache.getPlayer(), player, 0.5, "Fire");
                                 player.setFireTicks(0);
                             }
                         }

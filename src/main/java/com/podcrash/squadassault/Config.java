@@ -162,6 +162,7 @@ public class Config {
             gunObj.setProjectileConeMax(guns.getDouble("Guns."+gun+".Burst.ProjectileConeMax"));
             gunObj.setResetPerTick(guns.getDouble("Guns."+gun+".Burst.Reset"));
             gunObj.setScopeDelay(guns.getInt("Guns."+gun+".Shoot.ScopeDelay"));
+            gunObj.setBurstDelay(guns.getInt("Guns."+gun+".Burst.BurstDelay"));
             Main.getWeaponManager().addGun(gunObj);
         }
     }

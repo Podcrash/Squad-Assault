@@ -239,7 +239,8 @@ Guns:
       BulletsPerPitch: 7
       BulletsPerYaw: 0
       DelayBullets: 2
-      BulletsPerBurst: 1
+      BulletsPerBurst: 2
+      BurstDelay: 2
       ProjectileConeMax: 0.3
       ProjectileConeMin: 0.005
       ProjectileConeIncrease: 0.02

@@ -692,6 +692,7 @@ public class GameListener implements Listener {
         Projectile snowball = (Projectile) event.getDamager();
 
         ProjectileStats stats = Main.getWeaponManager().getProjectiles().get(snowball);
+        Main.getWeaponManager().getProjectiles().remove(snowball);
         if(stats == null) {
             event.setCancelled(true);
             return;
@@ -701,8 +702,8 @@ public class GameListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        boolean hs = snowballHeadshot(damaged, snowball);
-        if(hs) {
+        HitType type = snowballCollision(damaged, snowball);
+        if(type == HitType.HEAD) {
             double armorPen = damaged.getInventory().getHelmet().getType() == Material.LEATHER_HELMET ? 1 :
                     stats.getArmorPen();
             double rangeFalloff = (stats.getDropoff() * damaged.getLocation().distance(stats.getLocation()));
@@ -712,7 +713,7 @@ public class GameListener implements Listener {
             Main.getGameManager().getGame(damaged).getStats().get(stats.getShooter().getUniqueId()).addHeadshots(1);
             Main.getGameManager().damage(Main.getGameManager().getGame(damaged), stats.getShooter(), damaged,
                     finalDamage, stats.getGunName() + " headshot");
-        } else {
+        } else if(type == HitType.BODY) {
             double armorPen = damaged.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 1 :
                     stats.getArmorPen();
             double rangeFalloff = (stats.getDropoff() * damaged.getLocation().distance(stats.getLocation()));
@@ -721,8 +722,10 @@ public class GameListener implements Listener {
             Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, false, stats.getShooter(), damaged));
             Main.getGameManager().damage(Main.getGameManager().getGame(damaged), stats.getShooter(), damaged,
                     finalDamage, stats.getGunName());
+        } else if(type == HitType.MISS) {
+            event.setCancelled(true);
+            return;
         }
-        Main.getWeaponManager().getProjectiles().remove(snowball);
 
     }
 
@@ -751,7 +754,7 @@ public class GameListener implements Listener {
         event.setCancelled(true);
     }
 
-    private boolean snowballHeadshot(Player damaged, Projectile snowball) {
+    private HitType snowballCollision(Player damaged, Projectile snowball) {
         Location start = snowball.getLocation();
         Location location = start.clone();
 
@@ -760,9 +763,10 @@ public class GameListener implements Listener {
         }
 
         if(hitBody(damaged, location))
-            return false;
-
-        return hitHead(damaged, location);
+            return HitType.BODY;
+        if(hitHead(damaged, location))
+            return HitType.HEAD;
+        return HitType.MISS;
     }
 
     private boolean hitBody(Player player, Location location) {
@@ -777,5 +781,9 @@ public class GameListener implements Listener {
                 location.getY() < player.getEyeLocation().getY() + 0.4;
     }
 
+
+    private enum HitType {
+        MISS, BODY, HEAD
+    }
 
 }
