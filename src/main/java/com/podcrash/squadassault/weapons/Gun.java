@@ -431,7 +431,7 @@ public class Gun {
                         (int) (accuracy) * 5) + 0.5f);
             }
             double yawRad =
-                    Math.toRadians(Utils.dumbMinecraftDegrees(yaw + 0.6) + gunCache.getAccuracyYaw() + 90.0);
+                    Math.toRadians(Utils.dumbMinecraftDegrees(yaw) + gunCache.getAccuracyYaw() + 90.0);
             double pitchRad = Math.toRadians(pitch + gunCache.getAccuracyPitch() + 90.0);
             double cot = Math.sin(pitchRad) * Math.cos(yawRad);
             double cos = Math.cos(pitchRad);

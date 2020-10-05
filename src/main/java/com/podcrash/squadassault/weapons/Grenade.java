@@ -104,8 +104,11 @@ public class Grenade {
                     if((cache.getPlayer() == player || Main.getGameManager().getTeam(cache.getGame(),
                             cache.getPlayer()) != Main.getGameManager().getTeam(cache.getGame(), player)) && !cache.getGame().getSpectators().contains(player)) {
                         if (los(location, player)) break;
+                        double armorPen =
+                                player.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 1 :
+                                        0.6;
                         Main.getGameManager().damage(cache.getGame(), cache.getPlayer(), player,
-                                effectPower - cache.getGrenade().getLocation().distance(player.getLocation()) * 2,
+                                armorPen*(effectPower - cache.getGrenade().getLocation().distance(player.getLocation()) * 2),
                                 "HE Grenade");
                     }
                 }
