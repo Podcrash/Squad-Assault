@@ -370,7 +370,7 @@ public class GameListener implements Listener {
                         if(shop.getMaterial() != Material.SHEARS) {
                             ItemStack itemStack = player.getInventory().getItem(shop.getHotbarSlot());
                             if(shop.getHotbarSlot() == 2 || itemStack == null || itemStack.getType() == Material.LEATHER_HELMET || itemStack.getType() == Material.LEATHER_CHESTPLATE) {
-                                if(itemStack != null && itemStack.getType() == Material.LEATHER_HELMET && player.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE) {
+                                if(shop.getMaterial() == Material.LEATHER_HELMET && player.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE) {
                                     player.sendMessage("you must buy kevlar to buy a helmet");
                                     break;
                                 }
