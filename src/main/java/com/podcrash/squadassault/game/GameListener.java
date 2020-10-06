@@ -6,13 +6,14 @@ import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.shop.ItemType;
 import com.podcrash.squadassault.shop.PlayerShopItem;
 import com.podcrash.squadassault.util.ItemBuilder;
-import com.podcrash.squadassault.util.Message;
+import com.podcrash.squadassault.util.Messages;
 import com.podcrash.squadassault.util.Utils;
 import com.podcrash.squadassault.weapons.Grenade;
 import com.podcrash.squadassault.weapons.GrenadeType;
 import com.podcrash.squadassault.weapons.Gun;
 import com.podcrash.squadassault.weapons.ProjectileStats;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -78,7 +79,8 @@ public class GameListener implements Listener {
                     } else if(player.getInventory().getItemInHand().getType() == Material.LEATHER) {
                         event.setCancelled(true);
                         Main.getGameManager().removePlayer(game, player, false, false);
-                        player.sendMessage("You left the game");
+                        game.sendToAll(Messages.PLAYER_LEAVE.replace("%p%", player.getDisplayName()));
+                        player.sendMessage(ChatColor.DARK_PURPLE + "You left the game");
                     }
                 }
             } else if(game.getState() == SAGameState.ROUND_LIVE || game.getState() == SAGameState.ROUND_START) {
@@ -88,10 +90,10 @@ public class GameListener implements Listener {
                         if(game.getTimer() > 85 || game.getState() == SAGameState.ROUND_START) {
                             player.openInventory(game.getShops().get(player.getUniqueId()));
                         } else {
-                            player.sendMessage(Message.SHOP_20_S.toString());
+                            player.sendMessage(Messages.PLAYER_SHOP_DENIED_ELAPSED.toString());
                         }
                     } else {
-                        player.sendMessage("You can only open the shop at spawn");
+                        player.sendMessage(Messages.PLAYER_SHOP_DENIED_OUTOFBOUNDS.toString());
                     }
                     return;
                 }
@@ -124,11 +126,11 @@ public class GameListener implements Listener {
                                     for(Player omega : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
                                         omega.setCompassTarget(game.getBomb().getLocation());
                                         //todo play sound
-                                        NmsUtils.sendTitle(omega,0,23,0,"","BOMB PLANTED");
+                                        NmsUtils.sendTitle(omega,0,23,0,"",ChatColor.DARK_PURPLE + "Bomb Planted");
                                     }
                                     for(Player alpha : Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers()) {
                                         //todo play sound
-                                        NmsUtils.sendTitle(alpha,0,23,0,"","BOMB PLANTED");
+                                        NmsUtils.sendTitle(alpha,0,23,0,"",ChatColor.DARK_PURPLE + "Bomb Planted");
                                     }
                                 }
                                 bombPlants.remove(game);
@@ -218,12 +220,12 @@ public class GameListener implements Listener {
         event.getRecipients().clear();
         if(Main.getGameManager().getTeam(game, player) == SATeam.Team.ALPHA) {
             event.getRecipients().addAll(Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers());
-            event.setFormat(Message.TEAM_CHAT_FORMAT.toString().replace("%player%",player.getDisplayName()).replace(
+            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
                     "%message%", "%2$s"));
         }
         if(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA) {
             event.getRecipients().addAll(Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers());
-            event.setFormat(Message.TEAM_CHAT_FORMAT.toString().replace("%player%",player.getDisplayName()).replace(
+            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
                     "%message%", "%2$s"));
         }
     }
@@ -285,15 +287,16 @@ public class GameListener implements Listener {
         if(event.getClickedInventory().equals(selector)) {
             if(event.getSlot() == 11) {
                 game.addTeamA(player);
-                player.sendMessage("Chose team A");
+                player.sendMessage(Messages.PLAYER_SELECT_TEAM.replace("%t%", "A"));
                 player.closeInventory();
             } else if (event.getSlot() == 13) {
                 game.randomTeam(player);
-                player.sendMessage("Chose random team");
+                player.sendMessage(Messages.PLAYER_SELECT_TEAM_RANDOM.replace("%t%",
+                        (game.getTeamA().getPlayers().contains(player) ? "A" : "B")));
                 player.closeInventory();
             } else if (event.getSlot() == 15) {
                 game.addTeamB(player);
-                player.sendMessage("Chose team B");
+                player.sendMessage(Messages.PLAYER_SELECT_TEAM.replace("%t%", "B"));
                 player.closeInventory();
             }
         }
@@ -303,7 +306,7 @@ public class GameListener implements Listener {
                 if(event.getSlot() == shop.getShopSlot() && (shop.getTeam() == null || Main.getGameManager().getTeam(game, player) == shop.getTeam())) {
                     if(game.getMoney(player) != null && shop.getPrice() > game.getMoney(player)) {
                         player.closeInventory();
-                        player.sendMessage("not enough money");
+                        player.sendMessage(Messages.PLAYER_SHOP_DENIED_FUNDS.toString());
                         break;
                     }
                     if(shop.getType() == ItemType.GRENADE) {
@@ -318,7 +321,7 @@ public class GameListener implements Listener {
                         }
                         if(current == max) {
                             player.closeInventory();
-                            player.sendMessage("You already have the maximum amount of that grenade!");
+                            player.sendMessage(ChatColor.DARK_PURPLE + "You already have the maximum amount of that grenade!");
                             break;
                         }
                         int desiredSlot = findNadeSlot(player);
@@ -330,7 +333,7 @@ public class GameListener implements Listener {
                             break;
                         }
                         player.closeInventory();
-                        player.sendMessage("Your slots are full!");
+                        player.sendMessage(ChatColor.DARK_PURPLE + "Your slots are full!");
                         break;
                     } else if(shop.getType() == ItemType.GUN) {
                         if(shop.getTeam() != null && Main.getGameManager().getTeam(game, player) != shop.getTeam()) {
@@ -370,8 +373,8 @@ public class GameListener implements Listener {
                         if(shop.getMaterial() != Material.SHEARS) {
                             ItemStack itemStack = player.getInventory().getItem(shop.getHotbarSlot());
                             if(shop.getHotbarSlot() == 2 || itemStack == null || itemStack.getType() == Material.LEATHER_HELMET || itemStack.getType() == Material.LEATHER_CHESTPLATE) {
-                                if(shop.getMaterial() == Material.LEATHER_HELMET && player.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE) {
-                                    player.sendMessage("you must buy kevlar to buy a helmet");
+                                if((shop.getMaterial() == Material.IRON_HELMET || shop.getMaterial() == Material.CHAINMAIL_HELMET) && player.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE) {
+                                    player.sendMessage(Messages.PLAYER_SHOP_DENIED_ARMOR.toString());
                                     break;
                                 }
                                 game.setMoney(player, game.getMoney(player) - shop.getPrice());
@@ -388,7 +391,7 @@ public class GameListener implements Listener {
                             }
                         }
                         player.closeInventory();
-                        player.sendMessage("You already have that!");
+                        player.sendMessage(ChatColor.DARK_PURPLE + "You already have that!");
                         break;
                     }
                 }
