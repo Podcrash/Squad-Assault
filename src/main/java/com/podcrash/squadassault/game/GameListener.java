@@ -370,6 +370,10 @@ public class GameListener implements Listener {
                         if(shop.getMaterial() != Material.SHEARS) {
                             ItemStack itemStack = player.getInventory().getItem(shop.getHotbarSlot());
                             if(shop.getHotbarSlot() == 2 || itemStack == null || itemStack.getType() == Material.LEATHER_HELMET || itemStack.getType() == Material.LEATHER_CHESTPLATE) {
+                                if(itemStack != null && itemStack.getType() == Material.LEATHER_HELMET && player.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE) {
+                                    player.sendMessage("you must buy kevlar to buy a helmet");
+                                    break;
+                                }
                                 game.setMoney(player, game.getMoney(player) - shop.getPrice());
                                 player.getInventory().setItem(shop.getHotbarSlot(),
                                         ItemBuilder.create(shop.getMaterial(), 1, shop.getName(), false));
@@ -579,6 +583,7 @@ public class GameListener implements Listener {
                 event.setCancelled(true);
                 itemStack.setAmount(n + 1);
                 player.getInventory().setItem(gunSlot, itemStack);
+                NmsUtils.sendActionBar(player, player.getInventory().getItem(gunSlot).getAmount() + " / " + Utils.getReserveAmmo(itemStack));
                 game.getDrops().remove(item);
                 item.remove();
             }
