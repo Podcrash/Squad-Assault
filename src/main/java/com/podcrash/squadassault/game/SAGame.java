@@ -243,15 +243,12 @@ public class SAGame {
     public void setState(SAGameState state) {
         this.state = state;
         Main.getInstance().getServer().getPluginManager().callEvent(new GameStateChangeEvent(this, state));
-        //todo update scoreboard
+        Main.getGameManager().updateTitle(this);
         switch(state) {
-            case END:
-                //todo
-                break;
             case ROUND_START:
-                bar.setTitle(Messages.BOSSBAR_INGAME.replace("%name%", mapName).replace("%timer%",
+                bar.setTitle(Messages.BOSSBAR_INGAME.toString().replace("%name%", mapName).replace("%timer%",
                         String.valueOf(timer))); //todo callouts
-                bar.setProgress(1);
+                bar.setProgress(((double) timer) / 15);
                 break;
             case WAITING:
                 bar.setTitle(Messages.BOSSBAR_WAITING.replace("%name%", mapName));
