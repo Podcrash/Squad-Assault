@@ -6,15 +6,12 @@ import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.scoreboard.SAScoreboard;
 import com.podcrash.squadassault.scoreboard.ScoreboardStatus;
 import com.podcrash.squadassault.util.ItemBuilder;
-import com.podcrash.squadassault.util.Message;
+import com.podcrash.squadassault.util.Messages;
 import com.podcrash.squadassault.util.Randomizer;
 import com.podcrash.squadassault.util.Utils;
 import com.podcrash.squadassault.weapons.Grenade;
 import com.podcrash.squadassault.weapons.Gun;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -50,23 +47,23 @@ public class SAGameManager {
 
     public void addPlayer(SAGame game, Player player) {
         if(game == null) {
-            player.sendMessage("game doesn't exist");
+            player.sendMessage(Messages.PLAYER_JOIN_FAIL.toString());
             return;
         }
         if(getGame(player) != null) {
-            player.sendMessage("already in a game");
+            player.sendMessage(Messages.PLAYER_JOIN_FAIL_MULTIPLE.toString());
             return;
         }
         if(game.getState() == SAGameState.DISABLED) {
-            player.sendMessage("disabled");
+            player.sendMessage(Messages.PLAYER_JOIN_FAIL_DISABLED.toString());
             return;
         }
         if(game.getState() != SAGameState.WAITING) {
-            player.sendMessage("already started");
+            player.sendMessage(Messages.PLAYER_JOIN_FAIL_STARTED.toString());
             return;
         }
-        if(game.getTeamA().size() + game.getTeamB().size() == game.getMaxPlayers()) {
-            player.sendMessage("full");
+        if(game.getTeamA().size() + game.getTeamB().size() >= game.getMaxPlayers()) {
+            player.sendMessage(Messages.PLAYER_JOIN_FAIL_FULL.toString());
             return;
         }
         player.getInventory().clear();
@@ -78,7 +75,8 @@ public class SAGameManager {
         game.getStats().put(player.getUniqueId(), new PlayerStats(player.getName()));
         //TODO leave game item
         player.updateInventory();
-        game.sendToAll(player.getDisplayName() + " joined the game. " + game.getSize() + "/" + game.getMaxPlayers());
+        game.sendToAll(Messages.PLAYER_JOIN.replace("%p%", player.getDisplayName()) + " " + ChatColor.YELLOW + game
+                        .getSize() + ChatColor.DARK_PURPLE +  " / " + ChatColor.YELLOW + game.getMaxPlayers());
         if(game.getSize() >= game.getMinPlayers()) {
             game.start();
         }
@@ -147,7 +145,7 @@ public class SAGameManager {
                 }
             }
             if(leftServer && game.getState() == SAGameState.WAITING) {
-                game.sendToAll(player.getDisplayName() + " left! " + game.getSize() + "/" + game.getMaxPlayers());
+                game.sendToAll(Messages.PLAYER_LEAVE.replace("%p%", player.getName()));
             }
             //call an event?
         }
@@ -161,14 +159,15 @@ public class SAGameManager {
     public void updateTitle(SAGame game) {
         for(SAScoreboard scoreboard : game.getScoreboards().values()) {
             if(game.getState() == SAGameState.WAITING) {
-                scoreboard.getStatus().setTitle(Message.SCOREBOARD_TITLE.toString());
+                scoreboard.getStatus().setTitle(Messages.SCOREBOARD_TITLE.toString());
             } else if(game.getState() == SAGameState.ROUND_START || game.getState() == SAGameState.ROUND_LIVE) {
                 int scoreTeamA = game.getScoreTeamA();
                 int scoreTeamB = game.getScoreTeamB();
                 SATeam.Team side = game.getTeamA().getTeam();
-                scoreboard.getStatus().setTitle(((side == SATeam.Team.ALPHA) ? scoreTeamA : scoreTeamB) + " α" + " Ω " + ((side == SATeam.Team.OMEGA) ? scoreTeamA : scoreTeamB));
+                scoreboard.getStatus().setTitle(((side == SATeam.Team.ALPHA) ? scoreTeamA : scoreTeamB) + " Alpha" +
+                        " Omega " + ((side == SATeam.Team.OMEGA) ? scoreTeamA : scoreTeamB));
             } else {
-                scoreboard.getStatus().setTitle("GAME OVER");
+                scoreboard.getStatus().setTitle(Messages.SCOREBOARD_GAME_OVER.toString());
             }
         }
     }
@@ -354,7 +353,7 @@ public class SAGameManager {
         player.setAllowFlight(false);
         player.getInventory().clear();
         player.setGameMode(GameMode.ADVENTURE);
-        player.getInventory().setArmorContents(null);
+        player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
         if (player.isInsideVehicle()) {
             player.leaveVehicle();
         }
@@ -376,7 +375,7 @@ public class SAGameManager {
                 game.getScoreboards().get(p.getUniqueId()).getHealth().update(player);
             }
 
-            player.sendMessage("You are alpha yay go");
+            player.sendMessage(Messages.PLAYER_JOIN_TEAM_DEFENCE.toString());
             if(game.getRound() == 0) {
                 game.setMoney(player, 800);
                 player.getInventory().setItem(0, null); //clear team selector
@@ -457,7 +456,7 @@ public class SAGameManager {
                 game.getScoreboards().get(p.getUniqueId()).getHealth().update(player);
             }
 
-            player.sendMessage("You are omega yay go");
+            player.sendMessage(Messages.PLAYER_JOIN_TEAM_OFFENCE.toString());
             if(game.getRound() == 0) {
                 game.setMoney(player, 800);
                 player.getInventory().setItem(0, null); //clear team selector
@@ -536,9 +535,9 @@ public class SAGameManager {
         for(Player player : getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
             player.setCompassTarget(bombCarrier.getLocation());
             if(player.equals(bombCarrier)) {
-                player.sendMessage("You have the bomb");
+                player.sendMessage(Messages.PLAYER_BOMB_SELF.toString());
             } else {
-                player.sendMessage(bombCarrier.getDisplayName() + " has the bomb!");
+                player.sendMessage(Messages.PLAYER_BOMB_OTHER.replace("%p", bombCarrier.getName()));
             }
         }
     }
@@ -625,11 +624,13 @@ public class SAGameManager {
                         (damager.getInventory().getHeldItemSlot() == 2 ? 1500 :
                                 Main.getWeaponManager().getGun(damager.getItemInHand()) != null ?
                                         Main.getWeaponManager().getGun(damager.getItemInHand()).getKillReward() : 300));
-                game.sendToAll(damager.getDisplayName() + " killed " + damaged.getDisplayName() + " via " + cause + listStringAssists(assists.get(damaged), damager));
+                game.sendToAll(Messages.KILL_BASE.replace("%p%", damaged.getDisplayName()).replace("%op%",
+                        damager.getDisplayName()).replace("%i%", cause) + listStringAssists(assists.get(damaged), damager));
                 game.getStats().get(damager.getUniqueId()).addKills(1);
 
             } else {
-                game.sendToAll(damaged.getDisplayName() + " died to " + cause + listStringAssists(assists.getOrDefault(damaged, new ArrayList<>()), null));
+                game.sendToAll(Messages.KILL_BASE_NO_KILLER.replace("%p%", damaged.getDisplayName()).replace("%op%",
+                        cause) + listStringAssists(assists.getOrDefault(damaged, new ArrayList<>()), null));
             }
             for(Player assisted : assists.getOrDefault(damaged, new ArrayList<>())) {
                 if (assisted != damager) {
@@ -638,7 +639,8 @@ public class SAGameManager {
             }
             assists.remove(damaged);
             game.getStats().get(damaged.getUniqueId()).addDeaths(1);
-            NmsUtils.sendTitle(damaged, 0, 100, 0, "You died", damager != null ? damager.getDisplayName() : "");
+            NmsUtils.sendTitle(damaged, 0, 100, 0, "You died", "Killer: " + (damager != null ? damager.getDisplayName()
+                    : ""));
             return true;
         }
         if(damaged.getNoDamageTicks() < 1) {
@@ -696,17 +698,14 @@ public class SAGameManager {
 
     private String listStringAssists(List<Player> list, Player damager) {
         StringBuilder builder = new StringBuilder();
-        if(list.size() > 1) {
-            builder.append(", assisted by ");
+        if(list.size() > 0 && !list.get(0).equals(damager)) {
+            builder.append("&5, assisted by &e");
         }
         for(Player player : list) {
-            if(list.size() == 1) {
-                break;
-            }
-            if(player != damager) {
+            if(!player.equals(damager)) {
                 builder.append(player.getDisplayName()).append(" ");
             }
         }
-        return builder.toString();
+        return ChatColor.translateAlternateColorCodes('&', builder.toString());
     }
 }

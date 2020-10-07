@@ -20,7 +20,6 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Snowball;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -58,6 +57,7 @@ public class Gun {
     private double coneIncPerBullet;
     private double resetPerTick;
     private int scopeDelay;
+    private int burstDelay;
     private final Map<UUID, Long> delay;
     private final Map<UUID, GunCache> cache;
     private final Map<UUID, GunReload> reloading;
@@ -212,6 +212,7 @@ public class Gun {
         }
         if(NmsUtils.getNBTInteger(player.getItemInHand(), "outofammo") == 1) {
             NmsUtils.sendActionBar(player, "0 / 0");
+            return;
         }
         long del = System.currentTimeMillis() / 49;
         if(delay.get(player.getUniqueId()) == null) {
@@ -219,14 +220,29 @@ public class Gun {
         } else if(del - delay.get(player.getUniqueId()) <= delayPerShot) {
             return;
         }
+
         GunCache gunCache = cache.get(player.getUniqueId());
-        if(gunCache == null) {
+        if (gunCache == null) {
             cache.put(player.getUniqueId(), new GunCache(game, bulletsPerShot, projectileConeMin));
         } else {
             gunCache.setRounds(bulletsPerShot);
             gunCache.setLastShot(System.currentTimeMillis());
         }
         delay.put(player.getUniqueId(), del);
+
+        if(bulletsPerBurst > 1) {
+            for(int i = 1; i < bulletsPerBurst; i++) {
+                Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
+                    GunCache cache = this.cache.get(player.getUniqueId());
+                    if (cache == null) {
+                        this.cache.put(player.getUniqueId(), new GunCache(game, bulletsPerShot, projectileConeMin));
+                    } else {
+                        cache.setRounds(bulletsPerShot);
+                        cache.setLastShot(System.currentTimeMillis());
+                    }
+                }, i*burstDelay);
+            }
+        }
     }
 
     public void reload(Player player, int slot, int left) {
@@ -365,56 +381,14 @@ public class Gun {
                             }
                             Location eye = player.getEyeLocation();
                             boolean isMoving = !player.getVelocity().equals(new Vector());
-                            if (player.isSneaking()) {
-                                eye.subtract(0, 0.03, 0);
-                            } else {
-                                eye.subtract(0, 0.1, 0);
-                            }
                             //play sound
 
                             if (accuracy == 0) {
                                 gunCache.setAccuracyPitch(0);
                                 gunCache.setAccuracyYaw(0);
                             }
-                            float yaw = eye.getYaw();
-                            float pitch = eye.getPitch();
-                            double x = eye.getX();
-                            double y = eye.getY();
-                            double z = eye.getZ();
-                            for(int i = 0; i < bulletsPerBurst; i++) {
-                                if (projectile) {
-                                    if (isShotgun) {
-                                        shotgun(player, isMoving, gunCache);
-                                    } else {
-                                        projectile(player, isMoving, gunCache);
-                                    }
-                                } else {
-                                    if (isMoving) {
-                                        gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy * 3),
-                                                (int) (accuracy * 3)) + 0.5f);
-                                        gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 3),
-                                                (int) (accuracy * 3)) + 0.5f);
-                                    } else if (scope && player.isSneaking() && System.currentTimeMillis()-scopeDelays.get(player.getUniqueId()) > scopeDelay*50) {
-                                        gunCache.setAccuracyYaw(0);
-                                        gunCache.setAccuracyPitch(0);
-                                    } else if (scope && !player.isSneaking()) {
-                                        gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy * 2),
-                                                (int) (accuracy) * 2) + 0.5f);
-                                        gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 2),
-                                                (int) (accuracy) * 2) + 0.5f);
-                                    }
-                                    double yawRad =
-                                            Math.toRadians(Utils.dumbMinecraftDegrees(yaw + 0.6) + gunCache.getAccuracyYaw() + 90.0);
-                                    double pitchRad = Math.toRadians(pitch + gunCache.getAccuracyPitch() + 90.0);
-                                    double cot = Math.sin(pitchRad) * Math.cos(yawRad);
-                                    double cos = Math.cos(pitchRad);
-                                    double sin2 = Math.sin(pitchRad) * Math.sin(yawRad);
-                                    hitscan(player, eye, x, y, z, cot, cos, sin2, gunCache);
-                                    eye.setX(x);
-                                    eye.setY(y);
-                                    eye.setZ(sin2);
-                                }
-                            }
+                            shootOnce(player, isMoving, gunCache, eye, eye.getPitch(), eye.getYaw(), eye.getX(),
+                                    eye.getY(), eye.getZ());
                         } else {
                             if (gunCache.getTicksLeft() > 0) {
                                 continue;
@@ -430,6 +404,42 @@ public class Gun {
             } else {
                 iterator.remove();
             }
+        }
+    }
+
+    private void shootOnce(Player player, boolean isMoving, GunCache gunCache, Location eye, double pitch,
+                           double yaw, double x, double y, double z) {
+        if (projectile) {
+            if (isShotgun) {
+                shotgun(player, isMoving, gunCache);
+            } else {
+                projectile(player, isMoving, gunCache);
+            }
+        } else {
+            if (isMoving) {
+                gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy * 5),
+                        (int) (accuracy * 5)) + 0.5f);
+                gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 5),
+                        (int) (accuracy * 5)) + 0.5f);
+            } else if (scope && player.isSneaking() && System.currentTimeMillis()-scopeDelays.get(player.getUniqueId()) > scopeDelay*50) {
+                gunCache.setAccuracyYaw(0);
+                gunCache.setAccuracyPitch(0);
+            } else if (scope && !player.isSneaking()) {
+                gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy * 5),
+                        (int) (accuracy) * 5) + 0.5f);
+                gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 5),
+                        (int) (accuracy) * 5) + 0.5f);
+            }
+            double yawRad =
+                    Math.toRadians(Utils.dumbMinecraftDegrees(yaw) + gunCache.getAccuracyYaw() + 90.0);
+            double pitchRad = Math.toRadians(pitch + gunCache.getAccuracyPitch() + 90.0);
+            double cot = Math.sin(pitchRad) * Math.cos(yawRad);
+            double cos = Math.cos(pitchRad);
+            double sin2 = Math.sin(pitchRad) * Math.sin(yawRad);
+            hitscan(player, eye, x, y, z, cot, cos, sin2, gunCache);
+            eye.setX(x);
+            eye.setY(y);
+            eye.setZ(sin2);
         }
     }
 
@@ -669,5 +679,13 @@ public class Gun {
         }
         ((CraftWorld) player.getWorld()).getHandle().addEntity(launch);
         return (Projectile) entity;
+    }
+
+    public int getBurstDelay() {
+        return burstDelay;
+    }
+
+    public void setBurstDelay(int burstDelay) {
+        this.burstDelay = burstDelay;
     }
 }

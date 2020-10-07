@@ -10,7 +10,7 @@ import com.podcrash.squadassault.shop.ItemType;
 import com.podcrash.squadassault.shop.MoneyManager;
 import com.podcrash.squadassault.shop.PlayerShopItem;
 import com.podcrash.squadassault.util.ItemBuilder;
-import com.podcrash.squadassault.util.Message;
+import com.podcrash.squadassault.util.Messages;
 import com.podcrash.squadassault.util.Randomizer;
 import com.podcrash.squadassault.util.Utils;
 import com.podcrash.squadassault.weapons.Grenade;
@@ -92,7 +92,7 @@ public class SAGame {
         stats = new HashMap<>();
         timer = 30;
         maxPlayers = alphaSpawns.size() + omegaSpawns.size();
-        bar = NmsUtils.createBossbar(Message.BOSSBAR_WAITING.getMsg().replace("%name%", mapName));
+        bar = NmsUtils.createBossbar(Messages.BOSSBAR_WAITING.replace("%name%", mapName));
     }
 
     public String getId() {
@@ -243,18 +243,15 @@ public class SAGame {
     public void setState(SAGameState state) {
         this.state = state;
         Main.getInstance().getServer().getPluginManager().callEvent(new GameStateChangeEvent(this, state));
-        //todo update scoreboard
+        Main.getGameManager().updateTitle(this);
         switch(state) {
-            case END:
-                //todo
-                break;
             case ROUND_START:
-                bar.setTitle(Message.BOSSBAR_INGAME.toString().replace("%name%", mapName).replace("%timer%",
+                bar.setTitle(Messages.BOSSBAR_INGAME.toString().replace("%name%", mapName).replace("%timer%",
                         String.valueOf(timer))); //todo callouts
-                bar.setProgress(1);
+                bar.setProgress(((double) timer) / 15);
                 break;
             case WAITING:
-                bar.setTitle(Message.BOSSBAR_WAITING.getMsg().replace("%name%", mapName));
+                bar.setTitle(Messages.BOSSBAR_WAITING.replace("%name%", mapName));
                 bar.setProgress(1);
                 break;
         }
@@ -362,7 +359,7 @@ public class SAGame {
 
     private void runLiveRound() {
         if(!roundEnding) {
-            bar.setTitle(Message.BOSSBAR_INGAME.toString().replace("%name%", mapName).replace("%timer%",
+            bar.setTitle(Messages.BOSSBAR_INGAME.toString().replace("%name%", mapName).replace("%timer%",
                     String.valueOf(timer))); //todo callouts
             bar.setProgress(bomb.isPlanted() ? (double) timer / 45 : (double) timer / 115);
         }
@@ -371,13 +368,13 @@ public class SAGame {
             for(Player player : teamA.getPlayers()) {
                 if(player.getOpenInventory() != null && player.getOpenInventory().getTitle().equals("Shop")) {
                     player.closeInventory();
-                    player.sendMessage(Message.SHOP_20_S.getMsg());
+                    player.sendMessage(Messages.PLAYER_SHOP_DENIED_ELAPSED.toString());
                 }
             }
             for(Player player : teamB.getPlayers()) {
                 if(player.getOpenInventory() != null && player.getOpenInventory().getTitle().equals("Shop")) {
                     player.closeInventory();
-                    player.sendMessage(Message.SHOP_20_S.getMsg());
+                    player.sendMessage(Messages.PLAYER_SHOP_DENIED_ELAPSED.toString());
                 }
             }
         }
@@ -398,11 +395,12 @@ public class SAGame {
                     break;
                 }
                 if(player.getTargetBlock(transparentBlocks, 3).getType() != Material.DAYLIGHT_DETECTOR) {
-                    NmsUtils.sendTitle(player, 0, 40, 0, "", Message.CANCEL_DEFUSE.toString());
+                    NmsUtils.sendTitle(player, 0, 40, 0, "", Messages.BOMB_DEF_CANCELLED.toString());
                     iterator.remove();
                     break;
                 }
-                NmsUtils.sendTitle(player, 0, 40, 0, Message.BOMB_DEFUSE.toString(), String.valueOf(defusing.get(player).getTime()));
+                NmsUtils.sendTitle(player, 0, 40, 0, Messages.BOMB_DEF_IN_PROGRESS.toString(),
+                        String.valueOf(defusing.get(player).getTime()));
                 //defused
                 if(entry.getValue().getTime() == -1 && !roundEnding) {
                     round++;
@@ -410,13 +408,17 @@ public class SAGame {
                     moneyManager.addMoneyEndRound(this, ALPHA, true, MoneyManager.RoundEndType.DEFUSED);
                     for(Player p : teamA.getPlayers()) {
                         //play sound? todo
-                        NmsUtils.sendTitle(p, 0, 60, 0, Message.BOMB_DEFUSED.toString(), player.getName());
-                        p.sendMessage(Message.ROUND_WINNER_ALPHA.toString());
+                        NmsUtils.sendTitle(p, 0, 60, 0, Messages.BOMB_DEF_COMPLETE.replace("%p", player.getName()),
+                                "");
+                        p.sendMessage(Messages.ROUND_OVER_DEF.toString());
+                        p.sendMessage(Messages.BOMB_DEF_START.replace("%p", player.getName()));
                     }
                     for(Player p : teamB.getPlayers()) {
                         //play sound? todo
-                        NmsUtils.sendTitle(p, 0, 60, 0, Message.BOMB_DEFUSED.toString(), player.getName());
-                        p.sendMessage(Message.ROUND_WINNER_ALPHA.toString());
+                        NmsUtils.sendTitle(p, 0, 60, 0, Messages.BOMB_DEF_COMPLETE.replace("%p", player.getName()),
+                                "");
+                        p.sendMessage(Messages.ROUND_OVER_DEF.toString());
+                        p.sendMessage(Messages.BOMB_DEF_START.replace("%p", player.getName()));
                     }
                     this.timer = 7;
                     if(teamA.getTeam() == ALPHA) {
@@ -455,10 +457,10 @@ public class SAGame {
                 if(!roundEnding) {
                     //todo sounds
                     for(Player p : teamA.getPlayers()) {
-                        p.sendMessage(Message.ROUND_WINNER_OMEGA.toString());
+                        p.sendMessage(Messages.ROUND_OVER_DET.toString());
                     }
                     for(Player p : teamB.getPlayers()) {
-                        p.sendMessage(Message.ROUND_WINNER_OMEGA.toString());
+                        p.sendMessage(Messages.ROUND_OVER_DET.toString());
                     }
                 }
                 bomb.reset();
@@ -471,18 +473,19 @@ public class SAGame {
             if(scoreTeamA >= 16 || scoreTeamB >= 16) {
                 timer = 10;
                 setState(SAGameState.END);
-                String winnerMsg = scoreTeamA > scoreTeamB ? "Team A wins" : "Team B wins";
+                String winnerMsg = ChatColor.YELLOW + (scoreTeamA > scoreTeamB ?
+                        "Team A" + ChatColor.DARK_PURPLE + " wins" : "Team B" + ChatColor.DARK_PURPLE +  " wins");
                 for(Player player : teamA.getPlayers()) {
                     if(!spectators.contains(player))
                         Main.getGameManager().clearPlayer(player);
                     player.sendMessage(winnerMsg);
-                    NmsUtils.sendTitle(player, 0, 200, 0, "Game Over", winnerMsg);
+                    NmsUtils.sendTitle(player, 0, 200, 0, Messages.GAME_OVER.toString(), winnerMsg);
                 }
                 for(Player player : teamB.getPlayers()) {
                     if(!spectators.contains(player))
                         Main.getGameManager().clearPlayer(player);
                     player.sendMessage(winnerMsg);
-                    NmsUtils.sendTitle(player, 0, 200, 0, "Game Over", winnerMsg);
+                    NmsUtils.sendTitle(player, 0, 200, 0, Messages.GAME_OVER.toString(), winnerMsg);
                 }
                 Main.getGameManager().endRound(this);
                 return;
@@ -507,15 +510,17 @@ public class SAGame {
                 }
                 if(queue.size() > 0) {
                     for (Player player : teamA.getPlayers()) {
-                        player.sendMessage("Following players joined the game:");
+                        player.sendMessage(ChatColor.DARK_PURPLE + "Following players joined the game:");
                         for (UUID uuid : queue.keySet()) {
-                            player.sendMessage(Bukkit.getPlayer(uuid) + " joined as " + queue.get(uuid).getTeam());
+                            player.sendMessage(ChatColor.YELLOW + Bukkit.getPlayer(uuid).getName() + ChatColor.DARK_PURPLE +
+                                    " joined as " + ChatColor.YELLOW + queue.get(uuid).getTeam());
                         }
                     }
                     for (Player player : teamB.getPlayers()) {
-                        player.sendMessage("Following players joined the game:");
+                        player.sendMessage(ChatColor.DARK_PURPLE + "Following players joined the game:");
                         for (UUID uuid : queue.keySet()) {
-                            player.sendMessage(Bukkit.getPlayer(uuid) + " joined as " + queue.get(uuid).getTeam());
+                            player.sendMessage(ChatColor.YELLOW + Bukkit.getPlayer(uuid).getName() + ChatColor.DARK_PURPLE +
+                                    " joined as " + ChatColor.YELLOW + queue.get(uuid).getTeam());
                         }
                     }
                 }
@@ -533,24 +538,23 @@ public class SAGame {
             }
             //rounds won on kills
             if(spectators.containsAll(Main.getGameManager().getTeam(this, ALPHA).getPlayers())) {
-                for (Player player1 : Main.getGameManager().getTeam(this, ALPHA).getPlayers()) {
-                    player1.sendMessage("You lose the round (deaths)");
+                for (Player player : Main.getGameManager().getTeam(this, ALPHA).getPlayers()) {
+                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Omega").replace("%ot%", "Alpha"));
                 }
                 for (Player player : Main.getGameManager().getTeam(this, OMEGA).getPlayers()) {
-                    player.sendMessage("You win the round (kills)");
+                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Omega").replace("%ot%", "Alpha"));
                 }
                 finalizeRoundKills(OMEGA);
                 return;
             }
             if(spectators.containsAll(Main.getGameManager().getTeam(this, OMEGA).getPlayers()) && !bomb.isPlanted()) {
                 for (Player player : Main.getGameManager().getTeam(this, ALPHA).getPlayers()) {
-                    player.sendMessage("You win" +
-                            " the round (kills)");
+                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Alpha").replace("%ot%", "Omega"));
+
                 }
                 for (Player player : Main.getGameManager().getTeam(this, OMEGA).getPlayers()) {
-                    player.sendMessage("You " +
-                            "lose" +
-                            " the round (deaths)");
+                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Alpha").replace("%ot%", "Omega"));
+
                 }
                 finalizeRoundKills(ALPHA);
                 return;
@@ -559,12 +563,10 @@ public class SAGame {
             //timer expires, CTs win
             if(timer == 0) {
                 for (Player player : Main.getGameManager().getTeam(this, ALPHA).getPlayers()) {
-                    player.sendMessage("You " +
-                            "win on time");
+                    player.sendMessage(Messages.ROUND_OVER_TIME.toString());
                 }
                 for (Player player : Main.getGameManager().getTeam(this, OMEGA).getPlayers()) {
-                    player.sendMessage("You " +
-                            "lose on time");
+                    player.sendMessage(Messages.ROUND_OVER_TIME.toString());
                 }
                 moneyManager.addMoneyEndRound(this, ALPHA, false, MoneyManager.RoundEndType.TIME);
                 finalizeRound(ALPHA);
@@ -645,29 +647,29 @@ public class SAGame {
         }
         if(round == 15 && timer >= 11) {
             for (Player player : teamA.getPlayers()) {
-                NmsUtils.sendTitle(player, 0, 40, 0, "team swap yeet", "");
+                NmsUtils.sendTitle(player, 0, 40, 0, "team swap yeet - DOODLER TODO", "");
             }
             for (Player player : teamB.getPlayers()) {
-                NmsUtils.sendTitle(player, 0, 40, 0, "team swap yeet", "");
+                NmsUtils.sendTitle(player, 0, 40, 0, "team swap yeet - DOODLER TODO", "");
             }
             return;
         }
         if(timer == 0) {
             for (Player player : teamA.getPlayers()) {
-                NmsUtils.sendTitle(player, 0, 30, 0, "round start go", "");
+                NmsUtils.sendTitle(player, 0, 30, 0, "round start go - DOODLER TODO", "");
             }
             for (Player player : teamB.getPlayers()) {
-                NmsUtils.sendTitle(player, 0, 30, 0, "round start go", "");
+                NmsUtils.sendTitle(player, 0, 30, 0, "round start go - DOODLER TODO", "");
             }
             timer = 115;
             setState(SAGameState.ROUND_LIVE);
             return;
         }
         for (Player player : teamA.getPlayers()) {
-            NmsUtils.sendTitle(player, 0, 30, 0, "buy stuff", "");
+            NmsUtils.sendTitle(player, 0, 30, 0, "buy stuff - DOODLER TODO", "");
         }
         for (Player player : teamB.getPlayers()) {
-            NmsUtils.sendTitle(player, 0, 30, 0, "buy stuff", "");
+            NmsUtils.sendTitle(player, 0, 30, 0, "buy stuff - DOODLER TODO", "");
         }
     }
 
@@ -675,10 +677,10 @@ public class SAGame {
         if(teamA.getPlayers().size() + teamB.getPlayers().size() < minPlayers) {
             stop();
             for (Player player : teamA.getPlayers()) {
-                player.sendMessage("Not enough players, cancelling game");
+                player.sendMessage(Messages.GAME_INSUFFICIENT_PLAYERS.toString());
             }
             for (Player player : teamB.getPlayers()) {
-                player.sendMessage("Not enough players, cancelling game");
+                player.sendMessage(Messages.GAME_INSUFFICIENT_PLAYERS.toString());
             }
             timer = 30;
             for(SAScoreboard scoreboard : scoreboards.values()) {
@@ -731,12 +733,12 @@ public class SAGame {
         }
         for (Player player : teamA.getPlayers()) {
             if (timer <= 5 || timer % 10 == 0) {
-                player.sendMessage(String.valueOf(timer));
+                player.sendMessage(Messages.GAME_STARTING.replace("%v%", String.valueOf(timer)));
             }
         }
         for (Player player : teamB.getPlayers()) {
             if (timer <= 5 || timer % 10 == 0) {
-                player.sendMessage(String.valueOf(timer));
+                player.sendMessage(Messages.GAME_STARTING.replace("%v%", String.valueOf(timer)));
             }
         }
     }

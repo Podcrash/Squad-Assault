@@ -147,7 +147,7 @@ public class Config {
             gunObj.setDelayBullets(guns.getInt("Guns." + gun + ".Burst.DelayBullets"));
             gunObj.setBulletsPerBurst(guns.getInt("Guns." + gun + ".Burst.BulletsPerBurst"));
             gunObj.setDropoffPerBlock(guns.getDouble("Guns." + gun + ".Shoot.DropoffPerBlock"));
-            gunObj.setAccuracy((float)guns.getDouble("Guns." + gun + ".Shoot.Accuracy"));
+            gunObj.setAccuracy(guns.getDouble("Guns." + gun + ".Shoot.Accuracy"));
             gunObj.setScope(guns.getBoolean("Guns." + gun + ".Shoot.Scope"));
             gunObj.setDamage(guns.getDouble("Guns." + gun + ".Shoot.Damage"));
             gunObj.setReloadDuration(guns.getInt("Guns." + gun + ".Reload.Duration"));
@@ -162,6 +162,7 @@ public class Config {
             gunObj.setProjectileConeMax(guns.getDouble("Guns."+gun+".Burst.ProjectileConeMax"));
             gunObj.setResetPerTick(guns.getDouble("Guns."+gun+".Burst.Reset"));
             gunObj.setScopeDelay(guns.getInt("Guns."+gun+".Shoot.ScopeDelay"));
+            gunObj.setBurstDelay(guns.getInt("Guns."+gun+".Burst.BurstDelay"));
             Main.getWeaponManager().addGun(gunObj);
         }
     }
