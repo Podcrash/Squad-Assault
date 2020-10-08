@@ -6,7 +6,9 @@ import com.podcrash.squadassault.shop.PlayerShopItem;
 import com.podcrash.squadassault.util.Utils;
 import com.podcrash.squadassault.util.Item;
 import com.podcrash.squadassault.weapons.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.WorldCreator;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -119,6 +121,7 @@ public class Config {
     private void loadMaps() {
         if(maps.getString("Game") != null && !maps.isString("Game")) {
             for(String id : maps.getConfigurationSection("Game").getKeys(false)) {
+                Bukkit.getServer().createWorld(new WorldCreator(maps.getString("Game." + id + ".Name")));
                 try {
                     Main.getGameManager().addGame(new SAGame(id, maps.getString("Game." + id + ".Name"),
                             Utils.getDeserializedLocation(maps.getString("Game." + id + ".Lobby")), maps.getInt(
