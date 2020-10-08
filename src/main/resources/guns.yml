@@ -262,7 +262,7 @@ Guns:
       Sound: 'squadassault.shootxd'
       Scope: TRUE
       Damage: 20.0 #DO THIS
-      Accuracy: 0.2 #DONT TOUCH YET
+      Accuracy: 0.0 #DONT TOUCH YET
       Delay: 12    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.0  #NEEDS WORK
