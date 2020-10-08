@@ -216,7 +216,7 @@ public class Grenade {
         boolean breakLos = false;
         for(int i = 0; i < Math.round(location.distance(clone)) + 1; i++) {
             clone.add(subtract.normalize());
-            if(clone.getBlock().getType() != Material.AIR) {
+            if(clone.getBlock().getType() != Material.AIR || clone.getBlock().getType() != Material.CROPS) {
                 breakLos = true;
                 break;
             }
