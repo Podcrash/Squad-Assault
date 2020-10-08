@@ -498,6 +498,7 @@ public class SAGameManager {
                     gun.resetPlayer(player);
                     player.getInventory().setItem(i, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                             gun.getItem().getData(), gun.getName()));
+                    NmsUtils.addNBTInteger(player.getInventory().getItem(i), "outofammo", 0);
                 }
             }
 
