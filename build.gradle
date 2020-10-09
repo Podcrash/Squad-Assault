@@ -11,6 +11,17 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
+repositories {
+    mavenCentral()
+    maven { url "http://repo.dmulloy2.net/nexus/repository/public/" }
+    maven { url 'https://plugins.gradle.org/m2/' }
+    maven { url 'https://repo.glaremasters.me/repository/concuncan/'}
+    maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots"}
+    maven { url "https://hub.spigotmc.org/nexus/content/repositories/releases"}
+    maven { url "http://ci.nametagedit.com/plugin/repository/everything/" }
+    maven { url 'https://jitpack.io' }
+}
+
 shadowJar {
     mergeServiceFiles()
 
@@ -28,7 +39,7 @@ shadowJar {
 }
 
 dependencies {
-    compileOnly fileTree('../libs')
+    compileOnly fileTree('./libs')
 
     testImplementation 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
     implementation "org.reflections:reflections:0.9.11"
