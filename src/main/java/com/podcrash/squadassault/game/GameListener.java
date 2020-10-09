@@ -12,10 +12,7 @@ import com.podcrash.squadassault.weapons.Grenade;
 import com.podcrash.squadassault.weapons.GrenadeType;
 import com.podcrash.squadassault.weapons.Gun;
 import com.podcrash.squadassault.weapons.ProjectileStats;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
@@ -29,11 +26,11 @@ import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
-import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -107,6 +104,7 @@ public class GameListener implements Listener {
                     if(inHand.getType() == Material.GOLDEN_APPLE && game.getState() == SAGameState.ROUND_LIVE && !game.isRoundEnding() && player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid() && bombPlants.get(game) == null) {
                         event.setCancelled(true);
                         bombPlants.put(game, true);
+                        player.getLocation().getWorld().playSound(player.getLocation(), Sound.NOTE_PLING, 1f, 3f);
                         new BukkitRunnable() {
                             public void run() {
                                 if(!game.isAtBombsite(player.getLocation())) {
@@ -144,7 +142,7 @@ public class GameListener implements Listener {
                     gun.shoot(game, player);
                 }
                 Grenade grenade = Main.getWeaponManager().getGrenade(inHand);
-                if (grenade != null && game.getState() == SAGameState.ROUND_LIVE && !game.isRoundEnding() && !game.isDefusing(player)) {
+                if (grenade != null && !game.isRoundEnding() && !game.isDefusing(player)) {
                     event.setCancelled(true);
                     grenade.throwGrenade(game, player);
                 }
@@ -170,7 +168,7 @@ public class GameListener implements Listener {
         event.setCancelled(true);
         if(Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers().contains(player) && !game.isDefusing(player) && player.getLocation().distance(game.getBomb().getLocation()) <= 3) {
             game.addDefuser(player, (inHand.getType() == Material.SHEARS ? 5 : 10));
-            //play sound? todo
+            player.getLocation().getWorld().playSound(player.getLocation(), Sound.HORSE_ARMOR, 1.3f, 1f);
         }
     }
 
@@ -190,16 +188,16 @@ public class GameListener implements Listener {
             return;
         }
         event.setCancelled(true);
-        if(game.getState() == SAGameState.ROUND_LIVE && !game.sameTeam(damaged, damager) && damager.getInventory().getHeldItemSlot() == 2 && damager.getInventory().getItemInHand() != null && Main.getUpdateTask().getDelay().get(damaged.getUniqueId()) == null && !game.getSpectators().contains(damaged)) {
+        if(game.getState() == SAGameState.ROUND_LIVE && !game.sameTeam(damaged, damager) && damager.getInventory().getHeldItemSlot() == 2 && damager.getInventory().getItemInHand() != null && Main.getUpdateTask().getDelay().get(damaged.getUniqueId()) == null && !game.isDead(damaged)) {
             float angle =
                     damager.getEyeLocation().toVector().subtract(damaged.getEyeLocation().toVector()).angle(damaged.getEyeLocation().getDirection().normalize());
             //check if they are behind player or not
             if(damager.getLocation().distance(damaged.getLocation()) <= 1.7 || angle <= 1.5) {
-                Main.getGameManager().damage(game, damager, damaged, 3, "Knife");
+                Main.getGameManager().damage(game, damager, damaged, 6, "Knife");
             } else {
                 Main.getGameManager().damage(game, damager, damaged, 20, "Knife Backstab");
             }
-            Main.getUpdateTask().getDelay().put(damaged.getUniqueId(), 35);
+            Main.getUpdateTask().getDelay().put(damaged.getUniqueId(), 17);
         }
     }
 
@@ -208,6 +206,7 @@ public class GameListener implements Listener {
         if(!event.getMessage().startsWith("#")) {
             return;
         }
+        event.setMessage(event.getMessage().substring(1));
         Player player = event.getPlayer();
         SAGame game = Main.getGameManager().getGame(player);
         if(game == null) {
@@ -247,11 +246,7 @@ public class GameListener implements Listener {
             event.setCancelled(true);
         }
         if(!event.isCancelled()) {
-            if(event.getNewSlot() == 2) {
-                player.setWalkSpeed(0.25f);
-            } else {
-                player.setWalkSpeed(0.2f);
-            }
+            player.setWalkSpeed(0.2f);
         }
     }
 
@@ -425,12 +420,23 @@ public class GameListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         //TODO: When we make this work properly with bungeecord, lots has to be changed probably
-        for(SAGame game : Main.getGameManager().getGames()) {
-            for (Player player : game.getTeamA().getPlayers()) {
-                player.hidePlayer(event.getPlayer());
+        if(Main.getGameManager().getGame(event.getPlayer()) == null) {
+            for(SAGame game : Main.getGameManager().getGames()) {
+                for (Player player : game.getTeamA().getPlayers()) {
+                    player.hidePlayer(event.getPlayer());
+                }
+                for (Player player : game.getTeamB().getPlayers()) {
+                    player.hidePlayer(event.getPlayer());
+                }
             }
-            for (Player player : game.getTeamB().getPlayers()) {
-                player.hidePlayer(event.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void playerHitNotInGame(EntityDamageByEntityEvent event) {
+        if(event.getDamager() instanceof Player) {
+            if(Main.getGameManager().getGame((Player) event.getDamager()) == null) {
+                event.setCancelled(true);
             }
         }
     }
@@ -438,19 +444,21 @@ public class GameListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        SAGame game = Main.getGameManager().getGame(player);
-        if(game != null) {
-            Main.getGameManager().removePlayer(game, player, false, true);
-        }
+        leaveGame(player);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onKick(PlayerKickEvent event) {
         Player player = event.getPlayer();
-        event.setLeaveMessage(null);
+        leaveGame(player);
+    }
+
+    private void leaveGame(Player player) {
         SAGame game = Main.getGameManager().getGame(player);
-        if(game != null) {
+        if(game != null && game.getState() == SAGameState.WAITING) {
             Main.getGameManager().removePlayer(game,player,false,true);
+        } else if(game != null) {
+            game.getSpectators().add(player);
         }
     }
 
@@ -461,14 +469,14 @@ public class GameListener implements Listener {
         if(game == null) {
             return;
         }
-        if(game.getState() == SAGameState.ROUND_START && !game.getSpectators().contains(player) && (event.getTo().getX() != event.getFrom().getX() || event.getTo().getZ() != event.getFrom().getZ())) {
+        if(game.getState() == SAGameState.ROUND_START && !game.isDead(player) && (event.getTo().getX() != event.getFrom().getX() || event.getTo().getZ() != event.getFrom().getZ())) {
             event.setTo(event.getFrom());
             return;
         }
         if(game.getState() != SAGameState.ROUND_LIVE) {
             return;
         }
-        if(player.getFallDistance() >= 6 && !game.getSpectators().contains(player) && player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
+        if(player.getFallDistance() >= 6 && !game.isDead(player) && player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
             Main.getGameManager().damage(game, null, player, player.getFallDistance(), "Fall");
         }
         if((event.getFrom().getBlockX() != event.getTo().getBlockX() || event.getFrom().getBlockZ() != event.getTo().getBlockZ()) && game.getBomb().getCarrier() == player) {
@@ -535,7 +543,7 @@ public class GameListener implements Listener {
             return;
         }
         event.setCancelled(true);
-        if (game.getSpectators().contains(player) || (game.getState() != SAGameState.ROUND_LIVE && game.getState() != SAGameState.ROUND_START)) {
+        if (game.isDead(player) || (game.getState() != SAGameState.ROUND_LIVE && game.getState() != SAGameState.ROUND_START)) {
             return;
         }
         Item item = event.getItem();
@@ -665,6 +673,7 @@ public class GameListener implements Listener {
         }
         if(event.isSneaking()) {
             NmsUtils.sendFakeItem(player, 5, new ItemStack(Material.PUMPKIN));
+            gun.scopeDelay(player);
         } else {
             NmsUtils.sendFakeItem(player, 5, player.getInventory().getHelmet());
         }
@@ -706,7 +715,7 @@ public class GameListener implements Listener {
             return;
         }
         Player damaged = (Player) event.getEntity();
-        if(Main.getGameManager().getGame(damaged).sameTeam(damaged,stats.getShooter()) || Main.getGameManager().getGame(damaged).getSpectators().contains(damaged)) {
+        if(Main.getGameManager().getGame(damaged).sameTeam(damaged,stats.getShooter()) || Main.getGameManager().getGame(damaged).isDead(damaged)) {
             event.setCancelled(true);
             return;
         }
@@ -732,21 +741,8 @@ public class GameListener implements Listener {
                     finalDamage, stats.getGunName());
         } else if(type == HitType.MISS) {
             event.setCancelled(true);
-            return;
         }
 
-    }
-
-    @EventHandler
-    public void projectileHitBlock(ProjectileHitEvent event) {
-        //TODO
-
-
-    }
-
-    @EventHandler
-    public void onWeatherChange(WeatherChangeEvent event) {
-        event.setCancelled(true);
     }
 
     @EventHandler
@@ -755,11 +751,33 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
+    public void onCraftingTable(PlayerInteractEvent event) {
+        if(event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.WORKBENCH) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
     public void onEat(PlayerItemConsumeEvent event) {
         if(Main.getGameManager().getGame(event.getPlayer()) == null) {
             return;
         }
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onProjectileHit(ProjectileHitEvent event) {
+        Location location = event.getEntity().getLocation();
+        Vector velocity = event.getEntity().getVelocity().clone();
+        velocity.normalize();
+        velocity.multiply(0.1);
+        while(location.getWorld().getBlockAt(location).getType() == Material.AIR) {
+            location.add(velocity);
+        }
+        if(location.getBlock().getType() == Material.THIN_GLASS) {
+            location.getBlock().breakNaturally();
+        }
+        //todo ask if he wants it to restore
     }
 
     private HitType snowballCollision(Player damaged, Projectile snowball) {

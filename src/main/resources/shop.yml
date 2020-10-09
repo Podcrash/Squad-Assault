@@ -38,13 +38,81 @@ ShopGuns:
     ItemName: 'Desert Eagle'
     ItemLore: 'Reserve Ammo: 35'
     Price: 700
-  Test1:
+  MAC-10:
     Slot: 7
-    ItemName: 'Test1'
+    ItemName: 'MAC-10'
     ItemLore: 'Reserve Ammo: 90'
     Price: 200
-  AWP:
+    Side: OMEGA
+  MP9:
+    Slot: 7
+    ItemName: 'MP9'
+    ItemLore: 'Reserve Ammo: 90'
+    Price: 200
+    Side: ALPHA
+  PP-Bizon:
+    Slot: 8
+    ItemName: 'PP-Bizon'
+    ItemLore: 'Reserve Ammo: 128'
+    Price: 200
+  P90:
+    Slot: 9
+    ItemName: 'P90'
+    ItemLore: 'Reserve Ammo: 100'
+    Price: 200
+  Nova:
     Slot: 10
+    ItemName: 'Nova'
+    ItemLore: 'Reserve Ammo: 32'
+    Price: 200
+  XM1014:
+    Slot: 11
+    ItemName: 'XM1014'
+    ItemLore: 'Reserve Ammo: 32'
+    Price: 200
+  Galil:
+    Slot: 12
+    ItemName: 'Galil'
+    ItemLore: 'Reserve Ammo: 90'
+    Price: 200
+    Side: OMEGA
+  FAMAS:
+    Slot: 12
+    ItemName: 'FAMAS'
+    ItemLore: 'Reserve Ammo: 75'
+    Price: 200
+    Side: ALPHA
+  AK-47:
+    Slot: 13
+    ItemName: 'AK-47'
+    ItemLore: 'Reserve Ammo: 90'
+    Price: 200
+    Side: OMEGA
+  M4A4:
+    Slot: 13
+    ItemName: 'M4A4'
+    ItemLore: 'Reserve Ammo: 90'
+    Price: 200
+    Side: ALPHA
+  AUG:
+    Slot: 14
+    ItemName: 'AUG'
+    ItemLore: 'Reserve Ammo: 60'
+    Price: 200
+    Side: ALPHA
+  SG553:
+    Slot: 14
+    ItemName: 'SG553'
+    ItemLore: 'Reserve Ammo: 90'
+    Price: 200
+    Side: OMEGA
+  SSG08:
+    Slot: 15
+    ItemName: 'SSG08'
+    ItemLore: 'Reserve Ammo: 30'
+    Price: 200
+  AWP:
+    Slot: 15
     ItemName: 'AWP'
     ItemLore: 'Reserve Ammo: 30'
     Price: 200

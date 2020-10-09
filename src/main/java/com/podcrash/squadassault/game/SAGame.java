@@ -281,6 +281,7 @@ public class SAGame {
 
     public void start() {
         gameStarted = true;
+        bombA.getWorld().setStorm(false);
         if(Randomizer.randomBool()) {
             teamA.setTeam(ALPHA);
             teamB.setTeam(OMEGA);
@@ -390,7 +391,7 @@ public class SAGame {
             while(iterator.hasNext()) {
                 Map.Entry<Player, Defuse> entry = iterator.next();
                 Player player = entry.getKey();
-                if(spectators.contains(player) || !gameStarted) {
+                if(isDead(player) || !gameStarted) {
                     iterator.remove();
                     break;
                 }
@@ -476,13 +477,13 @@ public class SAGame {
                 String winnerMsg = ChatColor.YELLOW + (scoreTeamA > scoreTeamB ?
                         "Team A" + ChatColor.DARK_PURPLE + " wins" : "Team B" + ChatColor.DARK_PURPLE +  " wins");
                 for(Player player : teamA.getPlayers()) {
-                    if(!spectators.contains(player))
+                    if(!isDead(player))
                         Main.getGameManager().clearPlayer(player);
                     player.sendMessage(winnerMsg);
                     NmsUtils.sendTitle(player, 0, 200, 0, Messages.GAME_OVER.toString(), winnerMsg);
                 }
                 for(Player player : teamB.getPlayers()) {
-                    if(!spectators.contains(player))
+                    if(!isDead(player))
                         Main.getGameManager().clearPlayer(player);
                     player.sendMessage(winnerMsg);
                     NmsUtils.sendTitle(player, 0, 200, 0, Messages.GAME_OVER.toString(), winnerMsg);
@@ -576,7 +577,7 @@ public class SAGame {
 
     private void bomb(SATeam team) {
         for (Player player : team.getPlayers()) {
-            if (spectators.contains(player)) {
+            if (isDead(player)) {
                 continue;
             }
             double distance = player.getLocation().distance(bomb.getLocation());
@@ -816,5 +817,9 @@ public class SAGame {
 
     public Map<UUID, PlayerStats> getStats() {
         return stats;
+    }
+
+    public boolean isDead(Player player) {
+        return (teamA.getPlayers().contains(player) || teamB.getPlayers().contains(player)) && (!player.isOnline() || spectators.contains(player));
     }
 }
