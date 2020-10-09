@@ -1,10 +1,13 @@
 package com.podcrash.squadassault.nms;
 
+import com.podcrash.squadassault.Main;
+import com.podcrash.squadassault.weapons.GrenadeType;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -14,10 +17,12 @@ public class PhysicsItem extends EntityArmorStand {
 
     private Hitbox hitbox;
     private boolean intersects;
+    private boolean fire;
 
     public PhysicsItem(EntityPlayer player, ItemStack item, double power) {
         super(player.world, player.locX, player.locY + 0.3, player.locZ);
         intersects = false;
+        fire = Main.getWeaponManager().getGrenade(CraftItemStack.asBukkitCopy(item)).getType() == GrenadeType.FIRE;
         yaw = player.yaw;
         Location location = player.getBukkitEntity().getLocation();
         location.setYaw(location.getYaw() - 90);
@@ -80,20 +85,23 @@ public class PhysicsItem extends EntityArmorStand {
                 List<BlockFace> intersects = intersects(hitbox);
                 if(intersects.size() > 0) {
                     if (intersects.contains(BlockFace.UP) || intersects.contains(BlockFace.DOWN)) {
-                        motY = -(motY * 0.5);
-                        motX *= 0.85;
-                        motZ *= 0.85;
+                        if(fire) {
+                            Main.getWeaponManager().getGrenade(CraftItemStack.asBukkitCopy(getEquipment(0))).explode(this);
+                        }
+                        motY = -(motY * 0.25);
+                        motX *= 0.42;
+                        motZ *= 0.42;
                         if (Math.abs(motY) <= 0.15) {
                             motY = 0.0;
                         }
                     }
                     if (intersects.contains(BlockFace.WEST) || intersects.contains(BlockFace.EAST)) {
-                        motX = -(motX * 0.4);
-                        motZ *= 0.4;
+                        motX = -(motX * 0.2);
+                        motZ *= 0.2;
                     }
                     if (intersects.contains(BlockFace.SOUTH) || intersects.contains(BlockFace.NORTH)) {
-                        motZ = -(motZ * 0.4);
-                        motX *= 0.4;
+                        motZ = -(motZ * 0.2);
+                        motX *= 0.2;
                     }
                     if (Math.abs(motX) <= 0.07) {
                         motX = 0.0;

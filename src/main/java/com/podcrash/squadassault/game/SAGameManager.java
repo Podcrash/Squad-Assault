@@ -18,11 +18,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.bukkit.ChatColor.translateAlternateColorCodes;
 
 public class SAGameManager {
 
@@ -39,10 +40,6 @@ public class SAGameManager {
     public SAGame findQuickGame(Player player) {
         //todo, not high priority
         return null;
-    }
-
-    public void addQuickJoinPlayer(SAGame game, Player player) {
-        //todo not high priority
     }
 
     public void addPlayer(SAGame game, Player player) {
@@ -67,6 +64,9 @@ public class SAGameManager {
             return;
         }
         player.getInventory().clear();
+        player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+        player.setHealth(20);
+        player.setFoodLevel(20);
         player.setGameMode(GameMode.ADVENTURE);
         game.randomTeam(player);
         player.teleport(game.getLobby());
@@ -164,8 +164,8 @@ public class SAGameManager {
                 int scoreTeamA = game.getScoreTeamA();
                 int scoreTeamB = game.getScoreTeamB();
                 SATeam.Team side = game.getTeamA().getTeam();
-                scoreboard.getStatus().setTitle(((side == SATeam.Team.ALPHA) ? scoreTeamA : scoreTeamB) + " Alpha" +
-                        " Omega " + ((side == SATeam.Team.OMEGA) ? scoreTeamA : scoreTeamB));
+                scoreboard.getStatus().setTitle(ChatColor.translateAlternateColorCodes('&',
+                        ((side == SATeam.Team.ALPHA) ? scoreTeamA : scoreTeamB) + " &3Alpha" + " &4Omega " + ((side == SATeam.Team.OMEGA) ? scoreTeamA : scoreTeamB)));
             } else {
                 scoreboard.getStatus().setTitle(Messages.SCOREBOARD_GAME_OVER.toString());
             }
@@ -179,67 +179,74 @@ public class SAGameManager {
         }
         if(game.getState() == SAGameState.WAITING || game.isGameEnding()) {
             status.updateLine(7, "");
-            status.updateLine(6, game.getMapName());
-            status.updateLine(5, game.getSize() + "/" + game.getMaxPlayers());
+            status.updateLine(6, translateAlternateColorCodes('&', "&e" + game.getMapName()));
+            status.updateLine(5, translateAlternateColorCodes('&',
+                    "&e" + game.getSize() + "&b/&e" + game.getMaxPlayers()));
             status.updateLine(4, "");
             if(game.isGameStarted()) {
-                status.updateLine(3, String.valueOf(game.getTimer()));
+                status.updateLine(3, translateAlternateColorCodes('&',"&e" + game.getTimer()));
             } else {
-                status.updateLine(3, "Waiting");
+                status.updateLine(3, translateAlternateColorCodes('&', "&bWaiting"));
             }
             status.updateLine(2, "");
-            status.updateLine(1, "Podcrash Games");
+            status.updateLine(1, translateAlternateColorCodes('&', "&bPodcrash Games"));
         } else if(game.getState() != SAGameState.END || game.getState() != SAGameState.DISABLED) {
             status.updateLine(15, "");
             if(getTeam(game, player) == SATeam.Team.ALPHA) {
                 if(game.getBomb().isPlanted()) {
-                    status.updateLine(14, "OBJECTIVE:");
-                    status.updateLine(13, "Defuse the bomb");
+                    status.updateLine(14, Messages.SCOREBOARD_OBJECTIVE.replace("%t%", String.valueOf(game.getTimer())));
+                    status.updateLine(13, translateAlternateColorCodes('&', "&eDefuse"));
+                    status.updateLine(12, translateAlternateColorCodes('&', "&eBomb"));
                 } else {
-                    status.updateLine(14, "OBJECTIVE:");
-                    status.updateLine(13, "Protect bombsites");
+                    status.updateLine(14, Messages.SCOREBOARD_OBJECTIVE.replace("%t%", String.valueOf(game.getTimer())));
+                    status.updateLine(13, translateAlternateColorCodes('&', "&eProtect"));
+                    status.updateLine(12, translateAlternateColorCodes('&', "&eBombsites"));
                 }
             } else if(game.getBomb().isPlanted()) {
-                status.updateLine(14, "OBJECTIVE:");
-                status.updateLine(13, "Protect the bomb");
+                status.updateLine(14, Messages.SCOREBOARD_OBJECTIVE.replace("%t%", String.valueOf(game.getTimer())));
+                status.updateLine(13, translateAlternateColorCodes('&', "&eDefend"));
+                status.updateLine(12, translateAlternateColorCodes('&', "&eBomb"));
             } else if(game.getBomb().getCarrier() == player) {
-                status.updateLine(14, "OBJECTIVE:");
-                status.updateLine(13, "Plant the bomb");
+                status.updateLine(14, Messages.SCOREBOARD_OBJECTIVE.replace("%t%", String.valueOf(game.getTimer())));
+                status.updateLine(13, translateAlternateColorCodes('&', "&ePlant"));
+                status.updateLine(12, translateAlternateColorCodes('&', "&eBomb"));
             } else {
-                status.updateLine(14, "OBJECTIVE:");
-                status.updateLine(13, "Protect the bomb carrier " + (game.getBomb().getCarrier() != null ?
-                        game.getBomb().getCarrier().getDisplayName() : ""));
+                status.updateLine(14, Messages.SCOREBOARD_OBJECTIVE.replace("%t%", String.valueOf(game.getTimer())));
+                status.updateLine(13, translateAlternateColorCodes('&', "&eProtect Carrier"));
+                status.updateLine(12, Messages.SCOREBOARD_GOAL.replace("%t%", (game.getBomb().getCarrier() != null ?
+                        game.getBomb().getCarrier().getDisplayName() : "")));
             }
-            if(game.getState() == SAGameState.ROUND_LIVE && !game.isRoundEnding()) {
-                int timer = game.getTimer();
-                status.updateLine(12,
-                        ((timer % 3600 / 60 < 10) ? "0" : "") + timer % 3600 / 60 + ":" + ((timer % 3600 % 60 < 10) ? "0" : "") + timer % 3600 % 60);
-            } else if(game.isRoundEnding() && !game.getBomb().isPlanted()) {
-                status.updateLine(12, "00:00");
-            } else {
-                int time = game.getBomb().isPlanted() ? game.getBomb().getTimer() : 115;
-                status.updateLine(12,
-                        ((time % 3600 / 60 < 10) ? "0" : "") + time % 3600 / 60 + ":" + ((time % 3600 % 60 < 10) ? "0" : "") + time % 3600 % 60);
-            }
-            status.updateLine(11,"");
-            status.updateLine(10, "");
+            status.updateLine(11, "");
             if(game.getMoney(player) != null) {
-                status.updateLine(9, "Money: $" + game.getMoney(player));
+                status.updateLine(10, Messages.SCOREBOARD_MONEY.replace("%t%", String.valueOf(game.getMoney(player))));
+            } else {
+                status.updateLine(9, "");
             }
             ItemStack helmet = player.getInventory().getHelmet();
             ItemStack chest = player.getInventory().getChestplate();
-            status.updateLine(8,
-                    ((helmet != null && helmet.getType() != Material.LEATHER_HELMET) ? "helmet " : " ") + ((chest != null && chest.getType() != Material.LEATHER_CHESTPLATE) ? "kevlar" : ""));
-            status.updateLine(7,
-                    "K/D/A/ADR:");
-            String adr = new DecimalFormat("##.#").format(game.getStats().get(player.getUniqueId()).getADR());
-            status.updateLine(6,
-                    game.getStats().get(player.getUniqueId()).getKills() + "/" + game.getStats().get(player.getUniqueId()).getDeaths() + "/" + game.getStats().get(player.getUniqueId()).getAssists()+ "/" + adr);
+            status.updateLine(9,
+                    ChatColor.YELLOW + ((helmet != null && helmet.getType() != Material.LEATHER_HELMET) ? "Helmet " :
+                            " ") + ((chest != null && chest.getType() != Material.LEATHER_CHESTPLATE) ? "Kevlar" : ""));
+            status.updateLine(8, "");
+            status.updateLine(7, translateAlternateColorCodes('&', "&eK&b/&eD&b/&eA"));
+            status.updateLine(6, Messages.SCOREBOARD_STATS.replace("%k%",
+                    String.valueOf(game.getStats().get(player.getUniqueId()).getKills())).replace("%d%",
+                    String.valueOf(game.getStats().get(player.getUniqueId()).getDeaths())).replace("%a%",
+                    String.valueOf(game.getStats().get(player.getUniqueId()).getAssists())));
             status.updateLine(5, "");
             status.updateLine(4, "Alpha Alive: " + getAlivePlayers(game, getTeam(game, SATeam.Team.ALPHA)));
-            status.updateLine(3, "Omega Alive: " + getAlivePlayers(game, getTeam(game, SATeam.Team.OMEGA)));
+            if(getTeam(game, player) == SATeam.Team.ALPHA) {
+                status.updateLine(4, translateAlternateColorCodes('&', "&3" + getAlivePlayers(game, getTeam(game, SATeam.Team.ALPHA)) + "&b/&4" + getAlivePlayers(game, getTeam(game, SATeam.Team.OMEGA))));
+            } else {
+                status.updateLine(4, translateAlternateColorCodes('&', "&4" + getAlivePlayers(game,
+                        getTeam(game, SATeam.Team.OMEGA)) + "&b/&3" + getAlivePlayers(game, getTeam(game,
+                        SATeam.Team.ALPHA))));
+            }
+            status.updateLine(3, "");
             status.updateLine(2, "");
-            status.updateLine(1, (getTeam(game, SATeam.Team.ALPHA).getPlayers().contains(player) ? "Alpha" : "Omega"));
+            status.updateLine(1,
+                    translateAlternateColorCodes('&', (getTeam(game, SATeam.Team.ALPHA).getPlayers().contains(player) ?
+                    "&3Alpha" : "&4Omega")));
         }
     }
 
@@ -298,7 +305,9 @@ public class SAGameManager {
         game.getDrops().clear();
         if(game.getState() == SAGameState.ROUND_START) {
             for (Player player : game.getSpectators()) {
-                player.setGameMode(GameMode.ADVENTURE);
+                if(player.isOnline()) {
+                    player.setGameMode(GameMode.ADVENTURE);
+                }
             }
         }
         for(Player player : game.getTeamA().getPlayers()) {
@@ -312,7 +321,7 @@ public class SAGameManager {
         }
         game.resetDefusers();
         game.getBomb().reset();
-        game.getSpectators().clear();
+        game.getSpectators().removeIf(OfflinePlayer::isOnline);
         game.setRoundEnding(false);
     }
 
@@ -431,11 +440,7 @@ public class SAGameManager {
             NmsUtils.sendInvisibility(scoreboard, game);
             player.getInventory().setItem(8, ItemBuilder.create(Material.GHAST_TEAR, 1, "Shop", false));
             player.teleport(game.getAlphaSpawns().get(Randomizer.randomInt(game.getAlphaSpawns().size())));
-            if(player.getInventory().getHeldItemSlot() == 2) {
-                player.setWalkSpeed(0.25f);
-            } else {
-                player.setWalkSpeed(0.2f);
-            }
+            player.setWalkSpeed(0.2f);
 
             if(player.getInventory().getHelmet() == null || game.getRound() == 15) {
                 player.getInventory().setHelmet(ItemBuilder.createItem(Material.LEATHER_HELMET, Color.BLUE, "Alpha Helmet"));
@@ -513,11 +518,7 @@ public class SAGameManager {
             player.getInventory().setItem(7, ItemBuilder.create(Material.COMPASS, 1, "Bomb Locator", false));
             player.getInventory().setItem(8, ItemBuilder.create(Material.GHAST_TEAR, 1, "Shop", false));
             player.teleport(game.getOmegaSpawns().get(Randomizer.randomInt(game.getOmegaSpawns().size())));
-            if(player.getInventory().getHeldItemSlot() == 2) {
-                player.setWalkSpeed(0.25f);
-            } else {
-                player.setWalkSpeed(0.2f);
-            }
+            player.setWalkSpeed(0.2f);
 
             if(player.getInventory().getHelmet() == null || game.getRound() == 15) {
                 player.getInventory().setHelmet(ItemBuilder.createItem(Material.LEATHER_HELMET, Color.RED, "Omega Helmet"));
@@ -677,7 +678,7 @@ public class SAGameManager {
     public int getAlivePlayers(SAGame game, SATeam side) {
         int n = 0;
         for(Player player : side.getPlayers()) {
-            if(!game.getSpectators().contains(player)) {
+            if(player.isOnline() && !game.getSpectators().contains(player)) {
                 n++;
             }
         }
@@ -700,13 +701,13 @@ public class SAGameManager {
     private String listStringAssists(List<Player> list, Player damager) {
         StringBuilder builder = new StringBuilder();
         if(list.size() > 0 && !list.get(0).equals(damager)) {
-            builder.append("&5, assisted by &e");
+            builder.append("&b, assisted by &e");
         }
         for(Player player : list) {
             if(!player.equals(damager)) {
                 builder.append(player.getDisplayName()).append(" ");
             }
         }
-        return ChatColor.translateAlternateColorCodes('&', builder.toString());
+        return translateAlternateColorCodes('&', builder.toString());
     }
 }

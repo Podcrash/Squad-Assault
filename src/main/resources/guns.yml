@@ -10,7 +10,7 @@ Guns:
       KillReward: 300
     Shoot:
       Projectile: TRUE
-      Sound: 'squadassault.shootxd'
+      Sound: 'BAT_LOOP'
       Scope: FALSE
       Damage: 5.8
       Accuracy: 0.2 #DONT TOUCH YET
@@ -23,7 +23,7 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.2
+      ProjectileConeMax: 0.12
       ProjectileConeMin: 0.00
       ProjectileConeIncrease: 0.05
       Reset: 0.05
@@ -41,7 +41,7 @@ Guns:
       KillReward: 300
     Shoot:
       Projectile: TRUE
-      Sound: 'squadassault.shootxd'
+      Sound: 'GHAST_SCREAM2'
       Scope: FALSE
       Damage: 6.8 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
@@ -54,7 +54,7 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.15
+      ProjectileConeMax: 0.1
       ProjectileConeMin: 0.00
       ProjectileConeIncrease: 0.015
       Reset: 0.05
@@ -72,7 +72,7 @@ Guns:
       KillReward: 300
     Shoot:
       Projectile: TRUE
-      Sound: 'squadassault.shootxd'
+      Sound: 'SILVERFISH_KILL'
       Scope: FALSE
       Damage: 7.4 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
@@ -85,7 +85,7 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.2
+      ProjectileConeMax: 0.1
       ProjectileConeMin: 0.00
       ProjectileConeIncrease: 0.01
       Reset: 0.02
@@ -103,11 +103,11 @@ Guns:
       KillReward: 300
     Shoot:
       Projectile: TRUE
-      Sound: 'squadassault.shootxd'
+      Sound: 'ENDERMAN_DEATH'
       Scope: FALSE
       Damage: 6.2
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 4    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.07317  #NEEDS WORK
       ArmorPen: 0.91
@@ -116,7 +116,7 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.225
+      ProjectileConeMax: 0.2
       ProjectileConeMin: 0.01
       ProjectileConeIncrease: 0.04
       Reset: 0.01
@@ -134,7 +134,7 @@ Guns:
       KillReward: 300
     Shoot:
       Projectile: TRUE
-      Sound: 'squadassault.shootxd'
+      Sound: 'ENDERMAN_DEATH'
       Scope: FALSE
       Damage: 6.2 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
@@ -147,7 +147,7 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.25
+      ProjectileConeMax: 0.2
       ProjectileConeMin: 0.01
       ProjectileConeIncrease: 0.0375
       Reset: 0.01
@@ -165,7 +165,7 @@ Guns:
       KillReward: 100
     Shoot:
       Projectile: TRUE
-      Sound: 'squadassault.shootxd'
+      Sound: 'ENDERMAN_DEATH'
       Scope: FALSE
       Damage: 6.4 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
@@ -178,7 +178,7 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 2
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.3
+      ProjectileConeMax: 0.25
       ProjectileConeMin: 0.01
       ProjectileConeIncrease: 0.07
       Reset: 0.08
@@ -196,7 +196,7 @@ Guns:
       KillReward: 300
     Shoot:
       Projectile: TRUE
-      Sound: 'squadassault.shootxd'
+      Sound: 'BAT_DEATH'
       Scope: FALSE
       Damage: 12.0
       Accuracy: 0.2 #DONT TOUCH YET
@@ -217,38 +217,412 @@ Guns:
       Duration: 44
       Amount: 7
       TotalAmount: 35
-  Test1: #these are not accurate stats
+  MAC-10: #these are not accurate stats
     ItemInfo:
-      Type: DIAMOND_PICKAXE
+      Type: BONE
       Data: 0
-      Name: 'Test1'
+      Name: 'MAC-10'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 600
+    Shoot:
+      Projectile: TRUE
+      Sound: 'ENDERMAN_DEATH'
+      Scope: FALSE
+      Damage: 5.6
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.058536
+      ArmorPen: 0.56
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.2
+      ProjectileConeMin: 0.0
+      ProjectileConeIncrease: 0.015
+      Reset: 0.02
+    Reload:
+      Duration: 52
+      Amount: 30
+      TotalAmount: 90
+  MP9: #these are not accurate stats
+    ItemInfo:
+      Type: ROTTEN_FLESH
+      Data: 0
+      Name: 'MP9'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 600
+    Shoot:
+      Projectile: TRUE
+      Sound: 'ENDERMAN_DEATH'
+      Scope: FALSE
+      Damage: 5.2
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.043902
+      ArmorPen: 0.60
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.2
+      ProjectileConeMin: 0.0
+      ProjectileConeIncrease: 0.175
+      Reset: 0.01
+    Reload:
+      Duration: 42
+      Amount: 30
+      TotalAmount: 90
+  PP-Bizon: #these are not accurate stats
+    ItemInfo:
+      Type: WOOD_AXE
+      Data: 0
+      Name: 'PP-Bizon'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 600
+    Shoot:
+      Projectile: TRUE
+      Sound: 'SHEEP_SHEAR'
+      Scope: FALSE
+      Damage: 5.4
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.058536
+      ArmorPen: 0.58
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.25
+      ProjectileConeMin: 0.0
+      ProjectileConeIncrease: 0.2
+      Reset: 0.01
+    Reload:
+      Duration: 48
+      Amount: 64
+      TotalAmount: 128
+  P90: #these are not accurate stats
+    ItemInfo:
+      Type: STONE_AXE
+      Data: 0
+      Name: 'P90'
       HotbarType: PRIMARY
       IsShotgun: FALSE
       KillReward: 300
     Shoot:
       Projectile: TRUE
-      Sound: 'squadassault.shootxd'
+      Sound: 'CREEPER_DEATH'
       Scope: FALSE
-      Damage: 2 #DO THIS
+      Damage: 5.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 2    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
-      DropoffPerBlock: 0.08  #NEEDS WORK
-      ArmorPen: 0.47
+      DropoffPerBlock: 0.039024
+      ArmorPen: 0.69
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
       DelayBullets: 2
-      BulletsPerBurst: 2
-      BurstDelay: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.3
+      ProjectileConeMin: 0.0
+      ProjectileConeIncrease: 0.03
+      Reset: 0.01
+    Reload:
+      Duration: 66
+      Amount: 50
+      TotalAmount: 100
+  Nova: #these are not accurate stats
+    ItemInfo:
+      Type: GOLD_AXE
+      Data: 0
+      Name: 'Nova'
+      HotbarType: PRIMARY
+      IsShotgun: TRUE
+      KillReward: 900
+    Shoot:
+      Projectile: TRUE
+      Sound: 'BLAZE_DEATH'
+      Scope: FALSE
+      Damage: 5.2 #DO THIS
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      ShotgunBullets: 9
+      DropoffPerBlock: 0.04390243  #NEEDS WORK
+      ArmorPen: 0.5
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.3
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.1
+      Reset: 0.1
+    Reload:
+      Duration: 60
+      Amount: 8
+      TotalAmount: 32
+  XM1014: #these are not accurate stats
+    ItemInfo:
+      Type: DIAMOND_AXE
+      Data: 0
+      Name: 'XM1014'
+      HotbarType: PRIMARY
+      IsShotgun: TRUE
+      KillReward: 900
+    Shoot:
+      Projectile: TRUE
+      Sound: 'SKELETON_DEATH'
+      Scope: FALSE
+      Damage: 4.0 #DO THIS
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      ShotgunBullets: 6
+      DropoffPerBlock: 0.058536  #NEEDS WORK
+      ArmorPen: 0.8
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.3
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.08
+      Reset: 0.05
+    Reload:
+      Duration: 56
+      Amount: 7
+      TotalAmount: 32
+  Galil: #these are not accurate stats
+    ItemInfo:
+      Type: STONE_PICKAXE
+      Data: 0
+      Name: 'Galil'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'WITHER_SHOOT'
+      Scope: FALSE
+      Damage: 6.0
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.009756
+      ArmorPen: 0.78
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
       ProjectileConeMax: 0.3
       ProjectileConeMin: 0.005
-      ProjectileConeIncrease: 0.02
+      ProjectileConeIncrease: 0.07
       Reset: .05
     Reload:
-      Duration: 30
+      Duration: 60
+      Amount: 35
+      TotalAmount: 90
+  FAMAS: #these are not accurate stats
+    ItemInfo:
+      Type: WOOD_PICKAXE
+      Data: 0
+      Name: 'FAMAS'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'WITHER_DEATH'
+      Scope: FALSE
+      Damage: 6.0
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.014634
+      ArmorPen: 0.70
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.3
+      ProjectileConeMin: 0.005
+      ProjectileConeIncrease: 0.07
+      Reset: .05
+    Reload:
+      Duration: 60
+      Amount: 25
+      TotalAmount: 75
+  AK-47: #these are not accurate stats
+    ItemInfo:
+      Type: WOOD_SPADE
+      Data: 0
+      Name: 'AK-47'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'BURP'
+      Scope: FALSE
+      Damage: 7.0
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.009756
+      ArmorPen: 0.78
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.3
+      ProjectileConeMin: 0.005
+      ProjectileConeIncrease: 0.05
+      Reset: .05
+    Reload:
+      Duration: 50
       Amount: 30
       TotalAmount: 90
+  M4A4: #these are not accurate stats
+    ItemInfo:
+      Type: STONE_SPADE
+      Data: 0
+      Name: 'M4A4'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'BAT_TAKEOFF'
+      Scope: FALSE
+      Damage: 6.6
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.014634
+      ArmorPen: 0.70
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.3
+      ProjectileConeMin: 0.005
+      ProjectileConeIncrease: 0.05
+      Reset: .05
+    Reload:
+      Duration: 50
+      Amount: 30
+      TotalAmount: 90
+  AUG: #these are not accurate stats
+    ItemInfo:
+      Type: GOLD_PICKAXE
+      Data: 0
+      Name: 'AUG'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'VILLAGER_DEATH'
+      Scope: TRUE
+      Damage: 5.6
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.009756
+      ArmorPen: 0.90
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.3
+      ProjectileConeMin: 0.005
+      ProjectileConeIncrease: 0.05
+      Reset: .05
+    Reload:
+      Duration: 68
+      Amount: 30
+      TotalAmount: 90
+  SG553: #these are not accurate stats
+    ItemInfo:
+      Type: IRON_PICKAXE
+      Data: 0
+      Name: 'SG553'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'WITHER_SPAWN'
+      Scope: TRUE
+      Damage: 6.0
+      Accuracy: 0.2 #DONT TOUCH YET
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.009756
+      ArmorPen: 1.0
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.3
+      ProjectileConeMin: 0.005
+      ProjectileConeIncrease: 0.05
+      Reset: .05
+    Reload:
+      Duration: 68
+      Amount: 30
+      TotalAmount: 90
+  SSG08: #these are not accurate stats
+    ItemInfo:
+      Type: DIAMOND_PICKAXE
+      Data: 0
+      Name: 'SSG08'
+      HotbarType: PRIMARY
+      IsShotgun: FALSE
+      KillReward: 300
+    Shoot:
+      Projectile: TRUE
+      Sound: 'WOLF_DEATH'
+      Scope: FALSE
+      Damage: 17.0
+      Accuracy: 1.0 #DONT TOUCH YET
+      Delay: 25    #check math on this (6.6666 shot per sec divide by 20)
+      BulletsPerShot: 1 #DOUBLE CHECK THIS
+      DropoffPerBlock: 0.024390
+      ArmorPen: 0.85
+    Burst:  #DONT DO ANY OF THIS
+      BulletsPerPitch: 7
+      BulletsPerYaw: 0
+      DelayBullets: 2
+      BulletsPerBurst: 1
+      ProjectileConeMax: 0.5
+      ProjectileConeMin: 0.02
+      ProjectileConeIncrease: 0.1
+      Reset:
+      ScopeDelay: 10
+    Reload:
+      Duration: 74
+      Amount: 10
+      TotalAmount: 30
   AWP: #these are not accurate stats
     ItemInfo:
       Type: GOLD_SPADE
@@ -259,14 +633,16 @@ Guns:
       KillReward: 100
     Shoot:
       Projectile: FALSE
-      Sound: 'squadassault.shootxd'
+      Sound: 'DRINK'
       Scope: TRUE
       Damage: 20.0 #DO THIS
-      Accuracy: 0.0 #DONT TOUCH YET
-      Delay: 12    #check math on this (6.6666 shot per sec divide by 20)
+      Accuracy: 1.0 #DONT TOUCH YET
+      Delay: 30    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.0  #NEEDS WORK
       ArmorPen: 1.0
+      Reset:
+      ScopeDelay: 10
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
@@ -276,6 +652,6 @@ Guns:
       ProjectileConeMin: 0.02
       ProjectileConeIncrease: 0.1
     Reload:
-      Duration: 20
+      Duration: 74
       Amount: 10
       TotalAmount: 30

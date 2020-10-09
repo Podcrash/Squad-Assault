@@ -28,7 +28,7 @@ public class SAScoreboardTeam {
             PlayerStats stats = game.getStats().get(player.getUniqueId());
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
             registerNewTeam.setPrefix("[O]");
-            registerNewTeam.setSuffix(stats.getKills() + " - " + stats.getDeaths());
+            registerNewTeam.setSuffix(" " + stats.getKills() + " - " + stats.getDeaths());
             NmsUtils.hideNametag(registerNewTeam);
             registerNewTeam.addEntry(player.getName());
             teams.add(registerNewTeam);
@@ -37,7 +37,7 @@ public class SAScoreboardTeam {
             PlayerStats stats = game.getStats().get(player.getUniqueId());
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
             registerNewTeam.setPrefix("[A]");
-            registerNewTeam.setSuffix(stats.getKills() + " - " + stats.getDeaths());
+            registerNewTeam.setSuffix(" " + stats.getKills() + " - " + stats.getDeaths());
             NmsUtils.hideNametag(registerNewTeam);
             registerNewTeam.addEntry(player.getName());
             teams.add(registerNewTeam);
@@ -48,7 +48,7 @@ public class SAScoreboardTeam {
         PlayerStats stats = game.getStats().get(player.getUniqueId());
         Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
         registerNewTeam.setPrefix(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA ? "[O]" : "[A]");
-        registerNewTeam.setSuffix(stats.getKills() + " - " + stats.getDeaths());
+        registerNewTeam.setSuffix(" " + stats.getKills() + " - " + stats.getDeaths());
         NmsUtils.hideNametag(registerNewTeam);
         registerNewTeam.addEntry(player.getName());
         teams.add(registerNewTeam);
@@ -70,7 +70,7 @@ public class SAScoreboardTeam {
         PlayerStats stats = game.getStats().get(player.getUniqueId());
         Team team = scoreboard.getTeam(player.getName());
         team.setPrefix(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA ? "[O]" : "[A]");
-        team.setSuffix(stats.getKills() + " - " + stats.getDeaths());
+        team.setSuffix(" " + stats.getKills() + " - " + stats.getDeaths());
         NmsUtils.hideNametag(team);
     }
 }

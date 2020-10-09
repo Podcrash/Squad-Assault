@@ -3,6 +3,7 @@ package com.podcrash.squadassault.weapons;
 import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.nms.NmsUtils;
+import com.podcrash.squadassault.nms.PhysicsItem;
 import com.podcrash.squadassault.util.Item;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -88,6 +89,40 @@ public class Grenade {
         //play sound
     }
 
+    public void explode(PhysicsItem item) {
+        for(GrenadeCache cache : played) {
+            if(cache.getGrenade() == item) {
+                spawnFire(cache);
+                break;
+            }
+        }
+    }
+
+
+    private void spawnFire(GrenadeCache cache) {
+        for(Block block : getBlocks(cache.getGrenade().getLocation().getBlock(), effectPower)) {
+            if(block.getType() == Material.AIR) {
+                if(!block.getRelative(BlockFace.DOWN).getType().isSolid() && (block.getRelative(BlockFace.DOWN).getType() != Material.STEP)) {
+                    continue;
+                }
+                cache.getBlocks().add(block);
+                block.setType(Material.FIRE);
+            } else {
+                if(!block.getType().isSolid() && block.getType() != Material.STEP) {
+                    continue;
+                }
+                Block relative = block.getRelative(BlockFace.UP);
+                if(relative.getType() != Material.AIR) {
+                    continue;
+                }
+                cache.getBlocks().add(relative);
+                relative.setType(Material.FIRE);
+            }
+        }
+        cache.setDuration(System.currentTimeMillis());
+        cache.getGrenade().remove();
+    }
+
     @SuppressWarnings("deprecation")
     public void tick(long ticks) {
         Iterator<GrenadeCache> iterator = played.iterator();
@@ -171,37 +206,16 @@ public class Grenade {
                         iterator.remove();
                     } else {
                         for(Player player : cache.getNearbyToBlockPlayers()) {
-                            if((cache.getPlayer() == player || Main.getGameManager().getTeam(cache.getGame(),
-                                    cache.getPlayer()) != Main.getGameManager().getTeam(cache.getGame(), player)) && !cache.getGame().getSpectators().contains(player)) {
-                                Main.getGameManager().damage(cache.getGame(), cache.getPlayer(), player, 0.5, "Fire");
+                            if((cache.getPlayer() == player) && !cache.getGame().isDead(player)) {
                                 player.setFireTicks(0);
+                                Main.getGameManager().damage(cache.getGame(), cache.getPlayer(), player, 0.25, "Fire");
                             }
                         }
                     }
                 } else {
                     //sound
 
-                    for(Block block : getBlocks(cache.getGrenade().getLocation().getBlock(), effectPower)) {
-                        if(block.getType() == Material.AIR) {
-                            if(!block.getRelative(BlockFace.DOWN).getType().isSolid()) {
-                                continue;
-                            }
-                            cache.getBlocks().add(block);
-                            block.setType(Material.FIRE);
-                        } else {
-                            if(!block.getType().isSolid()) {
-                                continue;
-                            }
-                            Block relative = block.getRelative(BlockFace.UP);
-                            if(relative.getType() != Material.AIR) {
-                                continue;
-                            }
-                            cache.getBlocks().add(relative);
-                            relative.setType(Material.FIRE);
-                        }
-                    }
-                    cache.setDuration(System.currentTimeMillis());
-                    cache.getGrenade().remove();
+                    spawnFire(cache);
                 }
             } else {
                 cache.getGrenade().remove();

@@ -110,5 +110,6 @@ public class Main extends JavaPlugin {
         getCommand("stopgame").setExecutor(new StopGame());
         getCommand("listgames").setExecutor(new ListGamesCommand());
         getCommand("announce").setExecutor(new AnnounceCommand());
+        getCommand("advancedstats").setExecutor(new AdvancedStatsCommand());
     }
 }

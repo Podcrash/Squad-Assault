@@ -55,7 +55,7 @@ public final class NmsUtils {
 
     public static void sendInvisibility(SAScoreboard scoreboard, SAGame game) {
         for(Player player : game.getTeamA().getPlayers()) {
-            if(game.getSpectators().contains(player))
+            if(!player.isOnline() || game.getSpectators().contains(player))
                 continue;
             ScoreboardTeam team = ((CraftScoreboard)scoreboard.getScoreboard()).getHandle().getTeam(player.getName());
             try {
@@ -68,7 +68,7 @@ public final class NmsUtils {
             sendListPacket(game.getTeamA(), new PacketPlayOutScoreboardTeam(team, 2));
         }
         for(Player player : game.getTeamB().getPlayers()) {
-            if(game.getSpectators().contains(player))
+            if(!player.isOnline() || game.getSpectators().contains(player))
                 continue;
             ScoreboardTeam team = ((CraftScoreboard)scoreboard.getScoreboard()).getHandle().getTeam(player.getName());
             try {

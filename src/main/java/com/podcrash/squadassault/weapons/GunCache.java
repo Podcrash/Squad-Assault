@@ -12,6 +12,7 @@ public class GunCache {
     private float accuracyPitch;
     private boolean firstShot;
     private double cone;
+    private boolean isActive;
     private long lastShot;
 
     public GunCache(SAGame game, int rounds, double cone) {
@@ -24,6 +25,7 @@ public class GunCache {
         this.accuracyPitch = 0;
         this.firstShot = true;
         this.cone = cone;
+        isActive = true;
         lastShot = System.currentTimeMillis();
     }
 
@@ -102,5 +104,13 @@ public class GunCache {
 
     public void setLastShot(long lastShot) {
         this.lastShot = lastShot;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

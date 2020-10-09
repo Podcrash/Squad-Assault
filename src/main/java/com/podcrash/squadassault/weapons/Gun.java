@@ -11,10 +11,7 @@ import com.podcrash.squadassault.util.Utils;
 import me.dpohvar.powernbt.api.NBTManager;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityLiving;
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
@@ -35,8 +32,8 @@ public class Gun {
     private final GunHotbarType type;
     private final boolean projectile;
     private final boolean isShotgun;
-    private final String shootSound;
-    private final String reloadSound;
+    private final Sound shootSound;
+    private final Sound reloadSound = Sound.PISTON_RETRACT;
     private int reloadDuration;
     private int magSize;
     private int totalAmmoSize;
@@ -58,19 +55,18 @@ public class Gun {
     private double resetPerTick;
     private int scopeDelay;
     private int burstDelay;
+    private int shotgunBullets;
     private final Map<UUID, Long> delay;
     private final Map<UUID, GunCache> cache;
     private final Map<UUID, GunReload> reloading;
     private final Map<UUID, Long> scopeDelays;
 
-    public Gun(String name, Item item, GunHotbarType type, boolean projectile, String shootSound, String reloadSound,
-     boolean isShotgun) {
+    public Gun(String name, Item item, GunHotbarType type, boolean projectile, Sound shootSound, boolean isShotgun) {
         this.name = name;
         this.item = item;
         this.type = type;
         this.projectile = projectile;
         this.shootSound = shootSound;
-        this.reloadSound = reloadSound;
         this.isShotgun = isShotgun;
         delay = new HashMap<>();
         reloading = new HashMap<>();
@@ -198,11 +194,11 @@ public class Gun {
         return projectile;
     }
 
-    public String getShootSound() {
+    public Sound getShootSound() {
         return shootSound;
     }
 
-    public String getReloadSound() {
+    public Sound getReloadSound() {
         return reloadSound;
     }
 
@@ -227,6 +223,7 @@ public class Gun {
         } else {
             gunCache.setRounds(bulletsPerShot);
             gunCache.setLastShot(System.currentTimeMillis());
+            gunCache.setActive(true);
         }
         delay.put(player.getUniqueId(), del);
 
@@ -236,7 +233,7 @@ public class Gun {
                     GunCache cache = this.cache.get(player.getUniqueId());
                     if (cache == null) {
                         this.cache.put(player.getUniqueId(), new GunCache(game, bulletsPerShot, projectileConeMin));
-                    } else {
+                    } else if(cache.isActive()) {
                         cache.setRounds(bulletsPerShot);
                         cache.setLastShot(System.currentTimeMillis());
                     }
@@ -264,7 +261,8 @@ public class Gun {
             NBTManager.getInstance().read(itemStack).forEach((key, value) -> System.out.println(key + " " + value));
             return;
         }
-        //play sound
+        player.getLocation().getWorld().playSound(player.getLocation(), reloadSound, 3f,
+                (float) Randomizer.random() * 0.3f);
 
         reloading.put(player.getUniqueId(), new GunReload(left, reloadDuration));
     }
@@ -274,6 +272,13 @@ public class Gun {
             reloading.remove(player.getUniqueId());
         }
         cache.remove(player.getUniqueId());
+    }
+    
+    public void resetSwitch(Player player) {
+        if(reloading.get(player.getUniqueId()) != null && !reloading.get(player.getUniqueId()).isOutOfAmmo()) {
+            reloading.remove(player.getUniqueId());
+        }
+        cache.get(player.getUniqueId()).setActive(false);
     }
 
     public void resetDelay(Player player) {
@@ -323,7 +328,6 @@ public class Gun {
                             NmsUtils.sendActionBar(player, toSet + " / " + reserveLeft);
                             player.getItemInHand().setAmount(toSet);
                             player.getItemInHand().setDurability((short) 0);
-                            //play sound?
                         }
                         entry.getValue().setLeft(entry.getValue().getLeft() - 1);
                     } else {
@@ -380,7 +384,8 @@ public class Gun {
                                 player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
                             }
                             Location eye = player.getEyeLocation();
-                            boolean isMoving = !player.getVelocity().equals(new Vector());
+                            boolean isMoving =
+                                    player.getVelocity().getX() != 0 || player.getVelocity().getZ() != 0 || !player.isOnGround();
                             //play sound
 
                             if (accuracy == 0) {
@@ -409,6 +414,8 @@ public class Gun {
 
     private void shootOnce(Player player, boolean isMoving, GunCache gunCache, Location eye, double pitch,
                            double yaw, double x, double y, double z) {
+        player.getLocation().getWorld().playSound(player.getLocation(), shootSound, 3f,
+                (float) Randomizer.random() * 0.3f);
         if (projectile) {
             if (isShotgun) {
                 shotgun(player, isMoving, gunCache);
@@ -421,10 +428,11 @@ public class Gun {
                         (int) (accuracy * 5)) + 0.5f);
                 gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 5),
                         (int) (accuracy * 5)) + 0.5f);
-            } else if (scope && player.isSneaking() && System.currentTimeMillis()-scopeDelays.get(player.getUniqueId()) > scopeDelay*50) {
+            } else if (scope && player.isSneaking() && System.currentTimeMillis()-scopeDelays.get(player
+            .getUniqueId()) > scopeDelay*50) {
                 gunCache.setAccuracyYaw(0);
                 gunCache.setAccuracyPitch(0);
-            } else if (scope && !player.isSneaking()) {
+            } else if (scope) {
                 gunCache.setAccuracyYaw(Randomizer.randomRange((int) (-accuracy * 5),
                         (int) (accuracy) * 5) + 0.5f);
                 gunCache.setAccuracyPitch(Randomizer.randomRange((int) (-accuracy * 5),
@@ -465,7 +473,9 @@ public class Gun {
                 String data = eye.getBlock().getState().getData().toString();
                 boolean inverted = data.contains("inverted");
                 Block block = eye.getBlock();
-                if (type.name().contains("FENCE")) {
+                if(type.name().contains("GLASS")) {
+                    eye.getBlock().breakNaturally();
+                } else if (type.name().contains("FENCE")) {
                     if (xMod >= 370 && xMod <= 620 && zMod >= 370 && zMod <= 620) {
                         player.getWorld().playEffect(eye, Effect.STEP_SOUND, block.getType());
                         break;
@@ -586,14 +596,14 @@ public class Gun {
         spray.add(player.getLocation().getDirection());
         spray.normalize();
 
-        projectile.setVelocity(spray.multiply(4));
+        projectile.setVelocity(spray.multiply(3));
         cache.setCone(Math.min(projectileConeMax, cone + coneIncPerBullet));
         Main.getWeaponManager().getProjectiles().put(projectile, new ProjectileStats(name, player.getLocation().clone(),
                 dropoffPerBlock, damage, armorPen, player));
     }
 
     private void shotgun(Player player, boolean moving, GunCache cache) {
-        for(int i = 0; i < bulletsPerShot; i++) {
+        for(int i = 0; i < shotgunBullets; i++) {
             //todo sound here
             projectile(player, moving, cache);
         }
@@ -687,5 +697,13 @@ public class Gun {
 
     public void setBurstDelay(int burstDelay) {
         this.burstDelay = burstDelay;
+    }
+
+    public int getShotgunBullets() {
+        return shotgunBullets;
+    }
+
+    public void setShotgunBullets(int shotgunBullets) {
+        this.shotgunBullets = shotgunBullets;
     }
 }
