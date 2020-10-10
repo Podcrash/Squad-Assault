@@ -5,51 +5,51 @@ authors: [Noid, Notoh]
 softdepend:
   - PowerNBT
 commands:
-  quit:
-    description: Leave a game.
-    usage: /quit
-  addalphaspawn:
-    description: Adds a spawn of a map for alpha team.
-    usage: /addalphaspawn
-  addomegaspawn:
-    description: Adds a spawn of a map for omega team.
-    usage: /addomegaspawn
-  creategame:
-    description: starts creation of a game.
-    usage: /damage <id> <mapname> <min players>
-  deletegame:
-    description: deletes a game.
-    usage: /delete <id>
-  enablemap:
-    description: enables a map.
-    usage: /enablemap <id>
-  disablemap:
-    description: disables a map.
-    usage: /disablemap <id>
-  finishcreation:
-    description: finalizes the creation of a world.
-    usage: /finishcreation
-  addbomb:
-    description: adds a bomb site to a map.
-    usage: /addbomb <site_letter>
-  reloadplugin:
-    description: reloads the plugin
-    usage: /reloadplugin
-  setlobby:
-    description: sets the lobby of a game.
-    usage: /setlobby
-  joingame:
-    description: joins a game
-    usage: /joingame <id>
-  stopgame:
-    description: stops all games
-    usage: /stopgame
-  listgames:
-    description: lists games on the server
-    usage: /listgames
-  announce:
-    description: announces
-    usage: /announce <message>
+#  quit:
+#    description: Leave a game.
+#    usage: /quit
+#  addalphaspawn:
+#    description: Adds a spawn of a map for alpha team.
+#    usage: /addalphaspawn
+#  addomegaspawn:
+#    description: Adds a spawn of a map for omega team.
+#    usage: /addomegaspawn
+#  creategame:
+#    description: starts creation of a game.
+#    usage: /damage <id> <mapname> <min players>
+#  deletegame:
+#    description: deletes a game.
+#    usage: /delete <id>
+#  enablemap:
+#    description: enables a map.
+#    usage: /enablemap <id>
+#  disablemap:
+#    description: disables a map.
+#    usage: /disablemap <id>
+#  finishcreation:
+#    description: finalizes the creation of a world.
+#    usage: /finishcreation
+#  addbomb:
+#    description: adds a bomb site to a map.
+#    usage: /addbomb <site_letter>
+#  reloadplugin:
+#    description: reloads the plugin
+#    usage: /reloadplugin
+#  setlobby:
+#    description: sets the lobby of a game.
+#    usage: /setlobby
+#  joingame:
+#    description: joins a game
+#    usage: /joingame <id>
+#  stopgame:
+#    description: stops all games
+#    usage: /stopgame
+#  listgames:
+#    description: lists games on the server
+#    usage: /listgames
+#  announce:
+#   description: announces
+#    usage: /announce <message>
   advancedstats:
     description: gets a player's advanced stats
     usage: /advancedstats [player]
