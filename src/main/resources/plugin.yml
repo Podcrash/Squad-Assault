@@ -4,7 +4,7 @@ main: com.podcrash.squadassault.Main
 authors: [Noid, Notoh]
 softdepend:
   - PowerNBT
-#commands:
+commands:
 #  quit:
 #    description: Leave a game.
 #    usage: /quit
@@ -50,9 +50,9 @@ softdepend:
 #  announce:
 #    description: announces
 #    usage: /announce <message>
-#  advancedstats:
-#    description: gets a player's advanced stats
-#    usage: /advancedstats [player]
+  advancedstats:
+    description: gets a player's advanced stats
+    usage: /advancedstats [player]
 permissions:
   squadassault.admin:
     description: permission to use admin gamesetup/enable/disable/reload commands
