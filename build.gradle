@@ -39,7 +39,7 @@ shadowJar {
 }
 
 dependencies {
-    compileOnly fileTree('./libs')
+    compileOnly fileTree('../libs')
 
     testImplementation 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
     implementation "org.reflections:reflections:0.9.11"
