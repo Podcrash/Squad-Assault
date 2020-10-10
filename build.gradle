@@ -6,8 +6,8 @@ plugins {
     id "com.github.johnrengelman.shadow" version "5.2.0"
 }
 
-group 'raindance'
-version '1.0-SNAPSHOT'
+group 'com.podcrash'
+version '1.0-BETA'
 
 sourceCompatibility = 1.8
 

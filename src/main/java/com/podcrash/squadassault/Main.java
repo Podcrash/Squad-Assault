@@ -16,6 +16,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
 
 public class Main extends JavaPlugin {
     private static Main instance;
@@ -72,8 +76,11 @@ public class Main extends JavaPlugin {
         shopManager = new ShopManager();
 
         config.startConfig();
-        registerCommands();
-        getServer().getPluginManager().registerEvents(listener = new GameListener(), this);
+//        registerCommands();
+        List<SAGame> gamesList = gameManager.getGames();
+        Random random = new Random();
+        SAGame saGame = gamesList.get(random.nextInt(gamesList.size()));
+        getServer().getPluginManager().registerEvents(listener = new GameListener(saGame), this);
     }
 
     @Override

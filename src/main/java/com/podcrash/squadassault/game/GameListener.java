@@ -38,10 +38,12 @@ import java.util.concurrent.ConcurrentMap;
 @SuppressWarnings("unused")
 public class GameListener implements Listener {
 
+    private final SAGame saGame;
     private final Inventory selector;
     private final ConcurrentMap<SAGame, Boolean> bombPlants;
 
-    public GameListener() {
+    public GameListener(SAGame saGame) {
+        this.saGame = saGame;
         selector = Bukkit.createInventory(null, 27, "Team Selector");
         selector.setItem(11, ItemBuilder.create(Material.WOOL, 1, (short)14, "Team A", "Click to join Team A"));
         selector.setItem(13, ItemBuilder.create(Material.WOOL, 1, (short)8, "Random", "Click to join a random team"));
@@ -418,6 +420,12 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
+    public void onLogin(PlayerLoginEvent playerLoginEvent) {
+        if (saGame.isGameStarted())
+            playerLoginEvent.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.RED + "You cannot join a game that's already started");
+    }
+
+    @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         //TODO: When we make this work properly with bungeecord, lots has to be changed probably
         if(Main.getGameManager().getGame(event.getPlayer()) == null) {
@@ -429,6 +437,7 @@ public class GameListener implements Listener {
                     player.hidePlayer(event.getPlayer());
                 }
             }
+            Main.getGameManager().addPlayer(saGame, event.getPlayer());
         }
     }
 
@@ -778,6 +787,11 @@ public class GameListener implements Listener {
             location.getBlock().breakNaturally();
         }
         //todo ask if he wants it to restore
+    }
+
+    @EventHandler
+    public void onMobSpawn(CreatureSpawnEvent event) {
+        event.setCancelled(true);
     }
 
     private HitType snowballCollision(Player damaged, Projectile snowball) {

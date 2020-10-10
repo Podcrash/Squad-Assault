@@ -349,6 +349,7 @@ public class SAGame {
             return;
         }
         Main.getGameManager().stopGame(this, false);
+        Bukkit.shutdown();
         /*
           if(shutdown) {
             shutdown();
