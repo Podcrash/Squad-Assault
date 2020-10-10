@@ -165,7 +165,7 @@ public class SAGameManager {
                 int scoreTeamB = game.getScoreTeamB();
                 SATeam.Team side = game.getTeamA().getTeam();
                 scoreboard.getStatus().setTitle(ChatColor.translateAlternateColorCodes('&',
-                        ((side == SATeam.Team.ALPHA) ? scoreTeamA : scoreTeamB) + " &3Alpha" + " &4Omega " + ((side == SATeam.Team.OMEGA) ? scoreTeamA : scoreTeamB)));
+                        "&3" + ((side == SATeam.Team.ALPHA) ? scoreTeamA : scoreTeamB) + " Alpha" + " &4Omega " + ((side == SATeam.Team.OMEGA) ? scoreTeamA : scoreTeamB)));
             } else {
                 scoreboard.getStatus().setTitle(Messages.SCOREBOARD_GAME_OVER.toString());
             }
