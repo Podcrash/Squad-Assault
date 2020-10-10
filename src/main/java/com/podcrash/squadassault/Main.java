@@ -8,6 +8,7 @@ import com.podcrash.squadassault.game.SAGameManager;
 import com.podcrash.squadassault.nms.BulletSnowball;
 import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.shop.ShopManager;
+import com.podcrash.squadassault.util.Randomizer;
 import com.podcrash.squadassault.weapons.WeaponManager;
 import me.dpohvar.powernbt.api.NBTManager;
 import net.minecraft.server.v1_8_R3.EntityTypes;
@@ -15,6 +16,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
 
 
 public class Main extends JavaPlugin {
@@ -70,10 +73,12 @@ public class Main extends JavaPlugin {
         task = new GameTask();
         weaponManager = new WeaponManager();
         shopManager = new ShopManager();
-
         config.startConfig();
         registerCommands();
-        getServer().getPluginManager().registerEvents(listener = new GameListener(), this);
+        List<SAGame> gameList = gameManager.getGames();
+        SAGame game = gameList.get(Randomizer.randomInt(gameList.size()));
+
+        getServer().getPluginManager().registerEvents(listener = new GameListener(game), this);
     }
 
     @Override
@@ -95,7 +100,7 @@ public class Main extends JavaPlugin {
     }
 
     private void registerCommands() {
-        getCommand("quit").setExecutor(new QuitCommand());
+        /* getCommand("quit").setExecutor(new QuitCommand());
         getCommand("addalphaspawn").setExecutor(new AddAlphaSpawnCommand());
         getCommand("addomegaspawn").setExecutor(new AddOmegaSpawnCommand());
         getCommand("addbomb").setExecutor(new AddBombCommand());
@@ -109,7 +114,7 @@ public class Main extends JavaPlugin {
         getCommand("joingame").setExecutor(new JoinGameCommand());
         getCommand("stopgame").setExecutor(new StopGame());
         getCommand("listgames").setExecutor(new ListGamesCommand());
-        getCommand("announce").setExecutor(new AnnounceCommand());
+        getCommand("announce").setExecutor(new AnnounceCommand()); */
         getCommand("advancedstats").setExecutor(new AdvancedStatsCommand());
     }
 }

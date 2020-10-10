@@ -3,15 +3,14 @@ package com.podcrash.squadassault;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.SATeam;
 import com.podcrash.squadassault.shop.PlayerShopItem;
-import com.podcrash.squadassault.util.Utils;
 import com.podcrash.squadassault.util.Item;
+import com.podcrash.squadassault.util.Utils;
 import com.podcrash.squadassault.weapons.*;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 
 import java.io.File;
 import java.io.IOException;
@@ -122,7 +121,8 @@ public class Config {
     private void loadMaps() {
         if(maps.getString("Game") != null && !maps.isString("Game")) {
             for(String id : maps.getConfigurationSection("Game").getKeys(false)) {
-                Bukkit.getServer().createWorld(new WorldCreator(maps.getString("Game."+id+".Name")));
+                World world = Bukkit.getServer().createWorld(new WorldCreator(maps.getString("Game."+id+".Name")));
+                world.getLivingEntities().stream().filter(e -> e.getType() != EntityType.PLAYER).forEach(Entity::remove);
                 try {
                     Main.getGameManager().addGame(new SAGame(id, maps.getString("Game." + id + ".Name"),
                             Utils.getDeserializedLocation(maps.getString("Game." + id + ".Lobby")), maps.getInt(
