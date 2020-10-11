@@ -1,7 +1,6 @@
 package com.podcrash.squadassault;
 
 import com.podcrash.squadassault.commands.AdvancedStatsCommand;
-import com.podcrash.squadassault.commands.JoinGameCommand;
 import com.podcrash.squadassault.game.GameListener;
 import com.podcrash.squadassault.game.GameTask;
 import com.podcrash.squadassault.game.SAGame;
@@ -102,7 +101,6 @@ public class Main extends JavaPlugin {
     }
 
     private void registerCommands() {
-        getCommand("joingame").setExecutor(new JoinGameCommand());
         getCommand("advancedstats").setExecutor(new AdvancedStatsCommand());
     }
 }
