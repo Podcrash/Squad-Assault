@@ -27,7 +27,7 @@ public enum Messages {
     PLAYER_JOIN_TEAM_DEFENCE("&bYou are &eAlpha, &bdefend the &eBombsites &bto win"),
     PLAYER_JOIN_TEAM_OFFENCE("&bYou are &eOmega, &bplant the &eBomb &bto win"),
     PLAYER_BOMB_SELF("&bYou have the &eBomb&b, plant it at a &eBombsite&b to win"),
-    PLAYER_BOMB_OTHER("&e%p%&b has the &eBomb&b, protect them to win "),
+    PLAYER_BOMB_OTHER("&e%p%&b has the &eBomb&b, protect them to win"),
 
     PLAYER_SHOP_DENIED_OUTOFBOUNDS("&bYou can only access the &eShop &bin spawn"),
     PLAYER_SHOP_DENIED_ELAPSED("&bThe allotted purchase period has elapsed"),

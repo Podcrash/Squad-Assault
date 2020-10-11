@@ -38,9 +38,9 @@ import java.util.concurrent.ConcurrentMap;
 @SuppressWarnings("unused")
 public class GameListener implements Listener {
 
-    private final SAGame game;
     private final Inventory selector;
     private final ConcurrentMap<SAGame, Boolean> bombPlants;
+    private final SAGame game;
 
     public GameListener(SAGame game) {
         this.game = game;
@@ -420,13 +420,6 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
-    public void onLogin(PlayerLoginEvent event) {
-        if(game.isGameStarted())
-            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.RED + "You cannot join a game that is " +
-                    "already started!");
-    }
-
-    @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         //TODO: When we make this work properly with bungeecord, lots has to be changed probably
         if(Main.getGameManager().getGame(event.getPlayer()) == null) {
@@ -448,6 +441,13 @@ public class GameListener implements Listener {
             if(Main.getGameManager().getGame((Player) event.getDamager()) == null) {
                 event.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler
+    public void onLogin(PlayerLoginEvent event) {
+        if(game.isGameStarted()) {
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.RED + "You cannot join a game that is in progress!");
         }
     }
 
@@ -762,7 +762,7 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onCraftingTable(PlayerInteractEvent event) {
-        if(event.getAction() == Action.RIGHT_CLICK_BLOCK && (event.getClickedBlock().getType() == Material.WORKBENCH || event.getClickedBlock().getType() == Material.FURNACE && event.getClickedBlock().getType() == Material.CHEST)) {
+        if(event.getAction() == Action.RIGHT_CLICK_BLOCK && (event.getClickedBlock().getType() == Material.WORKBENCH || event.getClickedBlock().getType() == Material.FURNACE || event.getClickedBlock().getType() == Material.CHEST)) {
             event.setCancelled(true);
         }
     }
@@ -770,6 +770,14 @@ public class GameListener implements Listener {
     @EventHandler
     public void onEat(PlayerItemConsumeEvent event) {
         if(Main.getGameManager().getGame(event.getPlayer()) == null) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onMobSpawn(CreatureSpawnEvent event) {
+        if(event.getEntity() instanceof ArmorStand) {
             return;
         }
         event.setCancelled(true);
@@ -788,11 +796,6 @@ public class GameListener implements Listener {
             location.getBlock().breakNaturally();
         }
         //todo ask if he wants it to restore
-    }
-
-    @EventHandler
-    public void onMobSpawn(CreatureSpawnEvent event) {
-        event.setCancelled(true);
     }
 
     private HitType snowballCollision(Player damaged, Projectile snowball) {

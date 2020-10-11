@@ -38,9 +38,9 @@ commands:
 #  setlobby:
 #    description: sets the lobby of a game.
 #    usage: /setlobby
-#  joingame:
-#    description: joins a game
-#    usage: /joingame <id>
+  joingame:
+    description: joins a game
+    usage: /joingame <id>
 #  stopgame:
 #    description: stops all games
 #    usage: /stopgame

@@ -88,20 +88,20 @@ public class PhysicsItem extends EntityArmorStand {
                         if(fire) {
                             Main.getWeaponManager().getGrenade(CraftItemStack.asBukkitCopy(getEquipment(0))).explode(this);
                         }
-                        motY = -(motY * 0.5);
-                        motX *= 0.85;
-                        motZ *= 0.85;
+                        motY = -(motY * 0.25);
+                        motX *= 0.42;
+                        motZ *= 0.42;
                         if (Math.abs(motY) <= 0.15) {
                             motY = 0.0;
                         }
                     }
                     if (intersects.contains(BlockFace.WEST) || intersects.contains(BlockFace.EAST)) {
-                        motX = -(motX * 0.4);
-                        motZ *= 0.4;
+                        motX = -(motX * 0.2);
+                        motZ *= 0.2;
                     }
                     if (intersects.contains(BlockFace.SOUTH) || intersects.contains(BlockFace.NORTH)) {
-                        motZ = -(motZ * 0.4);
-                        motX *= 0.4;
+                        motZ = -(motZ * 0.2);
+                        motX *= 0.2;
                     }
                     if (Math.abs(motX) <= 0.07) {
                         motX = 0.0;

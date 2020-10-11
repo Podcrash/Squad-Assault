@@ -1,6 +1,7 @@
 package com.podcrash.squadassault;
 
-import com.podcrash.squadassault.commands.*;
+import com.podcrash.squadassault.commands.AdvancedStatsCommand;
+import com.podcrash.squadassault.commands.JoinGameCommand;
 import com.podcrash.squadassault.game.GameListener;
 import com.podcrash.squadassault.game.GameTask;
 import com.podcrash.squadassault.game.SAGame;
@@ -73,6 +74,7 @@ public class Main extends JavaPlugin {
         task = new GameTask();
         weaponManager = new WeaponManager();
         shopManager = new ShopManager();
+
         config.startConfig();
         registerCommands();
         List<SAGame> gameList = gameManager.getGames();
@@ -100,21 +102,7 @@ public class Main extends JavaPlugin {
     }
 
     private void registerCommands() {
-        /* getCommand("quit").setExecutor(new QuitCommand());
-        getCommand("addalphaspawn").setExecutor(new AddAlphaSpawnCommand());
-        getCommand("addomegaspawn").setExecutor(new AddOmegaSpawnCommand());
-        getCommand("addbomb").setExecutor(new AddBombCommand());
-        getCommand("creategame").setExecutor(new CreateGameCommand());
-        getCommand("disablemap").setExecutor(new DisableMapCommand());
-        getCommand("enablemap").setExecutor(new EnableMapCommand());
-        getCommand("finishcreation").setExecutor(new FinishCreationCommand());
-        getCommand("reloadplugin").setExecutor(new ReloadPluginCommand());
-        getCommand("setlobby").setExecutor(new SetLobbyCommand());
-        getCommand("deletegame").setExecutor(new DeleteGameCommand());
         getCommand("joingame").setExecutor(new JoinGameCommand());
-        getCommand("stopgame").setExecutor(new StopGame());
-        getCommand("listgames").setExecutor(new ListGamesCommand());
-        getCommand("announce").setExecutor(new AnnounceCommand()); */
         getCommand("advancedstats").setExecutor(new AdvancedStatsCommand());
     }
 }
