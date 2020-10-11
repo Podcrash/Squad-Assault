@@ -427,6 +427,7 @@ public class SAGameManager {
                     gun.resetPlayer(player);
                     player.getInventory().setItem(i, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
                             gun.getItem().getData(), gun.getName()));
+                    NmsUtils.addNBTInteger(player.getInventory().getItem(i), "outofammo", 0);
                 }
             }
 
@@ -539,7 +540,7 @@ public class SAGameManager {
             if(player.equals(bombCarrier)) {
                 player.sendMessage(Messages.PLAYER_BOMB_SELF.toString());
             } else {
-                player.sendMessage(Messages.PLAYER_BOMB_OTHER.replace("%p", bombCarrier.getName()));
+                player.sendMessage(Messages.PLAYER_BOMB_OTHER.replace("%p%", bombCarrier.getName()));
             }
         }
     }
