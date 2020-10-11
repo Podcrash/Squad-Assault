@@ -105,14 +105,14 @@ ShopGuns:
     ItemName: 'SG553'
     ItemLore: 'Reserve Ammo: 90'
     Price: 200
-    Side: OMEGA
+    ideS: OMEGA
   SSG08:
     Slot: 15
     ItemName: 'SSG08'
     ItemLore: 'Reserve Ammo: 30'
     Price: 200
   AWP:
-    Slot: 15
+    Slot: 16
     ItemName: 'AWP'
     ItemLore: 'Reserve Ammo: 30'
     Price: 200

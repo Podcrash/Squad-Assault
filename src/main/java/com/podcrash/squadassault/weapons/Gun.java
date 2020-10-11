@@ -596,7 +596,7 @@ public class Gun {
         spray.add(player.getLocation().getDirection());
         spray.normalize();
 
-        projectile.setVelocity(spray.multiply(3));
+        projectile.setVelocity(spray.multiply(4));
         cache.setCone(Math.min(projectileConeMax, cone + coneIncPerBullet));
         Main.getWeaponManager().getProjectiles().put(projectile, new ProjectileStats(name, player.getLocation().clone(),
                 dropoffPerBlock, damage, armorPen, player));

@@ -600,9 +600,9 @@ Guns:
       IsShotgun: FALSE
       KillReward: 300
     Shoot:
-      Projectile: TRUE
+      Projectile: FALSE
       Sound: 'WOLF_DEATH'
-      Scope: FALSE
+      Scope: TRUE
       Damage: 17.0
       Accuracy: 1.0 #DONT TOUCH YET
       Delay: 25    #check math on this (6.6666 shot per sec divide by 20)

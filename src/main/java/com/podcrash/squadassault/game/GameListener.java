@@ -762,7 +762,7 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onCraftingTable(PlayerInteractEvent event) {
-        if(event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.WORKBENCH) {
+        if(event.getAction() == Action.RIGHT_CLICK_BLOCK && (event.getClickedBlock().getType() == Material.WORKBENCH || event.getClickedBlock().getType() == Material.FURNACE && event.getClickedBlock().getType() == Material.CHEST)) {
             event.setCancelled(true);
         }
     }
@@ -784,7 +784,7 @@ public class GameListener implements Listener {
         while(location.getWorld().getBlockAt(location).getType() == Material.AIR) {
             location.add(velocity);
         }
-        if(location.getBlock().getType() == Material.THIN_GLASS) {
+        if(location.getBlock().getType() == Material.THIN_GLASS || location.getBlock().getType() == Material.STAINED_GLASS_PANE) {
             location.getBlock().breakNaturally();
         }
         //todo ask if he wants it to restore
