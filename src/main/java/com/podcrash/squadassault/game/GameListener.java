@@ -30,8 +30,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -103,13 +104,15 @@ public class GameListener implements Listener {
                     if((inHand.getType() == Material.SHEARS || inHand.getType() == Material.GOLD_NUGGET) && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.CROPS) {
                         addDefuse(event, player, game, inHand);
                     }
-                    if(inHand.getType() == Material.GOLDEN_APPLE && game.getState() == SAGameState.ROUND_LIVE && !game.isRoundEnding() && player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid() && bombPlants.get(game) == null) {
+                    if(inHand.getType() == Material.GOLDEN_APPLE && game.getState() == SAGameState.ROUND_LIVE && !game.isRoundEnding() && bombPlants.get(game) == null) {
                         event.setCancelled(true);
                         bombPlants.put(game, true);
                         player.getLocation().getWorld().playSound(player.getLocation(), Sound.NOTE_PLING, 1f, 3f);
                         new BukkitRunnable() {
                             public void run() {
                                 if(!game.isAtBombsite(player.getLocation())) {
+                                    bombPlants.remove(game);
+                                    player.sendMessage(ChatColor.AQUA + "You are not at the bombsite!");
                                     cancel();
                                     return;
                                 }
@@ -132,6 +135,8 @@ public class GameListener implements Listener {
                                         //todo play sound
                                         NmsUtils.sendTitle(alpha,0,23,0,"",ChatColor.DARK_PURPLE + "Bomb Planted");
                                     }
+                                } else {
+                                    player.sendMessage(ChatColor.AQUA + "You must be on the ground/not a half-slab to plant!");
                                 }
                                 bombPlants.remove(game);
                             }
@@ -144,7 +149,7 @@ public class GameListener implements Listener {
                     gun.shoot(game, player);
                 }
                 Grenade grenade = Main.getWeaponManager().getGrenade(inHand);
-                if (grenade != null && !game.isRoundEnding() && !game.isDefusing(player)) {
+                if (grenade != null && !game.isRoundEnding() && !game.isDefusing(player) && game.getState() != SAGameState.ROUND_START) {
                     event.setCancelled(true);
                     grenade.throwGrenade(game, player);
                 }
@@ -159,7 +164,7 @@ public class GameListener implements Listener {
                     return;
                 }
                 Grenade grenade = Main.getWeaponManager().getGrenade(inHand);
-                if(grenade != null) {
+                if(grenade != null && game.getState() != SAGameState.ROUND_START) {
                     grenade.roll(game, player);
                 }
             }
@@ -785,17 +790,45 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
-        Location location = event.getEntity().getLocation();
-        Vector velocity = event.getEntity().getVelocity().clone();
-        velocity.normalize();
-        velocity.multiply(0.1);
-        while(location.getWorld().getBlockAt(location).getType() == Material.AIR) {
-            location.add(velocity);
+        Location location = event.getEntity().getLocation().add(event.getEntity().getVelocity().multiply(0.8));
+        Block block = location.getBlock();
+
+        if(block.getType() == Material.AIR) {
+            Block closest = null;
+            double closestDist = 0;
+
+            for (Block other : getSurrounding(block)) {
+                if (other.getType() == Material.AIR)
+                    continue;
+
+                double dist = Utils.offset(location.toVector(), other.getLocation().add(0.5, 0.5, 0.5).toVector());
+
+                if (closest == null || dist < closestDist) {
+                    closest = other;
+                    closestDist = dist;
+                }
+            }
+
+            if (closest != null)
+                block = closest;
         }
-        if(location.getBlock().getType() == Material.THIN_GLASS || location.getBlock().getType() == Material.STAINED_GLASS_PANE) {
+        if(block.getType() == Material.THIN_GLASS || block.getType() == Material.STAINED_GLASS_PANE) {
             location.getBlock().breakNaturally();
         }
         //todo ask if he wants it to restore
+    }
+
+    private List<Block> getSurrounding(Block block) {
+        List<Block> blocks = new ArrayList<>();
+        for (int x = -1; x <= 1; x++)
+            for (int y = -1; y <= 1; y++)
+                for (int z = -1; z <= 1; z++) {
+                    if (x == 0 && y == 0 && z == 0)
+                        continue;
+
+                    blocks.add(block.getRelative(x, y, z));
+                }
+        return blocks;
     }
 
     private HitType snowballCollision(Player damaged, Projectile snowball) {

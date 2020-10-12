@@ -51,6 +51,8 @@ public class SAGame {
     private final Location bombB;
     private final List<Location> alphaSpawns;
     private final List<Location> omegaSpawns;
+    private List<Location> openAlpha;
+    private List<Location> openOmega;
     private List<Player> spectators;
     private SATeam teamA;
     private SATeam teamB;
@@ -81,6 +83,8 @@ public class SAGame {
         state = SAGameState.WAITING;
         moneyManager = new MoneyManager();
         spectators = new ArrayList<>();
+        openAlpha = new ArrayList<>(alphaSpawns);
+        openOmega = new ArrayList<>(omegaSpawns);
         teamA = new SATeam(new ArrayList<>());
         teamB = new SATeam(new ArrayList<>());
         drops = new HashMap<>();
@@ -432,7 +436,7 @@ public class SAGame {
                     money.put(player.getUniqueId(), money.get(player.getUniqueId())+300);
                     bomb.reset();
                     for(Grenade grenade : Main.getWeaponManager().getGrenades()) {
-                        grenade.remove(this);
+                        grenade.remove();
                     }
                     roundEnding = true;
                     break;
@@ -571,6 +575,7 @@ public class SAGame {
                     player.sendMessage(Messages.ROUND_OVER_TIME.toString());
                 }
                 moneyManager.addMoneyEndRound(this, ALPHA, false, MoneyManager.RoundEndType.TIME);
+                round++;
                 finalizeRound(ALPHA);
             }
         }
@@ -606,7 +611,7 @@ public class SAGame {
             addRoundTeamB();
         }
         for(Grenade grenade : Main.getWeaponManager().getGrenades()) {
-            grenade.remove(this);
+            grenade.remove();
         }
 
         roundEnding = true;
@@ -748,6 +753,7 @@ public class SAGame {
     private void initShop(SATeam.Team team) {
         for(Player player : Main.getGameManager().getTeam(this, team).getPlayers()) {
             Inventory inventory = shops.get(player.getUniqueId());
+            inventory.clear();
             initShopInventory(team, inventory);
         }
     }
@@ -813,7 +819,7 @@ public class SAGame {
     }
 
     public boolean isAtBombsite(Location location) {
-        return location.distance(bombA) <= 4 || location.distance(bombB) <= 4;
+        return Utils.offset(location.toVector(), bombA.toVector()) <= 4 || Utils.offset(location.toVector(), bombB.toVector()) <= 4;
     }
 
     public Map<UUID, PlayerStats> getStats() {
@@ -822,5 +828,21 @@ public class SAGame {
 
     public boolean isDead(Player player) {
         return (teamA.getPlayers().contains(player) || teamB.getPlayers().contains(player)) && (!player.isOnline() || spectators.contains(player));
+    }
+
+    public List<Location> getOpenAlpha() {
+        return openAlpha;
+    }
+
+    public List<Location> getOpenOmega() {
+        return openOmega;
+    }
+
+    public void setOpenAlpha(List<Location> openAlpha) {
+        this.openAlpha = new ArrayList<>(openAlpha);
+    }
+
+    public void setOpenOmega(List<Location> openOmega) {
+        this.openOmega = new ArrayList<>(openOmega);
     }
 }
