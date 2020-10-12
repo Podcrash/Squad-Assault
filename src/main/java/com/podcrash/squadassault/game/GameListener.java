@@ -339,6 +339,8 @@ public class GameListener implements Listener {
                         break;
                     } else if(shop.getType() == ItemType.GUN) {
                         if(shop.getTeam() != null && Main.getGameManager().getTeam(game, player) != shop.getTeam()) {
+                            player.sendMessage("read team as " + Main.getGameManager().getTeam(game, player) + ", " +
+                                    "shop item team " + (shop.getTeam() == null ? "nothing" : shop.getTeam().toString()));
                             break;
                         }
                         Gun gun = Main.getWeaponManager().getGun(shop.getWeaponName());

@@ -291,7 +291,7 @@ public class SAGame {
             teamB.setTeam(OMEGA);
         } else {
             teamA.setTeam(OMEGA);
-            teamA.setTeam(ALPHA);
+            teamB.setTeam(ALPHA);
         }
     }
 
@@ -705,27 +705,23 @@ public class SAGame {
                     }
                     if(teamA.size() < teamB.size()) {
                         Player player = teamB.getPlayers().get(Randomizer.randomInt(teamB.getPlayers().size()));
-                        teamB.removePlayer(player);
-                        teamA.addPlayer(player);
+                        addTeamA(player);
                     } else {
                         if(teamB.size() >= teamA.size()) {
                             continue;
                         }
                         Player player = teamA.getPlayers().get(Randomizer.randomInt(teamA.getPlayers().size()));
-                        teamA.removePlayer(player);
-                        teamB.addPlayer(player);
+                        addTeamB(player);
                     }
                 } else if(teamA.size() > maxPlayers / 2) {
                     Player player = teamA.getPlayers().get(Randomizer.randomInt(teamA.getPlayers().size()));
-                    teamA.removePlayer(player);
-                    teamB.addPlayer(player);
+                    addTeamB(player);
                 } else {
                     if(teamB.size() <= maxPlayers / 2) {
                         continue;
                     }
                     Player player = teamB.getPlayers().get(Randomizer.randomInt(teamB.getPlayers().size()));
-                    teamB.removePlayer(player);
-                    teamA.addPlayer(player);
+                    addTeamA(player);
                 }
             }
             initShopWaiting(OMEGA);
