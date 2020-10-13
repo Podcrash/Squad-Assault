@@ -3,10 +3,10 @@ package com.podcrash.squadassault.util;
 import org.bukkit.ChatColor;
 
 public enum Messages {
-    ROUND_OVER_TIME("&eAlpha &bdefended until round time elapsed"),
-    ROUND_OVER_KILLS("&e%t% &bcompletely obliterated &e%ot%"),
-    ROUND_OVER_DET("&eOmega &bwon the round by detonating the &eBomb"),
-    ROUND_OVER_DEF("&eAlpha &bhas defused the &eBomb &band won the round"),
+    ROUND_OVER_TIME("&eAlpha &bdefended until round time elapsed, current score &3%a% &4%o%"),
+    ROUND_OVER_KILLS("&e%t% &bcompletely obliterated &e%ot%&b, current score &3%a% &4%o%"),
+    ROUND_OVER_DET("&eOmega &bwon the round by detonating the &eBomb&b, current score &3%a% &4%o%"),
+    ROUND_OVER_DEF("&eAlpha &bhas defused the &eBomb &band won the round, current score &3%a% &4%o%"),
     GAME_OVER("&bThe game is over"),
     GAME_STARTING("&bGame begins in &e%v% &bseconds"),
 

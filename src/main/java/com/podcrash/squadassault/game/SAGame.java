@@ -416,14 +416,18 @@ public class SAGame {
                         //play sound? todo
                         NmsUtils.sendTitle(p, 0, 60, 0, Messages.BOMB_DEF_COMPLETE.replace("%p", player.getName()),
                                 "");
-                        p.sendMessage(Messages.ROUND_OVER_DEF.toString());
+                        p.sendMessage(Messages.ROUND_OVER_DEF.replace("%a%",
+                                String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA+1 : scoreTeamB+1))).replace(
+                                        "%o%", String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA : scoreTeamB)));
                         p.sendMessage(Messages.BOMB_DEF_START.replace("%p", player.getName()));
                     }
                     for(Player p : teamB.getPlayers()) {
                         //play sound? todo
                         NmsUtils.sendTitle(p, 0, 60, 0, Messages.BOMB_DEF_COMPLETE.replace("%p", player.getName()),
                                 "");
-                        p.sendMessage(Messages.ROUND_OVER_DEF.toString());
+                        p.sendMessage(Messages.ROUND_OVER_DEF.replace("%a%",
+                                String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA+1 : scoreTeamB+1))).replace(
+                                        "%o%", String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA : scoreTeamB)));
                         p.sendMessage(Messages.BOMB_DEF_START.replace("%p", player.getName()));
                     }
                     this.timer = 7;
@@ -463,10 +467,14 @@ public class SAGame {
                 if(!roundEnding) {
                     //todo sounds
                     for(Player p : teamA.getPlayers()) {
-                        p.sendMessage(Messages.ROUND_OVER_DET.toString());
+                        p.sendMessage(Messages.ROUND_OVER_DET.replace("%a%",
+                                String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA : scoreTeamB))).replace("%o%"
+                                , String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA+1 : scoreTeamB+1)));
                     }
                     for(Player p : teamB.getPlayers()) {
-                        p.sendMessage(Messages.ROUND_OVER_DET.toString());
+                        p.sendMessage(Messages.ROUND_OVER_DET.replace("%a%",
+                                String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA : scoreTeamB))).replace("%o%"
+                                , String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA+1 : scoreTeamB+1)));
                     }
                 }
                 bomb.reset();
@@ -545,21 +553,28 @@ public class SAGame {
             //rounds won on kills
             if(spectators.containsAll(Main.getGameManager().getTeam(this, ALPHA).getPlayers())) {
                 for (Player player : Main.getGameManager().getTeam(this, ALPHA).getPlayers()) {
-                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Omega").replace("%ot%", "Alpha"));
+                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Omega").replace("%ot%", "Alpha").replace("%a%",
+                            String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA : scoreTeamB))).replace("%o%",
+                            String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA+1 : scoreTeamB+1)));
                 }
                 for (Player player : Main.getGameManager().getTeam(this, OMEGA).getPlayers()) {
-                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Omega").replace("%ot%", "Alpha"));
+                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Omega").replace("%ot%", "Alpha").replace("%a%",
+                            String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA : scoreTeamB))).replace("%o%",
+                            String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA+1 : scoreTeamB+1)));
                 }
                 finalizeRoundKills(OMEGA);
                 return;
             }
             if(spectators.containsAll(Main.getGameManager().getTeam(this, OMEGA).getPlayers()) && !bomb.isPlanted()) {
                 for (Player player : Main.getGameManager().getTeam(this, ALPHA).getPlayers()) {
-                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Alpha").replace("%ot%", "Omega"));
-
+                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Alpha").replace("%ot%", "Omega").replace("%a%",
+                            String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA+1 : scoreTeamB+1))).replace("%o%",
+                            String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA : scoreTeamB)));
                 }
                 for (Player player : Main.getGameManager().getTeam(this, OMEGA).getPlayers()) {
-                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Alpha").replace("%ot%", "Omega"));
+                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Alpha").replace("%ot%", "Omega").replace("%a%",
+                            String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA+1 : scoreTeamB+1))).replace("%o%",
+                            String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA : scoreTeamB)));
 
                 }
                 finalizeRoundKills(ALPHA);
@@ -569,10 +584,14 @@ public class SAGame {
             //timer expires, CTs win
             if(timer == 0) {
                 for (Player player : Main.getGameManager().getTeam(this, ALPHA).getPlayers()) {
-                    player.sendMessage(Messages.ROUND_OVER_TIME.toString());
+                    player.sendMessage(Messages.ROUND_OVER_TIME.replace("%a%",
+                            String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA+1 : scoreTeamB+1))).replace("%o%",
+                            String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA : scoreTeamB)));
                 }
                 for (Player player : Main.getGameManager().getTeam(this, OMEGA).getPlayers()) {
-                    player.sendMessage(Messages.ROUND_OVER_TIME.toString());
+                    player.sendMessage(Messages.ROUND_OVER_TIME.replace("%a%",
+                            String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA+1 : scoreTeamB+1))).replace("%o%",
+                            String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA : scoreTeamB)));
                 }
                 moneyManager.addMoneyEndRound(this, ALPHA, false, MoneyManager.RoundEndType.TIME);
                 round++;

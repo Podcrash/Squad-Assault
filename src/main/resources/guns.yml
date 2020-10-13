@@ -241,9 +241,9 @@ Guns:
       BulletsPerYaw: 0
       DelayBullets: 1
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.2
+      ProjectileConeMax: 0.1
       ProjectileConeMin: 0.0
-      ProjectileConeIncrease: 0.015
+      ProjectileConeIncrease: 0.025
       Reset: 0.02
     Reload:
       Duration: 52
@@ -305,7 +305,7 @@ Guns:
       BulletsPerBurst: 1
       ProjectileConeMax: 0.25
       ProjectileConeMin: 0.0
-      ProjectileConeIncrease: 0.2
+      ProjectileConeIncrease: 0.02
       Reset: 0.01
     Reload:
       Duration: 48
