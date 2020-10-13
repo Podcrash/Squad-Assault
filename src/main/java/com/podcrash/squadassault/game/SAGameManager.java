@@ -212,7 +212,7 @@ public class SAGameManager {
                 status.updateLine(12, translateAlternateColorCodes('&', "&eBomb"));
             } else {
                 status.updateLine(14, Messages.SCOREBOARD_OBJECTIVE.replace("%t%", String.valueOf(game.getTimer())));
-                status.updateLine(13, translateAlternateColorCodes('&', "&eProtect Carrier"));
+                status.updateLine(13, translateAlternateColorCodes('&', "&eProtect Bomb"));
                 status.updateLine(12, Messages.SCOREBOARD_GOAL.replace("%t%", (game.getBomb().getCarrier() != null ?
                         game.getBomb().getCarrier().getDisplayName() : "")));
             }
@@ -297,7 +297,7 @@ public class SAGameManager {
 
     public void endRound(SAGame game) {
         for(Grenade grenade : Main.getWeaponManager().getGrenades()) {
-            grenade.remove(game);
+            grenade.remove();
         }
         for(Item drop : game.getDrops().keySet()) {
             drop.remove();
@@ -373,6 +373,8 @@ public class SAGameManager {
     }
 
     public void resetPlayers(SAGame game) {
+        game.setOpenAlpha(game.getAlphaSpawns());
+        game.setOpenOmega(game.getOmegaSpawns());
         for(Player player : getTeam(game, SATeam.Team.ALPHA).getPlayers()) {
             player.setHealth(20);
             player.closeInventory();
@@ -440,7 +442,9 @@ public class SAGameManager {
             }
             NmsUtils.sendInvisibility(scoreboard, game);
             player.getInventory().setItem(8, ItemBuilder.create(Material.GHAST_TEAR, 1, "Shop", false));
-            player.teleport(game.getAlphaSpawns().get(Randomizer.randomInt(game.getAlphaSpawns().size())));
+            Location tp = game.getOpenAlpha().get(Randomizer.randomInt(game.getOpenAlpha().size()));
+            player.teleport(tp);
+            game.getOpenAlpha().remove(tp);
             player.setWalkSpeed(0.2f);
 
             if(player.getInventory().getHelmet() == null || game.getRound() == 15) {
@@ -518,7 +522,9 @@ public class SAGameManager {
             NmsUtils.sendInvisibility(scoreboard, game);
             player.getInventory().setItem(7, ItemBuilder.create(Material.COMPASS, 1, "Bomb Locator", false));
             player.getInventory().setItem(8, ItemBuilder.create(Material.GHAST_TEAR, 1, "Shop", false));
-            player.teleport(game.getOmegaSpawns().get(Randomizer.randomInt(game.getOmegaSpawns().size())));
+            Location tp = game.getOpenOmega().get(Randomizer.randomInt(game.getOpenOmega().size()));
+            player.teleport(tp);
+            game.getOpenOmega().remove(tp);
             player.setWalkSpeed(0.2f);
 
             if(player.getInventory().getHelmet() == null || game.getRound() == 15) {

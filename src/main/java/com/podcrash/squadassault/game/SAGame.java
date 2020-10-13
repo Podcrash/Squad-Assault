@@ -51,6 +51,8 @@ public class SAGame {
     private final Location bombB;
     private final List<Location> alphaSpawns;
     private final List<Location> omegaSpawns;
+    private List<Location> openAlpha;
+    private List<Location> openOmega;
     private List<Player> spectators;
     private SATeam teamA;
     private SATeam teamB;
@@ -81,6 +83,8 @@ public class SAGame {
         state = SAGameState.WAITING;
         moneyManager = new MoneyManager();
         spectators = new ArrayList<>();
+        openAlpha = new ArrayList<>(alphaSpawns);
+        openOmega = new ArrayList<>(omegaSpawns);
         teamA = new SATeam(new ArrayList<>());
         teamB = new SATeam(new ArrayList<>());
         drops = new HashMap<>();
@@ -287,7 +291,7 @@ public class SAGame {
             teamB.setTeam(OMEGA);
         } else {
             teamA.setTeam(OMEGA);
-            teamA.setTeam(ALPHA);
+            teamB.setTeam(ALPHA);
         }
     }
 
@@ -412,14 +416,18 @@ public class SAGame {
                         //play sound? todo
                         NmsUtils.sendTitle(p, 0, 60, 0, Messages.BOMB_DEF_COMPLETE.replace("%p", player.getName()),
                                 "");
-                        p.sendMessage(Messages.ROUND_OVER_DEF.toString());
+                        p.sendMessage(Messages.ROUND_OVER_DEF.replace("%a%",
+                                String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA+1 : scoreTeamB+1))).replace(
+                                        "%o%", String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA : scoreTeamB)));
                         p.sendMessage(Messages.BOMB_DEF_START.replace("%p", player.getName()));
                     }
                     for(Player p : teamB.getPlayers()) {
                         //play sound? todo
                         NmsUtils.sendTitle(p, 0, 60, 0, Messages.BOMB_DEF_COMPLETE.replace("%p", player.getName()),
                                 "");
-                        p.sendMessage(Messages.ROUND_OVER_DEF.toString());
+                        p.sendMessage(Messages.ROUND_OVER_DEF.replace("%a%",
+                                String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA+1 : scoreTeamB+1))).replace(
+                                        "%o%", String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA : scoreTeamB)));
                         p.sendMessage(Messages.BOMB_DEF_START.replace("%p", player.getName()));
                     }
                     this.timer = 7;
@@ -432,7 +440,7 @@ public class SAGame {
                     money.put(player.getUniqueId(), money.get(player.getUniqueId())+300);
                     bomb.reset();
                     for(Grenade grenade : Main.getWeaponManager().getGrenades()) {
-                        grenade.remove(this);
+                        grenade.remove();
                     }
                     roundEnding = true;
                     break;
@@ -459,10 +467,14 @@ public class SAGame {
                 if(!roundEnding) {
                     //todo sounds
                     for(Player p : teamA.getPlayers()) {
-                        p.sendMessage(Messages.ROUND_OVER_DET.toString());
+                        p.sendMessage(Messages.ROUND_OVER_DET.replace("%a%",
+                                String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA : scoreTeamB))).replace("%o%"
+                                , String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA+1 : scoreTeamB+1)));
                     }
                     for(Player p : teamB.getPlayers()) {
-                        p.sendMessage(Messages.ROUND_OVER_DET.toString());
+                        p.sendMessage(Messages.ROUND_OVER_DET.replace("%a%",
+                                String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA : scoreTeamB))).replace("%o%"
+                                , String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA+1 : scoreTeamB+1)));
                     }
                 }
                 bomb.reset();
@@ -541,21 +553,28 @@ public class SAGame {
             //rounds won on kills
             if(spectators.containsAll(Main.getGameManager().getTeam(this, ALPHA).getPlayers())) {
                 for (Player player : Main.getGameManager().getTeam(this, ALPHA).getPlayers()) {
-                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Omega").replace("%ot%", "Alpha"));
+                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Omega").replace("%ot%", "Alpha").replace("%a%",
+                            String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA : scoreTeamB))).replace("%o%",
+                            String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA+1 : scoreTeamB+1)));
                 }
                 for (Player player : Main.getGameManager().getTeam(this, OMEGA).getPlayers()) {
-                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Omega").replace("%ot%", "Alpha"));
+                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Omega").replace("%ot%", "Alpha").replace("%a%",
+                            String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA : scoreTeamB))).replace("%o%",
+                            String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA+1 : scoreTeamB+1)));
                 }
                 finalizeRoundKills(OMEGA);
                 return;
             }
             if(spectators.containsAll(Main.getGameManager().getTeam(this, OMEGA).getPlayers()) && !bomb.isPlanted()) {
                 for (Player player : Main.getGameManager().getTeam(this, ALPHA).getPlayers()) {
-                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Alpha").replace("%ot%", "Omega"));
-
+                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Alpha").replace("%ot%", "Omega").replace("%a%",
+                            String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA+1 : scoreTeamB+1))).replace("%o%",
+                            String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA : scoreTeamB)));
                 }
                 for (Player player : Main.getGameManager().getTeam(this, OMEGA).getPlayers()) {
-                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Alpha").replace("%ot%", "Omega"));
+                    player.sendMessage(Messages.ROUND_OVER_KILLS.replace("%t%", "Alpha").replace("%ot%", "Omega").replace("%a%",
+                            String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA+1 : scoreTeamB+1))).replace("%o%",
+                            String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA : scoreTeamB)));
 
                 }
                 finalizeRoundKills(ALPHA);
@@ -565,12 +584,17 @@ public class SAGame {
             //timer expires, CTs win
             if(timer == 0) {
                 for (Player player : Main.getGameManager().getTeam(this, ALPHA).getPlayers()) {
-                    player.sendMessage(Messages.ROUND_OVER_TIME.toString());
+                    player.sendMessage(Messages.ROUND_OVER_TIME.replace("%a%",
+                            String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA+1 : scoreTeamB+1))).replace("%o%",
+                            String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA : scoreTeamB)));
                 }
                 for (Player player : Main.getGameManager().getTeam(this, OMEGA).getPlayers()) {
-                    player.sendMessage(Messages.ROUND_OVER_TIME.toString());
+                    player.sendMessage(Messages.ROUND_OVER_TIME.replace("%a%",
+                            String.valueOf(((teamA.getTeam() == ALPHA) ? scoreTeamA+1 : scoreTeamB+1))).replace("%o%",
+                            String.valueOf((teamA.getTeam() == OMEGA) ? scoreTeamA : scoreTeamB)));
                 }
                 moneyManager.addMoneyEndRound(this, ALPHA, false, MoneyManager.RoundEndType.TIME);
+                round++;
                 finalizeRound(ALPHA);
             }
         }
@@ -606,7 +630,7 @@ public class SAGame {
             addRoundTeamB();
         }
         for(Grenade grenade : Main.getWeaponManager().getGrenades()) {
-            grenade.remove(this);
+            grenade.remove();
         }
 
         roundEnding = true;
@@ -700,27 +724,23 @@ public class SAGame {
                     }
                     if(teamA.size() < teamB.size()) {
                         Player player = teamB.getPlayers().get(Randomizer.randomInt(teamB.getPlayers().size()));
-                        teamB.removePlayer(player);
-                        teamA.addPlayer(player);
+                        addTeamA(player);
                     } else {
                         if(teamB.size() >= teamA.size()) {
                             continue;
                         }
                         Player player = teamA.getPlayers().get(Randomizer.randomInt(teamA.getPlayers().size()));
-                        teamA.removePlayer(player);
-                        teamB.addPlayer(player);
+                        addTeamB(player);
                     }
                 } else if(teamA.size() > maxPlayers / 2) {
                     Player player = teamA.getPlayers().get(Randomizer.randomInt(teamA.getPlayers().size()));
-                    teamA.removePlayer(player);
-                    teamB.addPlayer(player);
+                    addTeamB(player);
                 } else {
                     if(teamB.size() <= maxPlayers / 2) {
                         continue;
                     }
                     Player player = teamB.getPlayers().get(Randomizer.randomInt(teamB.getPlayers().size()));
-                    teamB.removePlayer(player);
-                    teamA.addPlayer(player);
+                    addTeamA(player);
                 }
             }
             initShopWaiting(OMEGA);
@@ -748,6 +768,7 @@ public class SAGame {
     private void initShop(SATeam.Team team) {
         for(Player player : Main.getGameManager().getTeam(this, team).getPlayers()) {
             Inventory inventory = shops.get(player.getUniqueId());
+            inventory.clear();
             initShopInventory(team, inventory);
         }
     }
@@ -813,7 +834,7 @@ public class SAGame {
     }
 
     public boolean isAtBombsite(Location location) {
-        return location.distance(bombA) <= 4 || location.distance(bombB) <= 4;
+        return Utils.offset(location.toVector(), bombA.toVector()) <= 4 || Utils.offset(location.toVector(), bombB.toVector()) <= 4;
     }
 
     public Map<UUID, PlayerStats> getStats() {
@@ -822,5 +843,21 @@ public class SAGame {
 
     public boolean isDead(Player player) {
         return (teamA.getPlayers().contains(player) || teamB.getPlayers().contains(player)) && (!player.isOnline() || spectators.contains(player));
+    }
+
+    public List<Location> getOpenAlpha() {
+        return openAlpha;
+    }
+
+    public List<Location> getOpenOmega() {
+        return openOmega;
+    }
+
+    public void setOpenAlpha(List<Location> openAlpha) {
+        this.openAlpha = new ArrayList<>(openAlpha);
+    }
+
+    public void setOpenOmega(List<Location> openOmega) {
+        this.openOmega = new ArrayList<>(openOmega);
     }
 }

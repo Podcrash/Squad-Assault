@@ -177,7 +177,8 @@ Guns:
       BulletsPerPitch: 7
       BulletsPerYaw: 0
       DelayBullets: 2
-      BulletsPerBurst: 1
+      BulletsPerBurst: 2
+      BurstDelay: 2
       ProjectileConeMax: 0.25
       ProjectileConeMin: 0.01
       ProjectileConeIncrease: 0.07
@@ -231,18 +232,18 @@ Guns:
       Scope: FALSE
       Damage: 5.6
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 1    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.058536
       ArmorPen: 0.56
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
-      DelayBullets: 2
+      DelayBullets: 1
       BulletsPerBurst: 1
-      ProjectileConeMax: 0.2
+      ProjectileConeMax: 0.1
       ProjectileConeMin: 0.0
-      ProjectileConeIncrease: 0.015
+      ProjectileConeIncrease: 0.025
       Reset: 0.02
     Reload:
       Duration: 52
@@ -262,14 +263,14 @@ Guns:
       Scope: FALSE
       Damage: 5.2
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 1    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.043902
       ArmorPen: 0.60
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
-      DelayBullets: 2
+      DelayBullets: 1
       BulletsPerBurst: 1
       ProjectileConeMax: 0.2
       ProjectileConeMin: 0.0
@@ -293,18 +294,18 @@ Guns:
       Scope: FALSE
       Damage: 5.4
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 1    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.058536
       ArmorPen: 0.58
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
-      DelayBullets: 2
+      DelayBullets: 1
       BulletsPerBurst: 1
       ProjectileConeMax: 0.25
       ProjectileConeMin: 0.0
-      ProjectileConeIncrease: 0.2
+      ProjectileConeIncrease: 0.02
       Reset: 0.01
     Reload:
       Duration: 48
@@ -324,14 +325,14 @@ Guns:
       Scope: FALSE
       Damage: 5.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 1    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.039024
       ArmorPen: 0.69
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
-      DelayBullets: 2
+      DelayBullets: 1
       BulletsPerBurst: 1
       ProjectileConeMax: 0.3
       ProjectileConeMin: 0.0
@@ -355,7 +356,7 @@ Guns:
       Scope: FALSE
       Damage: 5.2 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 25    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       ShotgunBullets: 9
       DropoffPerBlock: 0.04390243  #NEEDS WORK
@@ -387,7 +388,7 @@ Guns:
       Scope: FALSE
       Damage: 4.0 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 11    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       ShotgunBullets: 6
       DropoffPerBlock: 0.058536  #NEEDS WORK
@@ -419,14 +420,14 @@ Guns:
       Scope: FALSE
       Damage: 6.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 4    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.009756
       ArmorPen: 0.78
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
-      DelayBullets: 2
+      DelayBullets: 1
       BulletsPerBurst: 1
       ProjectileConeMax: 0.3
       ProjectileConeMin: 0.005
@@ -450,14 +451,14 @@ Guns:
       Scope: FALSE
       Damage: 6.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 4    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.014634
       ArmorPen: 0.70
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
-      DelayBullets: 2
+      DelayBullets: 1
       BulletsPerBurst: 1
       ProjectileConeMax: 0.3
       ProjectileConeMin: 0.005
@@ -481,14 +482,14 @@ Guns:
       Scope: FALSE
       Damage: 7.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 4    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.009756
       ArmorPen: 0.78
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
-      DelayBullets: 2
+      DelayBullets: 1
       BulletsPerBurst: 1
       ProjectileConeMax: 0.3
       ProjectileConeMin: 0.005
@@ -512,14 +513,14 @@ Guns:
       Scope: FALSE
       Damage: 6.6
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 4    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.014634
       ArmorPen: 0.70
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
-      DelayBullets: 2
+      DelayBullets: 1
       BulletsPerBurst: 1
       ProjectileConeMax: 0.3
       ProjectileConeMin: 0.005
@@ -574,14 +575,14 @@ Guns:
       Scope: TRUE
       Damage: 6.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 5    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.009756
       ArmorPen: 1.0
     Burst:  #DONT DO ANY OF THIS
       BulletsPerPitch: 7
       BulletsPerYaw: 0
-      DelayBullets: 2
+      DelayBullets: 1
       BulletsPerBurst: 1
       ProjectileConeMax: 0.3
       ProjectileConeMin: 0.005

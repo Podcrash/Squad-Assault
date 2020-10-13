@@ -20,6 +20,12 @@ public class MoneyManager {
                 streak = 1;
             }
             addMoneyTeam(game, winner, type.getMoney());
+            int trueStreak = Math.min(streak, 5);
+            for(Player player : Main.getGameManager().getTeam(game, loser).getPlayers()) {
+                if(!game.isDead(player)) {
+                    addMoney(player, streakMoney[trueStreak-1]);
+                }
+            }
             return;
         }
         if(lastWinner == winner) {
@@ -50,7 +56,7 @@ public class MoneyManager {
 
     private void addMoney(Player player, int money) {
         SAGame game = Main.getGameManager().getGame(player);
-        game.setMoney(player, game.getMoney(player)+money);
+        game.setMoney(player, Math.min(16000,game.getMoney(player)+money));
     }
 
     public enum RoundEndType {

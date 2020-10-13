@@ -151,8 +151,7 @@ public class Grenade {
             if(type == GrenadeType.FLASH) {
                 //sound
                 for(Player player : cache.getNearbyPlayers(effectPower)) {
-                    if(!cache.getGame().getSpectators().contains(player) || cache.getPlayer() == player || Main.getGameManager().getTeam(cache.getGame(),
-                            cache.getPlayer()) != Main.getGameManager().getTeam(cache.getGame(), player)) {
+                    if(!cache.getGame().getSpectators().contains(player) || cache.getPlayer() == player) {
                         float angle =
                                 location.toVector().subtract(player.getEyeLocation().toVector()).angle(player.getEyeLocation().getDirection().normalize());
                         if(Float.isNaN(angle) || angle > 1) {
@@ -186,7 +185,7 @@ public class Grenade {
                 } else {
                     //play sound
                     for(Block block : getBlocks(cache.getGrenade().getLocation().getBlock(), effectPower)) {
-                        if(block.getType() == Material.AIR) {
+                        if(block.getType() == Material.AIR || block.getType() == Material.FIRE || block.getType() == Material.CROPS) {
                             cache.getBlocks().add(block);
                             block.setType(Material.CROPS);
                             block.setData((byte) 7);
@@ -206,7 +205,7 @@ public class Grenade {
                         iterator.remove();
                     } else {
                         for(Player player : cache.getNearbyToBlockPlayers()) {
-                            if((cache.getPlayer() == player) && !cache.getGame().isDead(player)) {
+                            if(!cache.getGame().isDead(player)) {
                                 player.setFireTicks(0);
                                 Main.getGameManager().damage(cache.getGame(), cache.getPlayer(), player, 0.25, "Fire");
                             }
@@ -238,17 +237,15 @@ public class Grenade {
         return breakLos;
     }
 
-    public void remove(SAGame game) {
+    public void remove() {
         Iterator<GrenadeCache> iterator = played.iterator();
         while(iterator.hasNext()) {
             GrenadeCache cache = iterator.next();
-            if(cache.getGame() == game) {
-                for(Block block : cache.getBlocks()) {
-                    block.setType(Material.AIR);
-                }
-                cache.getGrenade().remove();
-                iterator.remove();
+            for(Block block : cache.getBlocks()) {
+                block.setType(Material.AIR);
             }
+            cache.getGrenade().remove();
+            iterator.remove();
         }
     }
 
