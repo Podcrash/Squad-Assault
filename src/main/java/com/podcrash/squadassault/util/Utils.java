@@ -45,6 +45,10 @@ public final class Utils {
         return a.subtract(b).length();
     }
 
+    public static Vector getTrajectory(Vector from, Vector to) {
+        return to.subtract(from.normalize());
+    }
+
     public static String getSerializedLocation(Location location) {
         return location.getWorld().getName() + "," + (location.getBlockX() + 0.5) + "," + location.getBlockY() + "," + (location.getBlockZ() + 0.5) + "," + location.getYaw() + "," + location.getPitch();
     }

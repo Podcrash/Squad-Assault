@@ -723,17 +723,16 @@ public class GameListener implements Listener {
         if(!(event.getDamager() instanceof Snowball) || !(event.getEntity() instanceof Player)) {
             return;
         }
+        event.setCancelled(true); //cancel knockback
         Projectile snowball = (Projectile) event.getDamager();
 
         ProjectileStats stats = Main.getWeaponManager().getProjectiles().get(snowball);
         Main.getWeaponManager().getProjectiles().remove(snowball);
         if(stats == null) {
-            event.setCancelled(true);
             return;
         }
         Player damaged = (Player) event.getEntity();
         if(Main.getGameManager().getGame(damaged).sameTeam(damaged,stats.getShooter()) || Main.getGameManager().getGame(damaged).isDead(damaged)) {
-            event.setCancelled(true);
             return;
         }
         HitType type = snowballCollision(damaged, snowball);
@@ -756,10 +755,7 @@ public class GameListener implements Listener {
             Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, false, stats.getShooter(), damaged));
             Main.getGameManager().damage(Main.getGameManager().getGame(damaged), stats.getShooter(), damaged,
                     finalDamage, stats.getGunName());
-        } else if(type == HitType.MISS) {
-            event.setCancelled(true);
         }
-
     }
 
     @EventHandler
@@ -857,7 +853,7 @@ public class GameListener implements Listener {
     private boolean hitHead(Player player, Location location) {
         return Utils.offset2d(location.toVector(), player.getLocation().toVector()) < 0.2 &&
                 location.getY() >= player.getEyeLocation().getY() - 0.0 &&
-                location.getY() < player.getEyeLocation().getY() + 0.4;
+                location.getY() < player.getEyeLocation().getY() + 0.43;
     }
 
 

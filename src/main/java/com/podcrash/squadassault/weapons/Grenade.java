@@ -5,9 +5,11 @@ import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.nms.PhysicsItem;
 import com.podcrash.squadassault.util.Item;
+import com.podcrash.squadassault.util.Utils;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -137,8 +139,8 @@ public class Grenade {
                 location.getWorld().playEffect(location, Effect.EXPLOSION_LARGE, 15);
                 for(Player player : cache.getNearbyPlayers(7.0)) {
                     if((cache.getPlayer() == player || Main.getGameManager().getTeam(cache.getGame(),
-                            cache.getPlayer()) != Main.getGameManager().getTeam(cache.getGame(), player)) && !cache.getGame().getSpectators().contains(player)) {
-                        if (los(location, player)) break;
+                            cache.getPlayer()) != Main.getGameManager().getTeam(cache.getGame(), player)) && !cache.getGame().isDead(player)) {
+                        if (grenadeLos(location, player)) break;
                         double armorPen =
                                 player.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 1 :
                                         0.6;
@@ -151,14 +153,14 @@ public class Grenade {
             if(type == GrenadeType.FLASH) {
                 //sound
                 for(Player player : cache.getNearbyPlayers(effectPower)) {
-                    if(!cache.getGame().getSpectators().contains(player) || cache.getPlayer() == player) {
-                        float angle =
-                                location.toVector().subtract(player.getEyeLocation().toVector()).angle(player.getEyeLocation().getDirection().normalize());
-                        if(Float.isNaN(angle) || angle > 1) {
-                            continue;
-                        }
-                        if (los(location, player)) continue;
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration * 20, 2), true);
+                    if(!cache.getGame().isDead(player)) {
+                        if (flashbangLos(player, location)) continue;
+                        double intensity =
+                                2 - Utils.offset(player.getEyeLocation().clone().add(player.getLocation().getDirection()).toVector(), player.getEyeLocation().clone().add(player.getLocation().getDirection()).toVector());
+
+                        double duration = ((2 + (3*location.distance(player.getLocation()))) * intensity) + 1;
+                        //mineplex duration math
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) duration, 2), true);
                     }
                 }
             }
@@ -170,7 +172,9 @@ public class Grenade {
                     cache.getGrenade().remove();
                     iterator.remove();
                 } else {
-                    //play sound
+                    if(ticks % 2 == 0) {
+                        location.getWorld().playSound(location, Sound.BURP, 1.0f, 1.0f);
+                    }
                 }
             } else if(type == GrenadeType.SMOKE) {
                 if(cache.getGrenade().isRemoved()) {
@@ -223,12 +227,27 @@ public class Grenade {
         }
     }
 
-    private boolean los(Location location, Player player) {
+    //the difference between these two methods is very small, but fixes a few directional errors we see
+
+    private boolean flashbangLos(Player player, Location entityLoc) {
+        Location location = player.getEyeLocation().clone();
+        boolean breakLos = false;
+        while(Utils.offset(location.toVector(), entityLoc.toVector()) > 0.5) {
+            if(location.getBlock().getType().isSolid() && location.getBlock().getType() != Material.STEP) {
+                breakLos = true;
+                break;
+            }
+            location.add(Utils.getTrajectory(location.toVector(), entityLoc.toVector()).multiply(0.2));
+        }
+        return breakLos;
+    }
+
+    private boolean grenadeLos(Location location, Player player) {
         Location clone = player.getEyeLocation().clone();
-        Vector subtract = location.toVector().subtract(clone.toVector());
+        Vector trajectory = Utils.getTrajectory(location.toVector(), clone.toVector());
         boolean breakLos = false;
         for(int i = 0; i < Math.round(location.distance(clone)) + 1; i++) {
-            clone.add(subtract.normalize());
+            clone.add(trajectory);
             if(clone.getBlock().getType() != Material.AIR || clone.getBlock().getType() != Material.CROPS) {
                 breakLos = true;
                 break;
