@@ -50,6 +50,7 @@ public enum Messages {
     SCOREBOARD_GAME_OVER("&eGame Over"),
 
     TEAM_CHAT_FORMAT("&b[&eTeam&b] &e%p%&b: %message%"),
+    GENERAL_CHAT_FORMAT("%p%&b: %message%"),
 
     KILL_BASE("&e%p% &bwas killed by &e%op% &bwith &e%i%"),
     KILL_BASE_NO_KILLER("&e%p% &bwas killed by &e%op%"),

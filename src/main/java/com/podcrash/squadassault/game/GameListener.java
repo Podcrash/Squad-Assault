@@ -210,10 +210,6 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
-        if(!event.getMessage().startsWith("#")) {
-            return;
-        }
-        event.setMessage(event.getMessage().substring(1));
         Player player = event.getPlayer();
         SAGame game = Main.getGameManager().getGame(player);
         if(game == null) {
@@ -223,16 +219,21 @@ public class GameListener implements Listener {
             }
             return;
         }
+        if(!event.getMessage().startsWith("#")) {
+            event.setFormat(Main.getGameManager().getTeam(game, player).getColor() + Messages.GENERAL_CHAT_FORMAT.replace("%p%", player.getDisplayName()).replace(
+                    "%message%", event.getMessage()));
+            return;
+        }
         event.getRecipients().clear();
         if(Main.getGameManager().getTeam(game, player) == SATeam.Team.ALPHA) {
             event.getRecipients().addAll(Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers());
-            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
-                    "%message%", "%2$s"));
+            event.setFormat(ChatColor.AQUA + Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
+                    "%message%", ChatColor.WHITE + event.getMessage().substring(1)));
         }
         if(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA) {
             event.getRecipients().addAll(Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers());
-            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
-                    "%message%", "%2$s"));
+            event.setFormat(ChatColor.RED + Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
+                    "%message%", ChatColor.WHITE + event.getMessage().substring(1)));
         }
     }
 
@@ -723,17 +724,16 @@ public class GameListener implements Listener {
         if(!(event.getDamager() instanceof Snowball) || !(event.getEntity() instanceof Player)) {
             return;
         }
+        event.setCancelled(true); //cancel knockback
         Projectile snowball = (Projectile) event.getDamager();
 
         ProjectileStats stats = Main.getWeaponManager().getProjectiles().get(snowball);
         Main.getWeaponManager().getProjectiles().remove(snowball);
         if(stats == null) {
-            event.setCancelled(true);
             return;
         }
         Player damaged = (Player) event.getEntity();
         if(Main.getGameManager().getGame(damaged).sameTeam(damaged,stats.getShooter()) || Main.getGameManager().getGame(damaged).isDead(damaged)) {
-            event.setCancelled(true);
             return;
         }
         HitType type = snowballCollision(damaged, snowball);
@@ -756,10 +756,7 @@ public class GameListener implements Listener {
             Main.getInstance().getServer().getPluginManager().callEvent(new GunDamageEvent(finalDamage, false, stats.getShooter(), damaged));
             Main.getGameManager().damage(Main.getGameManager().getGame(damaged), stats.getShooter(), damaged,
                     finalDamage, stats.getGunName());
-        } else if(type == HitType.MISS) {
-            event.setCancelled(true);
         }
-
     }
 
     @EventHandler
@@ -857,7 +854,7 @@ public class GameListener implements Listener {
     private boolean hitHead(Player player, Location location) {
         return Utils.offset2d(location.toVector(), player.getLocation().toVector()) < 0.2 &&
                 location.getY() >= player.getEyeLocation().getY() - 0.0 &&
-                location.getY() < player.getEyeLocation().getY() + 0.4;
+                location.getY() < player.getEyeLocation().getY() + 0.43;
     }
 
 

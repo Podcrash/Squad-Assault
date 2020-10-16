@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -318,6 +319,7 @@ public class SAGameManager {
         }
         for(PlayerStats stats : game.getStats().values()) {
             stats.addRoundsPlayed(1);
+            stats.getDamagedPlayers().clear();
         }
         game.resetDefusers();
         game.getBomb().reset();
@@ -563,7 +565,9 @@ public class SAGameManager {
                 if(game.getStats().get(damager.getUniqueId()) == null) {
                     game.getStats().put(damager.getUniqueId(), new PlayerStats(damager.getName()));
                 }
-                game.getStats().get(damager.getUniqueId()).addDamage(damaged.getHealth());
+                PlayerStats stats = game.getStats().get(damager.getUniqueId());
+                stats.addDamage(damaged.getHealth());
+                stats.getDamagedPlayers().put(damaged, stats.getDamagedPlayers().getOrDefault(damaged, 0.0)+damaged.getHealth());
             }
             damaged.setHealth(5); //do this so they experience the hit effect
             damaged.damage(4);
@@ -648,8 +652,14 @@ public class SAGameManager {
             }
             assists.remove(damaged);
             game.getStats().get(damaged.getUniqueId()).addDeaths(1);
-            NmsUtils.sendTitle(damaged, 0, 100, 0, "You died", "Killer: " + (damager != null ? damager.getDisplayName()
-                    : ""));
+            DecimalFormat format = new DecimalFormat("##.#");
+            if(damager != null) {
+                String killerText = "Killer: " + damager.getDisplayName();
+                NmsUtils.sendTitle(damaged, 0, 100, 0, killerText,
+                        "Damage: " + format.format(game.getStats().get(damager.getUniqueId()).getDamagedPlayers().get(damaged)));
+            } else {
+                NmsUtils.sendTitle(damaged, 0, 100, 0, "You died", "");
+            }
             return true;
         }
         if(damaged.getNoDamageTicks() < 1) {
@@ -663,7 +673,9 @@ public class SAGameManager {
             if(game.getStats().get(damager.getUniqueId()) == null) {
                 game.getStats().put(damager.getUniqueId(), new PlayerStats(damager.getName()));
             }
-            game.getStats().get(damager.getUniqueId()).addDamage(damage);
+            PlayerStats stats = game.getStats().get(damager.getUniqueId());
+            stats.addDamage(damage);
+            stats.getDamagedPlayers().put(damaged, stats.getDamagedPlayers().getOrDefault(damaged, 0.0)+damage);
         }
         damaged.setHealth(damaged.getHealth() - damage);
         for (Player player : game.getTeamA().getPlayers()) {

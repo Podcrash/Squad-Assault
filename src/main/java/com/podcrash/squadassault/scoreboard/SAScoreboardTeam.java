@@ -5,6 +5,7 @@ import com.podcrash.squadassault.game.PlayerStats;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.SATeam;
 import com.podcrash.squadassault.nms.NmsUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -27,8 +28,8 @@ public class SAScoreboardTeam {
         for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
             PlayerStats stats = game.getStats().get(player.getUniqueId());
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
-            registerNewTeam.setPrefix("[O]");
-            registerNewTeam.setSuffix(" " + stats.getKills() + " - " + stats.getDeaths());
+            registerNewTeam.setPrefix(SATeam.Team.OMEGA.getColor().toString());
+            registerNewTeam.setSuffix(ChatColor.YELLOW + " " + stats.getKills() + " - " + stats.getDeaths());
             NmsUtils.hideNametag(registerNewTeam);
             registerNewTeam.addEntry(player.getName());
             teams.add(registerNewTeam);
@@ -36,8 +37,8 @@ public class SAScoreboardTeam {
         for(Player player : Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers()) {
             PlayerStats stats = game.getStats().get(player.getUniqueId());
             Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
-            registerNewTeam.setPrefix("[A]");
-            registerNewTeam.setSuffix(" " + stats.getKills() + " - " + stats.getDeaths());
+            registerNewTeam.setPrefix(SATeam.Team.ALPHA.getColor().toString());
+            registerNewTeam.setSuffix(ChatColor.YELLOW + " " + stats.getKills() + " - " + stats.getDeaths());
             NmsUtils.hideNametag(registerNewTeam);
             registerNewTeam.addEntry(player.getName());
             teams.add(registerNewTeam);
@@ -47,8 +48,8 @@ public class SAScoreboardTeam {
     public void add(SAGame game, Player player) {
         PlayerStats stats = game.getStats().get(player.getUniqueId());
         Team registerNewTeam = scoreboard.registerNewTeam(player.getName());
-        registerNewTeam.setPrefix(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA ? "[O]" : "[A]");
-        registerNewTeam.setSuffix(" " + stats.getKills() + " - " + stats.getDeaths());
+        registerNewTeam.setPrefix(Main.getGameManager().getTeam(game, player).getColor().toString());
+        registerNewTeam.setSuffix(ChatColor.YELLOW + " " + stats.getKills() + " - " + stats.getDeaths());
         NmsUtils.hideNametag(registerNewTeam);
         registerNewTeam.addEntry(player.getName());
         teams.add(registerNewTeam);
@@ -69,8 +70,8 @@ public class SAScoreboardTeam {
     public void update(SAGame game, Player player) {
         PlayerStats stats = game.getStats().get(player.getUniqueId());
         Team team = scoreboard.getTeam(player.getName());
-        team.setPrefix(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA ? "[O]" : "[A]");
-        team.setSuffix(" " + stats.getKills() + " - " + stats.getDeaths());
+        team.setPrefix(Main.getGameManager().getTeam(game, player).getColor().toString());
+        team.setSuffix(ChatColor.YELLOW + " " + stats.getKills() + " - " + stats.getDeaths());
         NmsUtils.hideNametag(team);
     }
 }

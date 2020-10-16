@@ -1,6 +1,7 @@
 package com.podcrash.squadassault.game;
 
 import com.podcrash.squadassault.util.Randomizer;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -44,6 +45,16 @@ public class SATeam {
 
 
     public enum Team {
-        ALPHA, OMEGA
+        ALPHA(ChatColor.AQUA), OMEGA(ChatColor.RED);
+
+        private ChatColor color;
+
+        Team(ChatColor color) {
+            this.color = color;
+        }
+
+        public ChatColor getColor() {
+            return color;
+        }
     }
 }

@@ -2,146 +2,146 @@ ShopGuns:
   P2000:
     Slot: 2
     ItemName: 'P2000'
-    ItemLore: 'Reserve Ammo: 52'
+    ItemLore: 'Price: 200 Reserve Ammo: 52'
     Price: 200
     Side: ALPHA
   Glock-18:
     Slot: 2
     ItemName: 'Glock-18'
-    ItemLore: 'Reserve Ammo: 120'
+    ItemLore: 'Price: 200 Reserve Ammo: 120'
     Price: 200
     Side: OMEGA
   P250:
     Slot: 3
     ItemName: 'P250'
-    ItemLore: 'Reserve Ammo: 52'
+    ItemLore: 'Price: 300 Reserve Ammo: 52'
     Price: 300
   Five-Seven:
     Slot: 4
     ItemName: 'Five-Seven'
-    ItemLore: 'Reserve Ammo: 40'
+    ItemLore: 'Price: 500 Reserve Ammo: 40'
     Price: 500
     Side: ALPHA
   Tec-9:
     Slot: 4
     ItemName: 'Tec-9'
-    ItemLore: 'Reserve Ammo: 90'
+    ItemLore: 'Price: 500 Reserve Ammo: 90'
     Price: 500
     Side: OMEGA
   CZ75-Auto:
     Slot: 5
     ItemName: 'CZ75-Auto'
-    ItemLore: 'Reserve Ammo: 12'
+    ItemLore: 'Price: 500 Reserve Ammo: 12'
     Price: 500
   Desert_Eagle:
     Slot: 6
     ItemName: 'Desert Eagle'
-    ItemLore: 'Reserve Ammo: 35'
+    ItemLore: 'Price: 700 Reserve Ammo: 35'
     Price: 700
   MAC-10:
     Slot: 7
     ItemName: 'MAC-10'
-    ItemLore: 'Reserve Ammo: 90'
+    ItemLore: 'Price: 1050 Reserve Ammo: 90'
     Price: 1050
     Side: OMEGA
   MP9:
     Slot: 7
     ItemName: 'MP9'
-    ItemLore: 'Reserve Ammo: 90'
+    ItemLore: 'Price: 1250 Reserve Ammo: 90'
     Price: 1250
     Side: ALPHA
   PP-Bizon:
     Slot: 8
     ItemName: 'PP-Bizon'
-    ItemLore: 'Reserve Ammo: 128'
+    ItemLore: 'Price: 1400 Reserve Ammo: 128'
     Price: 1400
   P90:
     Slot: 9
     ItemName: 'P90'
-    ItemLore: 'Reserve Ammo: 100'
+    ItemLore: 'Price: 2250 Reserve Ammo: 100'
     Price: 2250
   Nova:
     Slot: 10
     ItemName: 'Nova'
-    ItemLore: 'Reserve Ammo: 32'
+    ItemLore: 'Price: 1050 Reserve Ammo: 32'
     Price: 1050
   XM1014:
     Slot: 11
     ItemName: 'XM1014'
-    ItemLore: 'Reserve Ammo: 32'
+    ItemLore: 'Price: 2000 Reserve Ammo: 32'
     Price: 2000
   Galil:
     Slot: 12
     ItemName: 'Galil'
-    ItemLore: 'Reserve Ammo: 90'
+    ItemLore: 'Price: 1800 Reserve Ammo: 90'
     Price: 1800
     Side: OMEGA
   FAMAS:
     Slot: 12
     ItemName: 'FAMAS'
-    ItemLore: 'Reserve Ammo: 75'
+    ItemLore: 'Price: 2050 Reserve Ammo: 75'
     Price: 2050
     Side: ALPHA
   AK-47:
     Slot: 13
     ItemName: 'AK-47'
-    ItemLore: 'Reserve Ammo: 90'
+    ItemLore: 'Price: 2700 Reserve Ammo: 90'
     Price: 2700
     Side: OMEGA
   M4A4:
     Slot: 13
     ItemName: 'M4A4'
-    ItemLore: 'Reserve Ammo: 90'
+    ItemLore: 'Price: 3100 Reserve Ammo: 90'
     Price: 3100
     Side: ALPHA
   AUG:
     Slot: 14
     ItemName: 'AUG'
-    ItemLore: 'Reserve Ammo: 60'
+    ItemLore: 'Price: 3300 Reserve Ammo: 60'
     Price: 3300
     Side: ALPHA
   SG553:
     Slot: 14
     ItemName: 'SG553'
-    ItemLore: 'Reserve Ammo: 90'
+    ItemLore: 'Price: 3000 Reserve Ammo: 90'
     Price: 3000
     Side: OMEGA
   SSG08:
     Slot: 15
     ItemName: 'SSG08'
-    ItemLore: 'Reserve Ammo: 30'
+    ItemLore: 'Price: 1700 Reserve Ammo: 30'
     Price: 1700
   AWP:
     Slot: 16
     ItemName: 'AWP'
-    ItemLore: 'Reserve Ammo: 30'
+    ItemLore: 'Price: 4750 Reserve Ammo: 30'
     Price: 4750
 ShopGrenades:
   HighExplosive:
     Slot: 19
     Price: 300
     ItemName: 'High Explosive'
-    ItemLore: 'buy me'
+    ItemLore: 'Price: 300'
   Smoke:
     Slot: 27
     Price: 300
     ItemName: 'Smoke'
-    ItemLore: 'buy me'
+    ItemLore: 'Price: 300'
   Flashbang:
     Slot: 36
     Price: 300
     ItemName: 'Flashbang'
-    ItemLore: 'buy me'
+    ItemLore: 'Price: 300'
   Decoy:
     Slot: 18
     Price: 100
     ItemName: 'Decoy'
-    ItemLore: 'buy me'
+    ItemLore: 'Price: 100'
   Molotov:
     Slot: 20
     Price: 400
     ItemName: 'Molotov'
-    ItemLore: 'buy me'
+    ItemLore: 'Price: 400'
 ShopItems:
   DefuseKit:
     Slot: 44
@@ -149,32 +149,32 @@ ShopItems:
     SlotPlace: 7
     Side: ALPHA
     Material: SHEARS
-    ItemName: "Defuse Kit"
-    ItemLore: 'buy me'
+    ItemName: 'Defuse Kit'
+    ItemLore: 'Price: 400'
   AlphaKevlar:
     Slot: 34
     Price: 650
     SlotPlace: 38
     Side: ALPHA
     Material: IRON_CHESTPLATE
-    ItemName: "Kevlar"
-    ItemLore: 'buy me'
+    ItemName: 'Kevlar'
+    ItemLore: 'Price: 650'
   AlphaHelmet:
     Slot: 35
     Price: 350
     SlotPlace: 39
     Side: ALPHA
     Material: IRON_HELMET
-    ItemName: "Alpha Helmet"
-    ItemLore: 'buy me'
+    ItemName: 'Alpha Helmet'
+    ItemLore: 'Price: 350'
   OmegaKevlar:
     Slot: 34
     Price: 650
     SlotPlace: 38
     Side: OMEGA
     Material: CHAINMAIL_CHESTPLATE
-    ItemName: "Kevlar"
-    ItemLore: 'buy me'
+    ItemName: 'Kevlar'
+    ItemLore: 'Price: 650'
   OmegaHelmet:
     Slot: 35
     Price: 350
@@ -182,4 +182,4 @@ ShopItems:
     Side: OMEGA
     Material: CHAINMAIL_HELMET
     ItemName: "Omega Helmet"
-    ItemLore: 'buy me'
+    ItemLore: 'Price: 350'
