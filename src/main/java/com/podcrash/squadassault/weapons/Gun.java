@@ -466,7 +466,7 @@ public class Gun {
                 player.getWorld().playEffect(eye, Effect.SNOWBALL_BREAK, 0, 10);
             }
             final Material type = eye.getBlock().getType();
-            if (type != Material.CROPS && type != Material.AIR) {
+            if (type != Material.CROPS && type != Material.AIR && type != Material.DAYLIGHT_DETECTOR && type != Material.SIGN_POST && !type.name().contains("PLATE") && !type.name().contains("GATE") && type != Material.TRAP_DOOR && type != Material.VINE && type != Material.SAPLING && type != Material.DEAD_BUSH && type != Material.RED_ROSE && type != Material.YELLOW_FLOWER && type != Material.TORCH && type != Material.CARPET && !type.name().contains("BANNER") && type != Material.FLOWER_POT && type != Material.LADDER && !type.name().contains("DOOR") && !type.name().contains("SIGN")) {
                 int xMod = (int)((eye.getX() - eye.getBlockX()) * 1000.0);
                 int yMod = (int)((eye.getY() - eye.getBlockY()) * 10.0);
                 int zMod = (int)((eye.getZ() - eye.getBlockZ()) * 1000.0);
