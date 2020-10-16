@@ -1,5 +1,10 @@
 package com.podcrash.squadassault.game;
 
+import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class PlayerStats {
 
     private final String name;
@@ -10,10 +15,12 @@ public class PlayerStats {
     private int bombPlants;
     private int bombDefuses;
     private double damage;
+    private final Map<Player, Double> damagedPlayers;
     private int roundsPlayed;
 
     public PlayerStats(String name) {
         this.name = name;
+        damagedPlayers = new HashMap<>();
     }
 
     public String getName() {
@@ -94,5 +101,9 @@ public class PlayerStats {
 
     public void export() {
         //todo hook this in with ky's leaderboard stuff
+    }
+
+    public Map<Player, Double> getDamagedPlayers() {
+        return damagedPlayers;
     }
 }

@@ -210,10 +210,6 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
-        if(!event.getMessage().startsWith("#")) {
-            return;
-        }
-        event.setMessage(event.getMessage().substring(1));
         Player player = event.getPlayer();
         SAGame game = Main.getGameManager().getGame(player);
         if(game == null) {
@@ -223,16 +219,21 @@ public class GameListener implements Listener {
             }
             return;
         }
+        if(!event.getMessage().startsWith("#")) {
+            event.setFormat(Main.getGameManager().getTeam(game, player).getColor() + Messages.GENERAL_CHAT_FORMAT.replace("%p%", player.getDisplayName()).replace(
+                    "%message%", event.getMessage()));
+            return;
+        }
         event.getRecipients().clear();
         if(Main.getGameManager().getTeam(game, player) == SATeam.Team.ALPHA) {
             event.getRecipients().addAll(Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers());
-            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
-                    "%message%", "%2$s"));
+            event.setFormat(ChatColor.AQUA + Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
+                    "%message%", ChatColor.WHITE + event.getMessage().substring(1)));
         }
         if(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA) {
             event.getRecipients().addAll(Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers());
-            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
-                    "%message%", "%2$s"));
+            event.setFormat(ChatColor.RED + Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
+                    "%message%", ChatColor.WHITE + event.getMessage().substring(1)));
         }
     }
 
