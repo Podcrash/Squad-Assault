@@ -228,12 +228,12 @@ public class GameListener implements Listener {
         if(Main.getGameManager().getTeam(game, player) == SATeam.Team.ALPHA) {
             event.getRecipients().addAll(Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers());
             event.setMessage(event.getMessage().substring(1));
-            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%player%",ChatColor.AQUA + player.getDisplayName()));
+            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%p%",ChatColor.AQUA + player.getDisplayName()));
         }
         if(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA) {
             event.getRecipients().addAll(Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers());
             event.setMessage(event.getMessage().substring(1));
-            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%player%",ChatColor.RED + player.getDisplayName()));
+            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%p%",ChatColor.RED + player.getDisplayName()));
         }
     }
 
