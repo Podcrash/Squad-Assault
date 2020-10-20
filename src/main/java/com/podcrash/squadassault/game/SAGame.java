@@ -244,6 +244,10 @@ public class SAGame {
         return scoreboards;
     }
 
+    public void endState() {
+        this.state = SAGameState.END;
+    }
+
     public void setState(SAGameState state) {
         this.state = state;
         Main.getInstance().getServer().getPluginManager().callEvent(new GameStateChangeEvent(this, state));
@@ -488,7 +492,7 @@ public class SAGame {
                 timer = 10;
                 setState(SAGameState.END);
                 String winnerMsg = ChatColor.YELLOW + (scoreTeamA > scoreTeamB ?
-                        "Team A" + ChatColor.DARK_PURPLE + " wins" : "Team B" + ChatColor.DARK_PURPLE +  " wins");
+                        "Team A" + ChatColor.AQUA + " wins" : "Team B" + ChatColor.AQUA +  " wins");
                 for(Player player : teamA.getPlayers()) {
                     if(!isDead(player))
                         Main.getGameManager().clearPlayer(player);
@@ -524,16 +528,16 @@ public class SAGame {
                 }
                 if(queue.size() > 0) {
                     for (Player player : teamA.getPlayers()) {
-                        player.sendMessage(ChatColor.DARK_PURPLE + "Following players joined the game:");
+                        player.sendMessage(ChatColor.AQUA + "Following players joined the game:");
                         for (UUID uuid : queue.keySet()) {
-                            player.sendMessage(ChatColor.YELLOW + Bukkit.getPlayer(uuid).getName() + ChatColor.DARK_PURPLE +
+                            player.sendMessage(ChatColor.YELLOW + Bukkit.getPlayer(uuid).getName() + ChatColor.AQUA +
                                     " joined as " + ChatColor.YELLOW + queue.get(uuid).getTeam());
                         }
                     }
                     for (Player player : teamB.getPlayers()) {
-                        player.sendMessage(ChatColor.DARK_PURPLE + "Following players joined the game:");
+                        player.sendMessage(ChatColor.AQUA + "Following players joined the game:");
                         for (UUID uuid : queue.keySet()) {
-                            player.sendMessage(ChatColor.YELLOW + Bukkit.getPlayer(uuid).getName() + ChatColor.DARK_PURPLE +
+                            player.sendMessage(ChatColor.YELLOW + Bukkit.getPlayer(uuid).getName() + ChatColor.AQUA +
                                     " joined as " + ChatColor.YELLOW + queue.get(uuid).getTeam());
                         }
                     }

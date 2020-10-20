@@ -77,7 +77,7 @@ public class SAGameManager {
         //TODO leave game item
         player.updateInventory();
         game.sendToAll(Messages.PLAYER_JOIN.replace("%p%", player.getDisplayName()) + " " + ChatColor.YELLOW + game
-                        .getSize() + ChatColor.DARK_PURPLE +  " / " + ChatColor.YELLOW + game.getMaxPlayers());
+                        .getSize() + ChatColor.AQUA +  " / " + ChatColor.YELLOW + game.getMaxPlayers());
         if(game.getSize() >= game.getMinPlayers()) {
             game.start();
         }
@@ -325,6 +325,35 @@ public class SAGameManager {
         game.getBomb().reset();
         game.getSpectators().removeIf(OfflinePlayer::isOnline);
         game.setRoundEnding(false);
+        checkAllPlayersOffline(game);
+    }
+
+    public void checkAllPlayersOffline(SAGame game) {
+        boolean allOffline = true;
+        for(Player player : game.getTeamA().getPlayers()) {
+            if(player.isOnline()) {
+                allOffline = false;
+                break;
+            }
+        }
+        if(allOffline) {
+            Bukkit.broadcastMessage(ChatColor.AQUA + "All players on team A left the game, ending now.");
+            game.endState();
+            return;
+            //todo stat update for winner team
+        }
+        allOffline = true;
+        for(Player player : game.getTeamB().getPlayers()) {
+            if(player.isOnline()) {
+                allOffline = false;
+                break;
+            }
+        }
+        if(allOffline) {
+            Bukkit.broadcastMessage(ChatColor.AQUA + "All players on a team B left the game, ending now.");
+            game.endState();
+            //todo stat update for winner team
+        }
     }
 
     public SAGame getGame(Player player) {

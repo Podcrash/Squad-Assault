@@ -80,7 +80,7 @@ public class GameListener implements Listener {
                         event.setCancelled(true);
                         Main.getGameManager().removePlayer(game, player, false, false);
                         game.sendToAll(Messages.PLAYER_LEAVE.replace("%p%", player.getDisplayName()));
-                        player.sendMessage(ChatColor.DARK_PURPLE + "You left the game");
+                        player.sendMessage(ChatColor.AQUA + "You left the game");
                     }
                 }
             } else if(game.getState() == SAGameState.ROUND_LIVE || game.getState() == SAGameState.ROUND_START) {
@@ -129,11 +129,11 @@ public class GameListener implements Listener {
                                     for(Player omega : Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers()) {
                                         omega.setCompassTarget(game.getBomb().getLocation());
                                         //todo play sound
-                                        NmsUtils.sendTitle(omega,0,23,0,"",ChatColor.DARK_PURPLE + "Bomb Planted");
+                                        NmsUtils.sendTitle(omega,0,23,0,"",ChatColor.AQUA + "Bomb Planted");
                                     }
                                     for(Player alpha : Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers()) {
                                         //todo play sound
-                                        NmsUtils.sendTitle(alpha,0,23,0,"",ChatColor.DARK_PURPLE + "Bomb Planted");
+                                        NmsUtils.sendTitle(alpha,0,23,0,"",ChatColor.AQUA + "Bomb Planted");
                                     }
                                 } else {
                                     player.sendMessage(ChatColor.AQUA + "You must be on the ground/not a half-slab to plant!");
@@ -220,20 +220,20 @@ public class GameListener implements Listener {
             return;
         }
         if(!event.getMessage().startsWith("#")) {
-            event.setFormat(Main.getGameManager().getTeam(game, player).getColor() + Messages.GENERAL_CHAT_FORMAT.replace("%p%", player.getDisplayName()).replace(
-                    "%message%", event.getMessage()));
+            event.setFormat(Messages.GENERAL_CHAT_FORMAT.replace("%p%",
+                    Main.getGameManager().getTeam(game, player).getColor() + player.getDisplayName()));
             return;
         }
         event.getRecipients().clear();
         if(Main.getGameManager().getTeam(game, player) == SATeam.Team.ALPHA) {
             event.getRecipients().addAll(Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers());
-            event.setFormat(ChatColor.AQUA + Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
-                    "%message%", ChatColor.WHITE + event.getMessage().substring(1)));
+            event.setMessage(event.getMessage().substring(1));
+            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%p%",ChatColor.AQUA + player.getDisplayName()));
         }
         if(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA) {
             event.getRecipients().addAll(Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers());
-            event.setFormat(ChatColor.RED + Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
-                    "%message%", ChatColor.WHITE + event.getMessage().substring(1)));
+            event.setMessage(event.getMessage().substring(1));
+            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%p%",ChatColor.RED + player.getDisplayName()));
         }
     }
 
@@ -324,7 +324,7 @@ public class GameListener implements Listener {
                         }
                         if(current == max) {
                             player.closeInventory();
-                            player.sendMessage(ChatColor.DARK_PURPLE + "You already have the maximum amount of that grenade!");
+                            player.sendMessage(ChatColor.AQUA + "You already have the maximum amount of that grenade!");
                             break;
                         }
                         int desiredSlot = findNadeSlot(player);
@@ -336,7 +336,7 @@ public class GameListener implements Listener {
                             break;
                         }
                         player.closeInventory();
-                        player.sendMessage(ChatColor.DARK_PURPLE + "Your slots are full!");
+                        player.sendMessage(ChatColor.AQUA + "Your slots are full!");
                         break;
                     } else if(shop.getType() == ItemType.GUN) {
                         if(shop.getTeam() != null && Main.getGameManager().getTeam(game, player) != shop.getTeam()) {
@@ -396,7 +396,7 @@ public class GameListener implements Listener {
                             }
                         }
                         player.closeInventory();
-                        player.sendMessage(ChatColor.DARK_PURPLE + "You already have that!");
+                        player.sendMessage(ChatColor.AQUA + "You already have that!");
                         break;
                     }
                 }
@@ -473,11 +473,16 @@ public class GameListener implements Listener {
 
     private void leaveGame(Player player) {
         SAGame game = Main.getGameManager().getGame(player);
-        if(game != null && game.getState() == SAGameState.WAITING) {
+        if(game == null) {
+            return;
+        }
+        game.getScoreboards().get(player.getUniqueId()).getStatus().reset();
+        if(game.getState() == SAGameState.WAITING) {
             Main.getGameManager().removePlayer(game,player,false,true);
-        } else if(game != null) {
+        } else {
             game.getSpectators().add(player);
         }
+        Main.getGameManager().checkAllPlayersOffline(game);
     }
 
     @EventHandler

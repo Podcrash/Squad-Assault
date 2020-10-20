@@ -473,7 +473,7 @@ public class Gun {
                 String data = eye.getBlock().getState().getData().toString();
                 boolean inverted = data.contains("inverted");
                 Block block = eye.getBlock();
-                if(type.name().contains("GLASS")) {
+                if(type == Material.THIN_GLASS || type == Material.STAINED_GLASS_PANE) {
                     eye.getBlock().breakNaturally();
                 } else if (type.name().contains("FENCE")) {
                     if (xMod >= 370 && xMod <= 620 && zMod >= 370 && zMod <= 620) {
