@@ -220,20 +220,20 @@ public class GameListener implements Listener {
             return;
         }
         if(!event.getMessage().startsWith("#")) {
-            event.setFormat(Main.getGameManager().getTeam(game, player).getColor() + Messages.GENERAL_CHAT_FORMAT.replace("%p%", player.getDisplayName()).replace(
-                    "%message%", event.getMessage()));
+            event.setFormat(Messages.GENERAL_CHAT_FORMAT.replace("%p%",
+                    Main.getGameManager().getTeam(game, player).getColor() + player.getDisplayName()));
             return;
         }
         event.getRecipients().clear();
         if(Main.getGameManager().getTeam(game, player) == SATeam.Team.ALPHA) {
             event.getRecipients().addAll(Main.getGameManager().getTeam(game, SATeam.Team.ALPHA).getPlayers());
-            event.setFormat(ChatColor.AQUA + Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
-                    "%message%", ChatColor.WHITE + event.getMessage().substring(1)));
+            event.setMessage(event.getMessage().substring(1));
+            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%player%",ChatColor.AQUA + player.getDisplayName()));
         }
         if(Main.getGameManager().getTeam(game, player) == SATeam.Team.OMEGA) {
             event.getRecipients().addAll(Main.getGameManager().getTeam(game, SATeam.Team.OMEGA).getPlayers());
-            event.setFormat(ChatColor.RED + Messages.TEAM_CHAT_FORMAT.replace("%player%",player.getDisplayName()).replace(
-                    "%message%", ChatColor.WHITE + event.getMessage().substring(1)));
+            event.setMessage(event.getMessage().substring(1));
+            event.setFormat(Messages.TEAM_CHAT_FORMAT.replace("%player%",ChatColor.RED + player.getDisplayName()));
         }
     }
 

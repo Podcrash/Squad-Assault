@@ -49,8 +49,8 @@ public enum Messages {
     SCOREBOARD_REMAINING("&bRemaining &e%t%&b/&e%to%"),
     SCOREBOARD_GAME_OVER("&eGame Over"),
 
-    TEAM_CHAT_FORMAT("&b[&eTeam&b] &e%p%&b: %message%"),
-    GENERAL_CHAT_FORMAT("%p%&b: %message%"),
+    TEAM_CHAT_FORMAT("&f[&eTeam&f] &e%p%&f: %2$s"),
+    GENERAL_CHAT_FORMAT("%p%&f: %2$s"),
 
     KILL_BASE("&e%p% &bwas killed by &e%op% &bwith &e%i%"),
     KILL_BASE_NO_KILLER("&e%p% &bwas killed by &e%op%"),
