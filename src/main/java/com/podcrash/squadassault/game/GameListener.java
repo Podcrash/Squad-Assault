@@ -473,11 +473,16 @@ public class GameListener implements Listener {
 
     private void leaveGame(Player player) {
         SAGame game = Main.getGameManager().getGame(player);
-        if(game != null && game.getState() == SAGameState.WAITING) {
+        if(game == null) {
+            return;
+        }
+        game.getScoreboards().get(player.getUniqueId()).getStatus().reset();
+        if(game.getState() == SAGameState.WAITING) {
             Main.getGameManager().removePlayer(game,player,false,true);
-        } else if(game != null) {
+        } else {
             game.getSpectators().add(player);
         }
+        Main.getGameManager().checkAllPlayersOffline(game);
     }
 
     @EventHandler

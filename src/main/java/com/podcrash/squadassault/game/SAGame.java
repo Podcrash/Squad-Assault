@@ -244,6 +244,10 @@ public class SAGame {
         return scoreboards;
     }
 
+    public void endState() {
+        this.state = SAGameState.END;
+    }
+
     public void setState(SAGameState state) {
         this.state = state;
         Main.getInstance().getServer().getPluginManager().callEvent(new GameStateChangeEvent(this, state));
