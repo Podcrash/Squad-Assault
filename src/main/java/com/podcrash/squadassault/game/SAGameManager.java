@@ -77,7 +77,7 @@ public class SAGameManager {
         //TODO leave game item
         player.updateInventory();
         game.sendToAll(Messages.PLAYER_JOIN.replace("%p%", player.getDisplayName()) + " " + ChatColor.YELLOW + game
-                        .getSize() + ChatColor.DARK_PURPLE +  " / " + ChatColor.YELLOW + game.getMaxPlayers());
+                        .getSize() + ChatColor.AQUA +  " / " + ChatColor.YELLOW + game.getMaxPlayers());
         if(game.getSize() >= game.getMinPlayers()) {
             game.start();
         }
