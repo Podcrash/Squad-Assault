@@ -246,6 +246,12 @@ public class SAGame {
 
     public void endState() {
         this.state = SAGameState.END;
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            if(Main.getGameManager().getGame(player) != null) {
+                scoreboards.get(player.getUniqueId()).getStatus().reset();
+            }
+        }
+        Bukkit.shutdown();
     }
 
     public void setState(SAGameState state) {
