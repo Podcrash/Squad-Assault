@@ -325,7 +325,6 @@ public class SAGameManager {
         game.getBomb().reset();
         game.getSpectators().removeIf(OfflinePlayer::isOnline);
         game.setRoundEnding(false);
-        checkAllPlayersOffline(game);
     }
 
     public void checkAllPlayersOffline(SAGame game) {
@@ -350,7 +349,7 @@ public class SAGameManager {
             }
         }
         if(allOffline) {
-            Bukkit.broadcastMessage(ChatColor.AQUA + "All players on a team B left the game, ending now.");
+            Bukkit.broadcastMessage(ChatColor.AQUA + "All players on team B left the game, ending now.");
             game.endState();
             //todo stat update for winner team
         }

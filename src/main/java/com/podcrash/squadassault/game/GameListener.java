@@ -481,8 +481,9 @@ public class GameListener implements Listener {
             Main.getGameManager().removePlayer(game,player,false,true);
         } else {
             game.getSpectators().add(player);
+            Bukkit.getScheduler().runTaskLater(Main.getInstance(),
+                    () -> Main.getGameManager().checkAllPlayersOffline(game), 1L);
         }
-        Main.getGameManager().checkAllPlayersOffline(game);
     }
 
     @EventHandler
