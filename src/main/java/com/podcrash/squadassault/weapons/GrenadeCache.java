@@ -56,13 +56,12 @@ public class GrenadeCache {
     public List<Player> getNearbyPlayers(double distance) {
         List<Player> list = new ArrayList<>();
         for (Player player : game.getTeamA().getPlayers()) {
-            if (player.getLocation().getWorld() == grenade.getLocation().getWorld() && player.getLocation().distance(grenade.getLocation()) <= distance) {
+            if (player.getLocation().getWorld() == grenade.getGrenadeLocation().getWorld() && player.getLocation().distance(grenade.getGrenadeLocation()) <= distance) {
                 list.add(player);
             }
         }
         for (Player player : game.getTeamB().getPlayers()) {
-            if (player.getLocation().getWorld() == grenade.getLocation().getWorld() && player.getLocation().distance(grenade.getLocation()) <= distance) {
-                list.add(player);
+            if (player.getLocation().getWorld() == grenade.getGrenadeLocation().getWorld() && player.getLocation().distance(grenade.getGrenadeLocation()) <= distance) { list.add(player);
             }
         }
         return list;

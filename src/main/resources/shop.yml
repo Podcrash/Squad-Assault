@@ -129,9 +129,9 @@ ShopGrenades:
     ItemLore: 'Price: 300'
   Flashbang:
     Slot: 36
-    Price: 300
+    Price: 200
     ItemName: 'Flashbang'
-    ItemLore: 'Price: 300'
+    ItemLore: 'Price: 200'
   Decoy:
     Slot: 18
     Price: 100

@@ -9,6 +9,7 @@ import com.podcrash.squadassault.util.Item;
 import com.podcrash.squadassault.util.Randomizer;
 import com.podcrash.squadassault.util.Utils;
 import me.dpohvar.powernbt.api.NBTManager;
+import net.jafama.FastMath;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.*;
@@ -439,11 +440,11 @@ public class Gun {
                         (int) (accuracy) * 5) + 0.5f);
             }
             double yawRad =
-                    Math.toRadians(Utils.dumbMinecraftDegrees(yaw) + gunCache.getAccuracyYaw() + 90.0);
-            double pitchRad = Math.toRadians(pitch + gunCache.getAccuracyPitch() + 90.0);
-            double cot = Math.sin(pitchRad) * Math.cos(yawRad);
-            double cos = Math.cos(pitchRad);
-            double sin2 = Math.sin(pitchRad) * Math.sin(yawRad);
+                    FastMath.toRadians(Utils.dumbMinecraftDegrees(yaw) + gunCache.getAccuracyYaw() + 90.0);
+            double pitchRad = FastMath.toRadians(pitch + gunCache.getAccuracyPitch() + 90.0);
+            double cot = FastMath.sin(pitchRad) * FastMath.cos(yawRad);
+            double cos = FastMath.cos(pitchRad);
+            double sin2 = FastMath.sin(pitchRad) * FastMath.sin(yawRad);
             hitscan(player, eye, x, y, z, cot, cos, sin2, gunCache);
             eye.setX(x);
             eye.setY(y);
