@@ -100,6 +100,12 @@ public class BulletSnowball extends EntitySnowball {
         if (movingobjectposition != null) {
             if (movingobjectposition.type == MovingObjectPosition.EnumMovingObjectType.BLOCK && (this.world.getType(movingobjectposition.a()).getBlock() == Blocks.PORTAL || this.world.getType(movingobjectposition.a()).getBlock() == Blocks.WHEAT)) {
                 this.d(movingobjectposition.a());
+            } else if(movingobjectposition.type == MovingObjectPosition.EnumMovingObjectType.BLOCK && (this.world.getType(movingobjectposition.a()).getBlock() == Blocks.GLASS_PANE || this.world.getType(movingobjectposition.a()).getBlock() == Blocks.STAINED_GLASS_PANE)) {
+                BlockPosition position = movingobjectposition.a();
+                org.bukkit.block.Block block = world.getWorld().getBlockAt(position.getX(), position.getY(),
+                        position.getZ());
+                block.breakNaturally();
+                this.a(movingobjectposition);
             } else {
                 this.a(movingobjectposition);
                 if (this.dead) {

@@ -675,6 +675,7 @@ public class SAGame {
     }
 
     private void runRoundStart() {
+        bombA.getWorld().setStorm(false);
         for(Player player : teamA.getPlayers()) {
             resetReserveAmmo(player);
         }

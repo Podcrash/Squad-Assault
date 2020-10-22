@@ -102,7 +102,7 @@ public class Grenade {
 
 
     private void spawnFire(GrenadeCache cache) {
-        for(Block block : getBlocks(cache.getGrenade().getLocation().getBlock(), effectPower)) {
+        for(Block block : getBlocks(cache.getGrenade().getGrenadeLocation().getBlock(), effectPower)) {
             if(block.getType() == Material.AIR) {
                 if(!block.getRelative(BlockFace.DOWN).getType().isSolid() && (block.getRelative(BlockFace.DOWN).getType() != Material.STEP)) {
                     continue;
@@ -133,19 +133,19 @@ public class Grenade {
             if ((System.currentTimeMillis() - cache.getTime()) / 1000L < delay) {
                 continue;
             }
-            Location location = cache.getGrenade().getLocation();
+            Location location = cache.getGrenade().getGrenadeLocation();
             if(type == GrenadeType.FRAG) {
                 //playsound
                 location.getWorld().playEffect(location, Effect.EXPLOSION_LARGE, 15);
                 for(Player player : cache.getNearbyPlayers(7.0)) {
                     if((cache.getPlayer() == player || Main.getGameManager().getTeam(cache.getGame(),
                             cache.getPlayer()) != Main.getGameManager().getTeam(cache.getGame(), player)) && !cache.getGame().isDead(player)) {
-                        if (grenadeLos(location, player)) break;
+                        if (grenadeLos(location, player)) continue;
                         double armorPen =
                                 player.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 1 :
                                         0.6;
                         Main.getGameManager().damage(cache.getGame(), cache.getPlayer(), player,
-                                armorPen*(effectPower - cache.getGrenade().getLocation().distance(player.getLocation()) * 2),
+                                armorPen*(effectPower - cache.getGrenade().getGrenadeLocation().distance(player.getLocation()) * 2),
                                 "HE Grenade");
                     }
                 }
@@ -154,13 +154,12 @@ public class Grenade {
                 //sound
                 for(Player player : cache.getNearbyPlayers(effectPower)) {
                     if(!cache.getGame().isDead(player)) {
-                        if (flashbangLos(player, location)) continue;
+                        if (grenadeLos(location, player)) continue;
                         double intensity =
-                                2 - Utils.offset(player.getEyeLocation().clone().add(player.getLocation().getDirection()).toVector(), player.getEyeLocation().clone().add(player.getLocation().getDirection()).toVector());
-
+                                2 - Utils.offset(player.getEyeLocation().add(player.getLocation().getDirection()).toVector(), player.getEyeLocation().add(player.getEyeLocation().getDirection()).toVector());
                         double duration = ((2 + (3*location.distance(player.getLocation()))) * intensity) + 1;
                         //mineplex duration math
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) duration, 2), true);
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) duration, 2));
                     }
                 }
             }
@@ -188,7 +187,7 @@ public class Grenade {
                     iterator.remove();
                 } else {
                     //play sound
-                    for(Block block : getBlocks(cache.getGrenade().getLocation().getBlock(), effectPower)) {
+                    for(Block block : getBlocks(cache.getGrenade().getGrenadeLocation().getBlock(), effectPower)) {
                         if(block.getType() == Material.AIR || block.getType() == Material.FIRE || block.getType() == Material.CROPS) {
                             cache.getBlocks().add(block);
                             block.setType(Material.CROPS);
@@ -230,15 +229,19 @@ public class Grenade {
     //the difference between these two methods is very small, but fixes a few directional errors we see
 
     private boolean flashbangLos(Player player, Location entityLoc) {
-        Location location = player.getEyeLocation().clone();
+        //todo
+        Location location = player.getEyeLocation();
         boolean breakLos = false;
+        System.out.println("prewhile");
         while(Utils.offset(location.toVector(), entityLoc.toVector()) > 0.5) {
             if(location.getBlock().getType().isSolid() && location.getBlock().getType() != Material.STEP) {
                 breakLos = true;
+                System.out.println("break");
                 break;
             }
             location.add(Utils.getTrajectory(location.toVector(), entityLoc.toVector()).multiply(0.2));
         }
+        System.out.println("postwhile");
         return breakLos;
     }
 

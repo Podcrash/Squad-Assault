@@ -123,6 +123,7 @@ public class Config {
             for(String id : maps.getConfigurationSection("Game").getKeys(false)) {
                 World world = Bukkit.getServer().createWorld(new WorldCreator(maps.getString("Game."+id+".Name")));
                 world.getLivingEntities().stream().filter(e -> e.getType() != EntityType.PLAYER).forEach(Entity::remove);
+                world.setStorm(false);
                 try {
                     Main.getGameManager().addGame(new SAGame(id, maps.getString("Game." + id + ".Name"),
                             Utils.getDeserializedLocation(maps.getString("Game." + id + ".Lobby")), maps.getInt(

@@ -32,7 +32,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -41,6 +43,7 @@ public class GameListener implements Listener {
 
     private final Inventory selector;
     private final ConcurrentMap<SAGame, Boolean> bombPlants;
+    private final Map<Player, Long> clickMap;
     private final SAGame game;
 
     public GameListener(SAGame game) {
@@ -50,6 +53,17 @@ public class GameListener implements Listener {
         selector.setItem(13, ItemBuilder.create(Material.WOOL, 1, (short)8, "Random", "Click to join a random team"));
         selector.setItem(15, ItemBuilder.create(Material.WOOL, 1, (short)10, "Team B", "Click to join Team B"));
         bombPlants = new ConcurrentHashMap<>();
+        clickMap = new HashMap<>();
+    }
+
+    private boolean checkClick(Player player) {
+        if(!clickMap.containsKey(player)) {
+            clickMap.put(player, System.currentTimeMillis());
+            return true;
+        }
+        boolean ret = System.currentTimeMillis() - clickMap.get(player) >= 200;
+        clickMap.put(player, System.currentTimeMillis());
+        return ret;
     }
 
     @EventHandler
@@ -145,7 +159,7 @@ public class GameListener implements Listener {
                     }
                 }
                 Gun gun = Main.getWeaponManager().getGun(inHand);
-                if(gun != null && !game.isDefusing(player)) {
+                if(checkClick(player) && gun != null && !game.isDefusing(player)) {
                     gun.shoot(game, player);
                 }
                 Grenade grenade = Main.getWeaponManager().getGrenade(inHand);
@@ -713,7 +727,7 @@ public class GameListener implements Listener {
         }
         event.setCancelled(true);
         Gun gun = Main.getWeaponManager().getGun(itemInHand);
-        if(gun != null && !game.isDefusing(player) && game.getState() == SAGameState.ROUND_LIVE) {
+        if(checkClick(player) && gun != null && !game.isDefusing(player) && game.getState() == SAGameState.ROUND_LIVE) {
             gun.shoot(game, player);
         }
     }
@@ -795,32 +809,10 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
-        Location location = event.getEntity().getLocation().add(event.getEntity().getVelocity().multiply(0.8));
-        Block block = location.getBlock();
-
-        if(block.getType() == Material.AIR) {
-            Block closest = null;
-            double closestDist = 0;
-
-            for (Block other : getSurrounding(block)) {
-                if (other.getType() == Material.AIR)
-                    continue;
-
-                double dist = Utils.offset(location.toVector(), other.getLocation().add(0.5, 0.5, 0.5).toVector());
-
-                if (closest == null || dist < closestDist) {
-                    closest = other;
-                    closestDist = dist;
-                }
-            }
-
-            if (closest != null)
-                block = closest;
+        if(!(event.getEntity() instanceof Snowball) || !(event.getEntity().getShooter() instanceof Player)) {
+            return;
         }
-        if(block.getType() == Material.THIN_GLASS || block.getType() == Material.STAINED_GLASS_PANE) {
-            location.getBlock().breakNaturally();
-        }
-        //todo ask if he wants it to restore
+        Player player = (Player) event.getEntity().getShooter();
     }
 
     private List<Block> getSurrounding(Block block) {
