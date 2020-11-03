@@ -12,6 +12,7 @@ import com.podcrash.squadassault.weapons.Grenade;
 import com.podcrash.squadassault.weapons.GrenadeType;
 import com.podcrash.squadassault.weapons.Gun;
 import com.podcrash.squadassault.weapons.ProjectileStats;
+import net.jafama.FastMath;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -809,10 +810,37 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
-        if(!(event.getEntity() instanceof Snowball) || !(event.getEntity().getShooter() instanceof Player)) {
+        if (!(event.getEntity() instanceof Snowball) || !(event.getEntity().getShooter() instanceof Player)) {
             return;
         }
         Player player = (Player) event.getEntity().getShooter();
+        Location eye = player.getEyeLocation();
+
+        //hitscan taken from gun code, only runs if block is not already broken by the projectilehitevent
+        double yawRad = FastMath.toRadians(Utils.dumbMinecraftDegrees(eye.getYaw())+90);
+        double pitchRad = FastMath.toRadians(eye.getPitch() + 90);
+        double x = eye.getX();
+        double y = eye.getY();
+        double z = eye.getZ();
+        double cot = FastMath.sin(pitchRad) * FastMath.cos(yawRad);
+        double cos = FastMath.cos(pitchRad);
+        double sin2 = FastMath.sin(pitchRad) * FastMath.sin(yawRad);
+
+        double distance = 0.5;
+        while (distance < 30) {
+            eye.setX(x + distance * cot);
+            eye.setY(y + distance * cos);
+            eye.setZ(z + distance * sin2);
+            if(eye.getBlock().getType() == Material.THIN_GLASS || eye.getBlock().getType() == Material.STAINED_GLASS_PANE) {
+                eye.getBlock().breakNaturally();
+                break;
+            }
+            distance += 0.25;
+        }
+
+        eye.setX(x);
+        eye.setY(y);
+        eye.setZ(sin2);
     }
 
     private List<Block> getSurrounding(Block block) {
