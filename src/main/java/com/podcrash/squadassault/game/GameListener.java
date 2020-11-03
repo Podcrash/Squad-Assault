@@ -831,8 +831,11 @@ public class GameListener implements Listener {
             eye.setX(x + distance * cot);
             eye.setY(y + distance * cos);
             eye.setZ(z + distance * sin2);
-            if(eye.getBlock().getType() == Material.THIN_GLASS || eye.getBlock().getType() == Material.STAINED_GLASS_PANE) {
-                eye.getBlock().breakNaturally();
+            Material type = eye.getBlock().getType();
+            if(type != Material.AIR && type != Material.CROPS) {
+                if(type == Material.THIN_GLASS || type == Material.STAINED_GLASS_PANE) {
+                    eye.getBlock().breakNaturally();
+                }
                 break;
             }
             distance += 0.25;
