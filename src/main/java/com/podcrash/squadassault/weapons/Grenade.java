@@ -153,19 +153,14 @@ public class Grenade {
             if(type == GrenadeType.FLASH) {
                 //sound
                 for(Player player : cache.getNearbyPlayers(effectPower)) {
-                    if(!cache.getGame().isDead(player)) {
-                        if (!flashbangLos(player, location)) continue;
-                        Location eyeToGrenade =
-                                player.getEyeLocation().add(Utils.getTrajectory(player.getEyeLocation().toVector(),
-                                        location.toVector()));
-                        double flashIntensity =
-                                2 - Utils.offset(player.getEyeLocation().add(player.getLocation().getDirection()).toVector(), eyeToGrenade.toVector());
-
-                        //mineplex duration math
-                        double duration = (2 + (3 * (location.distance(player.getLocation())))) * flashIntensity;
-                        duration += 1;
-
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) duration, 2));
+                    if (cache.getGame().isDead(player)) {
+                        continue;
+                    }
+                    if(isEntityInCone(location, player.getLocation().toVector(), (float) effectPower, 80,
+                            player.getLocation().getDirection())) {
+                        int duration = Math.round(flashbangTime(getAngleBetweenVectors(player.getLocation().getDirection(),
+                                location.subtract(player.getLocation().toVector()).toVector())));
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 2));
                     }
                 }
             }
@@ -232,21 +227,23 @@ public class Grenade {
         }
     }
 
-    //the difference between these two methods is very small, but fixes a few directional errors we see
 
-    private boolean flashbangLos(Player player, Location entityLoc) {
-        Location loc = player.getEyeLocation();
+    private boolean isEntityInCone(Location entityLocation, Vector startPos, float radius, float degrees, Vector direction) {
+        float squaredRadius = radius * radius;
 
-        boolean sight = true;
-        while (Utils.offset(loc.toVector(), entityLoc.toVector()) > 0.5) {
-            if (loc.getBlock().getType().isSolid()) {
-                sight = false;
-                break;
-            }
+        Vector relativePosition = entityLocation.toVector();
+        relativePosition.subtract(startPos);
+        if (relativePosition.lengthSquared() > squaredRadius)
+            return false;
+        return !(getAngleBetweenVectors(direction, relativePosition) > degrees);
+    }
 
-            loc.add(Utils.getTrajectory(loc.toVector(), entityLoc.toVector()).multiply(0.2));
-        }
-        return sight;
+    private float flashbangTime(float angle) {
+        return (angle) / (80) * (1 - 60) + 60;
+    }
+
+    private float getAngleBetweenVectors(Vector v1, Vector v2) {
+        return Math.abs((float)Math.toDegrees(v1.angle(v2)));
     }
 
     private boolean grenadeLos(Location location, Player player) {

@@ -61,7 +61,8 @@ public class GrenadeCache {
             }
         }
         for (Player player : game.getTeamB().getPlayers()) {
-            if (player.getLocation().getWorld() == grenade.getGrenadeLocation().getWorld() && player.getLocation().distance(grenade.getGrenadeLocation()) <= distance) { list.add(player);
+            if (player.getLocation().getWorld() == grenade.getGrenadeLocation().getWorld() && player.getLocation().distance(grenade.getGrenadeLocation()) <= distance) {
+                list.add(player);
             }
         }
         return list;
