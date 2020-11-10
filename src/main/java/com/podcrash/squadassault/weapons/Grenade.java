@@ -154,11 +154,17 @@ public class Grenade {
                 //sound
                 for(Player player : cache.getNearbyPlayers(effectPower)) {
                     if(!cache.getGame().isDead(player)) {
-                        if (grenadeLos(location, player)) continue;
-                        double intensity =
-                                2 - Utils.offset(player.getEyeLocation().add(player.getLocation().getDirection()).toVector(), player.getEyeLocation().add(player.getEyeLocation().getDirection()).toVector());
-                        double duration = ((2 + (3*location.distance(player.getLocation()))) * intensity) + 1;
+                        if (!flashbangLos(player, location)) continue;
+                        Location eyeToGrenade =
+                                player.getEyeLocation().add(Utils.getTrajectory(player.getEyeLocation().toVector(),
+                                        location.toVector()));
+                        double flashIntensity =
+                                2 - Utils.offset(player.getEyeLocation().add(player.getLocation().getDirection()).toVector(), eyeToGrenade.toVector());
+
                         //mineplex duration math
+                        double duration = (2 + (3 * (location.distance(player.getLocation())))) * flashIntensity;
+                        duration += 1;
+
                         player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) duration, 2));
                     }
                 }
@@ -229,20 +235,18 @@ public class Grenade {
     //the difference between these two methods is very small, but fixes a few directional errors we see
 
     private boolean flashbangLos(Player player, Location entityLoc) {
-        //todo
-        Location location = player.getEyeLocation();
-        boolean breakLos = false;
-        System.out.println("prewhile");
-        while(Utils.offset(location.toVector(), entityLoc.toVector()) > 0.5) {
-            if(location.getBlock().getType().isSolid() && location.getBlock().getType() != Material.STEP) {
-                breakLos = true;
-                System.out.println("break");
+        Location loc = player.getEyeLocation();
+
+        boolean sight = true;
+        while (Utils.offset(loc.toVector(), entityLoc.toVector()) > 0.5) {
+            if (loc.getBlock().getType().isSolid()) {
+                sight = false;
                 break;
             }
-            location.add(Utils.getTrajectory(location.toVector(), entityLoc.toVector()).multiply(0.2));
+
+            loc.add(Utils.getTrajectory(loc.toVector(), entityLoc.toVector()).multiply(0.2));
         }
-        System.out.println("postwhile");
-        return breakLos;
+        return sight;
     }
 
     private boolean grenadeLos(Location location, Player player) {
