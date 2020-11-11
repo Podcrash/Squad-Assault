@@ -158,7 +158,7 @@ public class Grenade {
                         continue;
                     }
                     if(isEntityInCone(location, player.getLocation().toVector(), (float) effectPower, 80,
-                            player.getLocation().getDirection())) {
+                            player.getLocation().getDirection()) && player.hasLineOfSight(cache.getGrenade().getBukkitEntity())) {
                         int duration = Math.round(flashbangTime(getAngleBetweenVectors(player.getLocation().getDirection(),
                                 location.subtract(player.getLocation().toVector()).toVector())));
                         player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 2));
