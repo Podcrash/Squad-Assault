@@ -140,8 +140,7 @@ public class Grenade {
                 for(Player player : cache.getNearbyPlayers(7.0)) {
                     if((cache.getPlayer() == player || Main.getGameManager().getTeam(cache.getGame(),
                             cache.getPlayer()) != Main.getGameManager().getTeam(cache.getGame(), player)) && !cache.getGame().isDead(player)) {
-                        if (!isEntityInCone(location, player.getLocation().toVector(), 7, 360,
-                                player.getLocation().getDirection())) continue;
+                        if (!player.hasLineOfSight(cache.getGrenade().getBukkitEntity())) continue;
                         double armorPen =
                                 player.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 1 :
                                         0.6;
