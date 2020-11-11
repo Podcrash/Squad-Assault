@@ -140,7 +140,7 @@ public class Grenade {
                 for(Player player : cache.getNearbyPlayers(7.0)) {
                     if((cache.getPlayer() == player || Main.getGameManager().getTeam(cache.getGame(),
                             cache.getPlayer()) != Main.getGameManager().getTeam(cache.getGame(), player)) && !cache.getGame().isDead(player)) {
-                        if (grenadeLos(location, player)) continue;
+                        if (!player.hasLineOfSight(cache.getGrenade().getBukkitEntity())) continue;
                         double armorPen =
                                 player.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 1 :
                                         0.6;
@@ -157,7 +157,7 @@ public class Grenade {
                         continue;
                     }
                     if(isEntityInCone(location, player.getLocation().toVector(), (float) effectPower, 80,
-                            player.getLocation().getDirection())) {
+                            player.getLocation().getDirection()) && player.hasLineOfSight(cache.getGrenade().getBukkitEntity())) {
                         int duration = Math.round(flashbangTime(getAngleBetweenVectors(player.getLocation().getDirection(),
                                 location.subtract(player.getLocation().toVector()).toVector())));
                         player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 2));
