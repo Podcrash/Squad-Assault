@@ -1,6 +1,7 @@
 package com.podcrash.squadassault.nms;
 
 import com.podcrash.squadassault.Main;
+import com.podcrash.squadassault.util.Utils;
 import com.podcrash.squadassault.weapons.GrenadeType;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
@@ -8,12 +9,14 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PhysicsItem extends EntityArmorStand {
+
 
     private Hitbox hitbox;
     private boolean intersects;
@@ -85,9 +88,6 @@ public class PhysicsItem extends EntityArmorStand {
                 List<BlockFace> intersects = intersects(hitbox);
                 if(intersects.size() > 0) {
                     if (intersects.contains(BlockFace.UP) || intersects.contains(BlockFace.DOWN)) {
-                        if(fire) {
-                            Main.getWeaponManager().getGrenade(CraftItemStack.asBukkitCopy(getEquipment(0))).explode(this);
-                        }
                         motY = -(motY * 0.25);
                         motX *= 0.42;
                         motZ *= 0.42;
@@ -199,7 +199,7 @@ public class PhysicsItem extends EntityArmorStand {
 
 
         return new Location(world.getWorld(), rightArmPose.getX(),  rightArmPose.getY(), rightArmPose.getZ());*/
-        return getLocation();
+        return Utils.getArmTip((ArmorStand) getBukkitEntity());
     }
 
     public boolean isRemoved() {

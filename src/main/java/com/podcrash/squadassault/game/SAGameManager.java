@@ -683,8 +683,13 @@ public class SAGameManager {
             DecimalFormat format = new DecimalFormat("##.#");
             if(damager != null) {
                 String killerText = "Killer: " + damager.getDisplayName();
-                NmsUtils.sendTitle(damaged, 0, 100, 0, killerText,
-                        "Damage: " + format.format(game.getStats().get(damager.getUniqueId()).getDamagedPlayers().get(damaged)));
+                String subtitle = "";
+                if (game.getStats().get(damaged.getUniqueId()).getDamagedPlayers().containsKey(damager)) {
+                    subtitle =
+                            "Damage: " +format.format(game.getStats().get(damaged.getUniqueId()).getDamagedPlayers().get
+                                    (damager).doubleValue());
+                }
+                NmsUtils.sendTitle(damaged, 0, 100, 0, killerText, subtitle);
             } else {
                 NmsUtils.sendTitle(damaged, 0, 100, 0, "You died", "");
             }

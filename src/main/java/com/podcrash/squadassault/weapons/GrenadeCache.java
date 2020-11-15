@@ -1,7 +1,7 @@
 package com.podcrash.squadassault.weapons;
 
 import com.podcrash.squadassault.game.SAGame;
-import com.podcrash.squadassault.nms.PhysicsItem;
+import com.podcrash.squadassault.nms.SimplePhysicsItem;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -14,10 +14,10 @@ public class GrenadeCache {
     private final Player player;
     private final long time;
     private long duration = -1;
-    private final PhysicsItem grenade;
+    private final SimplePhysicsItem grenade;
     private final List<Block> blocks;
 
-    public GrenadeCache(SAGame game, Player player, long time, PhysicsItem grenade) {
+    public GrenadeCache(SAGame game, Player player, long time, SimplePhysicsItem grenade) {
         this.game = game;
         this.player = player;
         this.time = time;
@@ -45,7 +45,7 @@ public class GrenadeCache {
         this.duration = duration;
     }
 
-    public PhysicsItem getGrenade() {
+    public SimplePhysicsItem getGrenade() {
         return grenade;
     }
 
@@ -56,12 +56,12 @@ public class GrenadeCache {
     public List<Player> getNearbyPlayers(double distance) {
         List<Player> list = new ArrayList<>();
         for (Player player : game.getTeamA().getPlayers()) {
-            if (player.getLocation().getWorld() == grenade.getGrenadeLocation().getWorld() && player.getLocation().distance(grenade.getGrenadeLocation()) <= distance) {
+            if (player.getLocation().getWorld() == grenade.getLocation().getWorld() && player.getLocation().distance(grenade.getLocation()) <= distance) {
                 list.add(player);
             }
         }
         for (Player player : game.getTeamB().getPlayers()) {
-            if (player.getLocation().getWorld() == grenade.getGrenadeLocation().getWorld() && player.getLocation().distance(grenade.getGrenadeLocation()) <= distance) {
+            if (player.getLocation().getWorld() == grenade.getLocation().getWorld() && player.getLocation().distance(grenade.getLocation()) <= distance) {
                 list.add(player);
             }
         }

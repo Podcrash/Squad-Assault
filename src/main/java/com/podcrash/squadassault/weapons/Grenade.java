@@ -3,15 +3,18 @@ package com.podcrash.squadassault.weapons;
 import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.nms.NmsUtils;
-import com.podcrash.squadassault.nms.PhysicsItem;
+import com.podcrash.squadassault.nms.SimplePhysicsItem;
 import com.podcrash.squadassault.util.Item;
 import com.podcrash.squadassault.util.Utils;
+import net.minecraft.server.v1_8_R3.MovingObjectPosition;
+import net.minecraft.server.v1_8_R3.Vec3D;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -75,7 +78,7 @@ public class Grenade {
         if (player.getInventory().getItemInHand().getType() != item.getType()) {
             return;
         } //might be a bug here
-        played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnPhysicsItem(player,
+        played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnSimplePhysicsItem(player,
                 player.getItemInHand(), throwSpeed)));
         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), null);
         //play sound
@@ -85,13 +88,13 @@ public class Grenade {
         if (player.getInventory().getItemInHand().getType() != item.getType()) {
             return;
         } //might be a bug here
-        played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnPhysicsItem(player,
+        played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnSimplePhysicsItem(player,
                 player.getItemInHand(), throwSpeed/20)));
         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), null);
         //play sound
     }
 
-    public void explode(PhysicsItem item) {
+    public void explode(SimplePhysicsItem item) {
         for(GrenadeCache cache : played) {
             if(cache.getGrenade() == item) {
                 spawnFire(cache);
@@ -102,7 +105,7 @@ public class Grenade {
 
 
     private void spawnFire(GrenadeCache cache) {
-        for(Block block : getBlocks(cache.getGrenade().getGrenadeLocation().getBlock(), effectPower)) {
+        for(Block block : getBlocks(cache.getGrenade().getLocation().getBlock(), effectPower)) {
             if(block.getType() == Material.AIR) {
                 if(!block.getRelative(BlockFace.DOWN).getType().isSolid() && (block.getRelative(BlockFace.DOWN).getType() != Material.STEP)) {
                     continue;
@@ -133,35 +136,48 @@ public class Grenade {
             if ((System.currentTimeMillis() - cache.getTime()) / 1000L < delay) {
                 continue;
             }
-            Location location = cache.getGrenade().getGrenadeLocation();
+            Location location = cache.getGrenade().getLocation();
             if(type == GrenadeType.FRAG) {
                 //playsound
                 location.getWorld().playEffect(location, Effect.EXPLOSION_LARGE, 15);
                 for(Player player : cache.getNearbyPlayers(7.0)) {
                     if((cache.getPlayer() == player || Main.getGameManager().getTeam(cache.getGame(),
                             cache.getPlayer()) != Main.getGameManager().getTeam(cache.getGame(), player)) && !cache.getGame().isDead(player)) {
-                        if (!player.hasLineOfSight(cache.getGrenade().getBukkitEntity())) continue;
+                        if (!blockLos(location, player)) continue;
                         double armorPen =
                                 player.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 1 :
                                         0.6;
                         Main.getGameManager().damage(cache.getGame(), cache.getPlayer(), player,
-                                armorPen*(effectPower - cache.getGrenade().getGrenadeLocation().distance(player.getLocation()) * 2),
+                                armorPen*(effectPower - cache.getGrenade().getLocation().distance(player.getLocation()) * 2),
                                 "HE Grenade");
                     }
                 }
             }
             if(type == GrenadeType.FLASH) {
                 //sound
-                for(Player player : cache.getNearbyPlayers(effectPower)) {
+                PLAYER: for(Player player : cache.getNearbyPlayers(effectPower)) {
                     if (cache.getGame().isDead(player)) {
                         continue;
                     }
-                    if(isEntityInCone(location, player.getLocation().toVector(), (float) effectPower, 80,
-                            player.getLocation().getDirection()) && player.hasLineOfSight(cache.getGrenade().getBukkitEntity())) {
-                        int duration = Math.round(flashbangTime(getAngleBetweenVectors(player.getLocation().getDirection(),
-                                location.subtract(player.getLocation().toVector()).toVector())));
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 2));
+                    System.out.println(player);
+                    final float angle =
+                            location.toVector().subtract(player.getEyeLocation().toVector()).angle(player.getEyeLocation().getDirection().normalize());
+                    if (Float.isNaN(angle) || angle > 1.6f) {
+                        System.out.println(angle);
+                        continue;
                     }
+                    final Location clone2 = player.getEyeLocation().clone();
+                    final Vector subtract2 = location.toVector().subtract(clone2.toVector());
+                    for (int n3 = 0; n3 < Math.round(location.distance(clone2)) + 1L; ++n3) {
+                        clone2.add(subtract2.normalize());
+                        if (clone2.getBlock().getType() != Material.AIR) {
+                            System.out.println("block");
+                            continue PLAYER;
+                        }
+                    }
+                    int duration = (int) Math.round(flashbangTime(getAngleBetweenVectors(player.getLocation().getDirection(),
+                                location.subtract(player.getLocation().toVector()).toVector())));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 2));
                 }
             }
             if(type == GrenadeType.DECOY) {
@@ -188,7 +204,7 @@ public class Grenade {
                     iterator.remove();
                 } else {
                     //play sound
-                    for(Block block : getBlocks(cache.getGrenade().getGrenadeLocation().getBlock(), effectPower)) {
+                    for(Block block : getBlocks(cache.getGrenade().getLocation().getBlock(), effectPower)) {
                         if(block.getType() == Material.AIR || block.getType() == Material.FIRE || block.getType() == Material.CROPS) {
                             cache.getBlocks().add(block);
                             block.setType(Material.CROPS);
@@ -227,23 +243,26 @@ public class Grenade {
         }
     }
 
-
-    private boolean isEntityInCone(Location entityLocation, Vector startPos, float radius, float degrees, Vector direction) {
-        float squaredRadius = radius * radius;
-
-        Vector relativePosition = entityLocation.toVector();
-        relativePosition.subtract(startPos);
-        if (relativePosition.lengthSquared() > squaredRadius)
-            return false;
-        return !(getAngleBetweenVectors(direction, relativePosition) > degrees);
-    }
-
-    private float flashbangTime(float angle) {
+    private double flashbangTime(double angle) {
         return (angle) / (80) * (1 - 60) + 60;
     }
 
-    private float getAngleBetweenVectors(Vector v1, Vector v2) {
-        return Math.abs((float)Math.toDegrees(v1.angle(v2)));
+    private double getAngleBetweenVectors(Vector v1, Vector v2) {
+        return Math.toDegrees(v1.angle(v2));
+    }
+
+    private boolean blockLos(Location location, Player player) {
+        MovingObjectPosition objectPosition =
+                ((CraftWorld)location.getWorld()).getHandle().rayTrace(new Vec3D(player.getLocation().getX(),
+                player.getLocation().getY(),
+                player.getLocation().getZ()), new Vec3D(location.getX(), location.getY() + 4.5, location.getZ()));
+        player.sendMessage(location.getX() + " " + (location.getY() + 1.5) + " " +  location.getZ());
+        if(objectPosition == null) {
+            System.out.println("xd");
+        } else {
+            System.out.println("nope" + ((CraftWorld)location.getWorld()).getHandle().getType(objectPosition.a()).toString());
+        }
+        return objectPosition == null;
     }
 
     private boolean grenadeLos(Location location, Player player) {

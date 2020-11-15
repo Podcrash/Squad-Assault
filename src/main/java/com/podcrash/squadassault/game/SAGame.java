@@ -228,6 +228,10 @@ public class SAGame {
         return state;
     }
 
+    public int getPlayerCount() {
+        return teamA.size() + teamB.size();
+    }
+
     public void setRoundEnding(boolean roundEnding) {
         this.roundEnding = roundEnding;
     }

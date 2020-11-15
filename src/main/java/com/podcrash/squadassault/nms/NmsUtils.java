@@ -41,7 +41,7 @@ public final class NmsUtils {
         }
         if(title != null) {
             playerConnection.sendPacket(new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE,
-                    IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + subtitle + "\"}")));
+                    IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + title + "\"}")));
         }
     }
 
@@ -88,8 +88,8 @@ public final class NmsUtils {
         }
     }
 
-    public static PhysicsItem spawnPhysicsItem(Player player, ItemStack stack, double power) {
-        return new PhysicsItem(((CraftPlayer)player).getHandle(), CraftItemStack.asNMSCopy(stack), power);
+    public static SimplePhysicsItem spawnSimplePhysicsItem(Player player, ItemStack stack, double power) {
+        return new SimplePhysicsItem(player, stack, power);
     }
 
     public static ItemStack addNBTInteger(ItemStack stack, String key, int value) {
