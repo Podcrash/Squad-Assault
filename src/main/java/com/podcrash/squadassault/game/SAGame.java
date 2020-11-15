@@ -688,23 +688,22 @@ public class SAGame {
         }
         if(round == 15 && timer >= 11) {
             for (Player player : teamA.getPlayers()) {
-                NmsUtils.sendTitle(player, 0, 40, 0, "team swap yeet - DOODLER TODO", "");
+                NmsUtils.sendTitle(player, 0, 40, 0, ChatColor.AQUA + "Teams Swapped!", "");
             }
             for (Player player : teamB.getPlayers()) {
-                NmsUtils.sendTitle(player, 0, 40, 0, "team swap yeet - DOODLER TODO", "");
+                NmsUtils.sendTitle(player, 0, 40, 0, ChatColor.AQUA + "Teams Swapped!", "");
             }
             return;
         }
         if(timer == 0) {
             for (Player player : teamA.getPlayers()) {
-                NmsUtils.sendTitle(player, 0, 30, 0, "round start go - DOODLER TODO", "");
+                NmsUtils.sendTitle(player, 0, 30, 0, ChatColor.AQUA + "Go!", "");
             }
             for (Player player : teamB.getPlayers()) {
-                NmsUtils.sendTitle(player, 0, 30, 0, "round start go - DOODLER TODO", "");
+                NmsUtils.sendTitle(player, 0, 30, 0, ChatColor.AQUA + "Go!", "");
             }
             timer = 115;
             setState(SAGameState.ROUND_LIVE);
-            return;
         }
     }
 
