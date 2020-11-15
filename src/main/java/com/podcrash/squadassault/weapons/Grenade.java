@@ -160,18 +160,11 @@ public class Grenade {
                         continue;
                     }
                     System.out.println(player);
-                    final float angle =
-                            location.toVector().subtract(player.getEyeLocation().toVector()).angle(player.getEyeLocation().getDirection().normalize());
-                    if (Float.isNaN(angle) || angle > 1.6f) {
-                        System.out.println(angle);
-                        continue;
-                    }
-                    final Location clone2 = player.getEyeLocation().clone();
-                    final Vector subtract2 = location.toVector().subtract(clone2.toVector());
-                    for (int n3 = 0; n3 < Math.round(location.distance(clone2)) + 1L; ++n3) {
-                        clone2.add(subtract2.normalize());
-                        if (clone2.getBlock().getType() != Material.AIR) {
-                            System.out.println("block");
+                    Location eye = player.getEyeLocation();
+                    Vector v = location.toVector().subtract(eye.toVector());
+                    for (int i = 0; i < Math.round(location.distance(eye)) + 1L; ++i) {
+                        eye.add(v.normalize());
+                        if (eye.getBlock().getType() != Material.AIR) {
                             continue PLAYER;
                         }
                     }
@@ -244,7 +237,7 @@ public class Grenade {
     }
 
     private double flashbangTime(double angle) {
-        return (angle) / (80) * (1 - 60) + 60;
+        return (angle) / (80) * (1 - duration*20) + duration*20;
     }
 
     private double getAngleBetweenVectors(Vector v1, Vector v2) {
