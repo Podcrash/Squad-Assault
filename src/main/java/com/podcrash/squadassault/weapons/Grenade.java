@@ -6,21 +6,20 @@ import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.nms.SimplePhysicsItem;
 import com.podcrash.squadassault.util.Item;
 import com.podcrash.squadassault.util.Utils;
-import net.minecraft.server.v1_8_R3.MovingObjectPosition;
-import net.minecraft.server.v1_8_R3.Vec3D;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -143,7 +142,7 @@ public class Grenade {
                 for(Player player : cache.getNearbyPlayers(7.0)) {
                     if((cache.getPlayer() == player || Main.getGameManager().getTeam(cache.getGame(),
                             cache.getPlayer()) != Main.getGameManager().getTeam(cache.getGame(), player)) && !cache.getGame().isDead(player)) {
-                        if (!blockLos(location, player)) continue;
+                        if (!player.hasLineOfSight(cache.getGrenade().getEntity())) continue;
                         double armorPen =
                                 player.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 1 :
                                         0.6;
@@ -155,22 +154,16 @@ public class Grenade {
             }
             if(type == GrenadeType.FLASH) {
                 //sound
-                PLAYER: for(Player player : cache.getNearbyPlayers(effectPower)) {
+                for(Player player : cache.getNearbyPlayers(effectPower)) {
                     if (cache.getGame().isDead(player)) {
                         continue;
                     }
-                    System.out.println(player);
-                    Location eye = player.getEyeLocation();
-                    Vector v = location.toVector().subtract(eye.toVector());
-                    for (int i = 0; i < Math.round(location.distance(eye)) + 1L; ++i) {
-                        eye.add(v.normalize());
-                        if (eye.getBlock().getType() != Material.AIR) {
-                            continue PLAYER;
-                        }
-                    }
-                    int duration = (int) Math.round(flashbangTime(getAngleBetweenVectors(player.getLocation().getDirection(),
+                    if(getEntitiesInCone(Collections.singletonList(cache.getGrenade().getEntity()),
+                            player.getLocation().toVector(), effectPower, 120, player.getLocation().getDirection()).contains(cache.getGrenade().getEntity()) && player.hasLineOfSight(cache.getGrenade().getEntity())) {
+                        int duration = (int) Math.round(flashbangTime(getAngleBetweenVectors(player.getLocation().getDirection(),
                                 location.subtract(player.getLocation().toVector()).toVector())));
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 2));
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 2));
+                    }
                 }
             }
             if(type == GrenadeType.DECOY) {
@@ -236,26 +229,38 @@ public class Grenade {
         }
     }
 
+    public List<Entity> getEntitiesInCone(List<Entity> entities, Vector startPos, double radius, float degrees, Vector direction) {
+
+        List<Entity> newEntities = new ArrayList<>();
+        float squaredRadius = (float) (radius * radius);                     //    We don't want to use square root
+
+        for (Entity e : entities) {
+            Vector relativePosition = e.getLocation().toVector();
+            relativePosition.subtract(startPos);
+            if (relativePosition.lengthSquared() > squaredRadius) continue;                    //    First check : distance
+            if (getAngleBetweenVectors(direction, relativePosition) > degrees) continue;    //    Second check : angle
+
+            newEntities.add(e);
+        }
+        return newEntities;
+    }
+
+    private boolean isEntityInCone(Location entityLocation, Vector startPos, float radius, float degrees, Vector direction) {
+        float squaredRadius = radius * radius;
+
+        Vector relativePosition = entityLocation.clone().toVector();
+        relativePosition.subtract(startPos);
+        if (relativePosition.lengthSquared() > squaredRadius)
+            return false;
+        return !(getAngleBetweenVectors(direction, relativePosition) > degrees);
+    }
+
     private double flashbangTime(double angle) {
         return (angle) / (80) * (1 - duration*20) + duration*20;
     }
 
     private double getAngleBetweenVectors(Vector v1, Vector v2) {
         return Math.toDegrees(v1.angle(v2));
-    }
-
-    private boolean blockLos(Location location, Player player) {
-        MovingObjectPosition objectPosition =
-                ((CraftWorld)location.getWorld()).getHandle().rayTrace(new Vec3D(player.getLocation().getX(),
-                player.getLocation().getY(),
-                player.getLocation().getZ()), new Vec3D(location.getX(), location.getY() + 4.5, location.getZ()));
-        player.sendMessage(location.getX() + " " + (location.getY() + 1.5) + " " +  location.getZ());
-        if(objectPosition == null) {
-            System.out.println("xd");
-        } else {
-            System.out.println("nope" + ((CraftWorld)location.getWorld()).getHandle().getType(objectPosition.a()).toString());
-        }
-        return objectPosition == null;
     }
 
     private boolean grenadeLos(Location location, Player player) {

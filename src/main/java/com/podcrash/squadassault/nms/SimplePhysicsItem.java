@@ -2,6 +2,7 @@ package com.podcrash.squadassault.nms;
 
 import com.podcrash.squadassault.util.Utils;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -32,5 +33,9 @@ public class SimplePhysicsItem {
 
     public Location getLocation() {
         return this.item.getLocation();
+    }
+
+    public Entity getEntity() {
+        return item;
     }
 }

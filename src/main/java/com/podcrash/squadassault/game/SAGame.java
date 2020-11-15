@@ -706,12 +706,6 @@ public class SAGame {
             setState(SAGameState.ROUND_LIVE);
             return;
         }
-        for (Player player : teamA.getPlayers()) {
-            NmsUtils.sendTitle(player, 0, 30, 0, "buy stuff - DOODLER TODO", "");
-        }
-        for (Player player : teamB.getPlayers()) {
-            NmsUtils.sendTitle(player, 0, 30, 0, "buy stuff - DOODLER TODO", "");
-        }
     }
 
     private void runWaiting() {
