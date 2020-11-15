@@ -62,8 +62,10 @@ public class GameListener implements Listener {
             clickMap.put(player, System.currentTimeMillis());
             return true;
         }
-        boolean ret = System.currentTimeMillis() - clickMap.get(player) >= 200;
-        clickMap.put(player, System.currentTimeMillis());
+        boolean ret = System.currentTimeMillis() - clickMap.get(player) >= 150;
+        if(ret) {
+            clickMap.put(player, System.currentTimeMillis());
+        }
         return ret;
     }
 
@@ -469,7 +471,7 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
-        if(game.isGameStarted()) {
+        if(game.getState() != SAGameState.WAITING || game.getPlayerCount() >= game.getMaxPlayers()) {
             event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.RED + "You cannot join a game that is in progress!");
         }
     }
@@ -675,7 +677,7 @@ public class GameListener implements Listener {
                 gun.resetDelay(player);
                 ItemStack newStack = ItemBuilder.create(itemStack.getType(), 1, gun.getItem().getData(),
                         itemStack.getItemMeta().getDisplayName(),
-                        itemStack.getItemMeta().getLore().toArray(new String[0]));
+                        itemStack.getItemMeta().getLore() == null ? new String[]{""} : itemStack.getItemMeta().getLore().toArray(new String[0]));
                 newStack = Utils.setReserveAmmo(newStack, Utils.getReserveAmmo(itemStack));
                 NmsUtils.addNBTInteger(newStack, "outofammo", NmsUtils.getNBTInteger(itemStack, "outofammo"));
                 event.getItemDrop().setItemStack(newStack);

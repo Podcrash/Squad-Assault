@@ -3,7 +3,7 @@ package com.podcrash.squadassault.weapons;
 import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.nms.NmsUtils;
-import com.podcrash.squadassault.nms.PhysicsItem;
+import com.podcrash.squadassault.nms.SimplePhysicsItem;
 import com.podcrash.squadassault.util.Item;
 import com.podcrash.squadassault.util.Utils;
 import org.bukkit.Effect;
@@ -12,12 +12,14 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -75,7 +77,7 @@ public class Grenade {
         if (player.getInventory().getItemInHand().getType() != item.getType()) {
             return;
         } //might be a bug here
-        played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnPhysicsItem(player,
+        played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnSimplePhysicsItem(player,
                 player.getItemInHand(), throwSpeed)));
         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), null);
         //play sound
@@ -85,13 +87,13 @@ public class Grenade {
         if (player.getInventory().getItemInHand().getType() != item.getType()) {
             return;
         } //might be a bug here
-        played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnPhysicsItem(player,
+        played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnSimplePhysicsItem(player,
                 player.getItemInHand(), throwSpeed/20)));
         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), null);
         //play sound
     }
 
-    public void explode(PhysicsItem item) {
+    public void explode(SimplePhysicsItem item) {
         for(GrenadeCache cache : played) {
             if(cache.getGrenade() == item) {
                 spawnFire(cache);
@@ -102,7 +104,7 @@ public class Grenade {
 
 
     private void spawnFire(GrenadeCache cache) {
-        for(Block block : getBlocks(cache.getGrenade().getGrenadeLocation().getBlock(), effectPower)) {
+        for(Block block : getBlocks(cache.getGrenade().getLocation().getBlock(), effectPower)) {
             if(block.getType() == Material.AIR) {
                 if(!block.getRelative(BlockFace.DOWN).getType().isSolid() && (block.getRelative(BlockFace.DOWN).getType() != Material.STEP)) {
                     continue;
@@ -133,19 +135,19 @@ public class Grenade {
             if ((System.currentTimeMillis() - cache.getTime()) / 1000L < delay) {
                 continue;
             }
-            Location location = cache.getGrenade().getGrenadeLocation();
+            Location location = cache.getGrenade().getLocation();
             if(type == GrenadeType.FRAG) {
                 //playsound
                 location.getWorld().playEffect(location, Effect.EXPLOSION_LARGE, 15);
                 for(Player player : cache.getNearbyPlayers(7.0)) {
                     if((cache.getPlayer() == player || Main.getGameManager().getTeam(cache.getGame(),
                             cache.getPlayer()) != Main.getGameManager().getTeam(cache.getGame(), player)) && !cache.getGame().isDead(player)) {
-                        if (!player.hasLineOfSight(cache.getGrenade().getBukkitEntity())) continue;
+                        if (!player.hasLineOfSight(cache.getGrenade().getEntity())) continue;
                         double armorPen =
                                 player.getInventory().getChestplate().getType() == Material.LEATHER_CHESTPLATE ? 1 :
                                         0.6;
                         Main.getGameManager().damage(cache.getGame(), cache.getPlayer(), player,
-                                armorPen*(effectPower - cache.getGrenade().getGrenadeLocation().distance(player.getLocation()) * 2),
+                                armorPen*(effectPower - cache.getGrenade().getLocation().distance(player.getLocation()) * 2),
                                 "HE Grenade");
                     }
                 }
@@ -156,9 +158,9 @@ public class Grenade {
                     if (cache.getGame().isDead(player)) {
                         continue;
                     }
-                    if(isEntityInCone(location, player.getLocation().toVector(), (float) effectPower, 80,
-                            player.getLocation().getDirection()) && player.hasLineOfSight(cache.getGrenade().getBukkitEntity())) {
-                        int duration = Math.round(flashbangTime(getAngleBetweenVectors(player.getLocation().getDirection(),
+                    if(getEntitiesInCone(Collections.singletonList(cache.getGrenade().getEntity()),
+                            player.getLocation().toVector(), effectPower, 120, player.getLocation().getDirection()).contains(cache.getGrenade().getEntity()) && player.hasLineOfSight(cache.getGrenade().getEntity())) {
+                        int duration = (int) Math.round(flashbangTime(getAngleBetweenVectors(player.getLocation().getDirection(),
                                 location.subtract(player.getLocation().toVector()).toVector())));
                         player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 2));
                     }
@@ -188,7 +190,7 @@ public class Grenade {
                     iterator.remove();
                 } else {
                     //play sound
-                    for(Block block : getBlocks(cache.getGrenade().getGrenadeLocation().getBlock(), effectPower)) {
+                    for(Block block : getBlocks(cache.getGrenade().getLocation().getBlock(), effectPower)) {
                         if(block.getType() == Material.AIR || block.getType() == Material.FIRE || block.getType() == Material.CROPS) {
                             cache.getBlocks().add(block);
                             block.setType(Material.CROPS);
@@ -227,23 +229,38 @@ public class Grenade {
         }
     }
 
+    public List<Entity> getEntitiesInCone(List<Entity> entities, Vector startPos, double radius, float degrees, Vector direction) {
+
+        List<Entity> newEntities = new ArrayList<>();
+        float squaredRadius = (float) (radius * radius);                     //    We don't want to use square root
+
+        for (Entity e : entities) {
+            Vector relativePosition = e.getLocation().toVector();
+            relativePosition.subtract(startPos);
+            if (relativePosition.lengthSquared() > squaredRadius) continue;                    //    First check : distance
+            if (getAngleBetweenVectors(direction, relativePosition) > degrees) continue;    //    Second check : angle
+
+            newEntities.add(e);
+        }
+        return newEntities;
+    }
 
     private boolean isEntityInCone(Location entityLocation, Vector startPos, float radius, float degrees, Vector direction) {
         float squaredRadius = radius * radius;
 
-        Vector relativePosition = entityLocation.toVector();
+        Vector relativePosition = entityLocation.clone().toVector();
         relativePosition.subtract(startPos);
         if (relativePosition.lengthSquared() > squaredRadius)
             return false;
         return !(getAngleBetweenVectors(direction, relativePosition) > degrees);
     }
 
-    private float flashbangTime(float angle) {
-        return (angle) / (80) * (1 - 60) + 60;
+    private double flashbangTime(double angle) {
+        return (angle) / (80) * (1 - duration*20) + duration*20;
     }
 
-    private float getAngleBetweenVectors(Vector v1, Vector v2) {
-        return Math.abs((float)Math.toDegrees(v1.angle(v2)));
+    private double getAngleBetweenVectors(Vector v1, Vector v2) {
+        return Math.toDegrees(v1.angle(v2));
     }
 
     private boolean grenadeLos(Location location, Player player) {
