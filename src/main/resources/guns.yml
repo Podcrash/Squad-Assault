@@ -14,7 +14,7 @@ Guns:
       Scope: FALSE
       Damage: 5.8
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.0390243  #NEEDS WORK
       ArmorPen: 0.47
@@ -45,7 +45,7 @@ Guns:
       Scope: FALSE
       Damage: 6.8 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (5.88333 shot per sec divide by 20)
+      Delay: 4    #check math on this (5.88333 shot per sec divide by 20)
       BulletsPerShot: 1
       DropoffPerBlock: 0.0341463  #NEEDS WORK
       ArmorPen: 0.51
@@ -76,7 +76,7 @@ Guns:
       Scope: FALSE
       Damage: 7.4 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 4    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.039024  #NEEDS WORK
       ArmorPen: 0.64
@@ -107,7 +107,7 @@ Guns:
       Scope: FALSE
       Damage: 6.2
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.07317  #NEEDS WORK
       ArmorPen: 0.91
@@ -138,7 +138,7 @@ Guns:
       Scope: FALSE
       Damage: 6.2 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0   #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3   #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.07317  #NEEDS WORK
       ArmorPen: 0.90
@@ -169,7 +169,7 @@ Guns:
       Scope: FALSE
       Damage: 6.4 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 1    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.053658  #NEEDS WORK
       ArmorPen: 0.78
@@ -201,7 +201,7 @@ Guns:
       Scope: FALSE
       Damage: 12.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this
+      Delay: 6    #check math on this
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.121951  #should be right, might tweak
       ArmorPen: 0.93
@@ -232,7 +232,7 @@ Guns:
       Scope: FALSE
       Damage: 5.6
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.058536
       ArmorPen: 0.56
@@ -263,7 +263,7 @@ Guns:
       Scope: FALSE
       Damage: 5.2
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.043902
       ArmorPen: 0.60
@@ -294,7 +294,7 @@ Guns:
       Scope: FALSE
       Damage: 5.4
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.058536
       ArmorPen: 0.58
@@ -325,7 +325,7 @@ Guns:
       Scope: FALSE
       Damage: 5.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.039024
       ArmorPen: 0.69
@@ -356,7 +356,7 @@ Guns:
       Scope: FALSE
       Damage: 5.2 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 05    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 18    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       ShotgunBullets: 9
       DropoffPerBlock: 0.04390243  #NEEDS WORK
@@ -388,7 +388,7 @@ Guns:
       Scope: FALSE
       Damage: 4.0 #DO THIS
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 8    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       ShotgunBullets: 6
       DropoffPerBlock: 0.058536  #NEEDS WORK
@@ -420,7 +420,7 @@ Guns:
       Scope: FALSE
       Damage: 6.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.009756
       ArmorPen: 0.78
@@ -451,7 +451,7 @@ Guns:
       Scope: FALSE
       Damage: 6.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.014634
       ArmorPen: 0.70
@@ -482,7 +482,7 @@ Guns:
       Scope: FALSE
       Damage: 7.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.009756
       ArmorPen: 0.78
@@ -514,7 +514,7 @@ Guns:
       Scope: FALSE
       Damage: 6.6
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.014634
       ArmorPen: 0.70
@@ -545,7 +545,7 @@ Guns:
       Scope: TRUE
       Damage: 5.6
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.009756
       ArmorPen: 0.90
@@ -576,7 +576,7 @@ Guns:
       Scope: TRUE
       Damage: 6.0
       Accuracy: 0.2 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 3    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.009756
       ArmorPen: 1.0
@@ -607,7 +607,7 @@ Guns:
       Scope: TRUE
       Damage: 17.0
       Accuracy: 1.0 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 25    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.024390
       ArmorPen: 0.85
@@ -639,7 +639,7 @@ Guns:
       Scope: TRUE
       Damage: 20.0 #DO THIS
       Accuracy: 1.0 #DONT TOUCH YET
-      Delay: 0    #check math on this (6.6666 shot per sec divide by 20)
+      Delay: 25    #check math on this (6.6666 shot per sec divide by 20)
       BulletsPerShot: 1 #DOUBLE CHECK THIS
       DropoffPerBlock: 0.0  #NEEDS WORK
       ArmorPen: 1.0
