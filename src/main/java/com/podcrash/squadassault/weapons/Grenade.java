@@ -88,7 +88,7 @@ public class Grenade {
             return;
         } //might be a bug here
         played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnSimplePhysicsItem(player,
-                player.getItemInHand(), throwSpeed/20)));
+                player.getItemInHand(), throwSpeed/10)));
         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), null);
         //play sound
     }
