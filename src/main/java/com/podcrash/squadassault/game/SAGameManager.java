@@ -593,9 +593,28 @@ public class SAGameManager {
                 if(game.getStats().get(damager.getUniqueId()) == null) {
                     game.getStats().put(damager.getUniqueId(), new PlayerStats(damager.getName()));
                 }
-                PlayerStats stats = game.getStats().get(damager.getUniqueId());
-                stats.addDamage(damaged.getHealth());
-                stats.getDamagedPlayers().put(damaged, stats.getDamagedPlayers().getOrDefault(damaged, 0.0)+damaged.getHealth());
+                PlayerStats damagerStats = game.getStats().get(damager.getUniqueId());
+                damagerStats.addDamage(damaged.getHealth());
+                damagerStats.getDamagedPlayers().put(damaged, damagerStats.getDamagedPlayers().getOrDefault(damaged, 0.0)+damaged.getHealth());
+                boolean firstDeath = false;
+                for(Player player : game.getTeamA().getPlayers()) {
+                    if(game.isDead(player)) {
+                        firstDeath = true;
+                        break;
+                    }
+                }
+                if(!firstDeath) {
+                    for(Player player : game.getTeamB().getPlayers()) {
+                        if(game.isDead(player)) {
+                            firstDeath = true;
+                            break;
+                        }
+                    }
+                    if(!firstDeath) {
+                        game.getStats().get(damaged.getUniqueId()).addOpenLoss();
+                        damagerStats.addOpenWin();
+                    }
+                }
             }
             damaged.setHealth(5); //do this so they experience the hit effect
             damaged.damage(4);

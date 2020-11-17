@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class SimplePhysicsItem {
+public class SimplePhysicsItem implements PhysicsItem {
 
     private Item item;
     private boolean removed;
@@ -22,19 +22,23 @@ public class SimplePhysicsItem {
         this.item.setVelocity(player.getEyeLocation().getDirection().multiply(n));
     }
 
+    @Override
     public void remove() {
         this.item.remove();
         this.removed = true;
     }
 
+    @Override
     public boolean isRemoved() {
         return this.removed;
     }
 
+    @Override
     public Location getLocation() {
         return this.item.getLocation();
     }
 
+    @Override
     public Entity getEntity() {
         return item;
     }

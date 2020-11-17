@@ -3,7 +3,7 @@ package com.podcrash.squadassault.weapons;
 import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.nms.NmsUtils;
-import com.podcrash.squadassault.nms.SimplePhysicsItem;
+import com.podcrash.squadassault.nms.PhysicsItem;
 import com.podcrash.squadassault.util.Item;
 import com.podcrash.squadassault.util.Utils;
 import org.bukkit.Effect;
@@ -77,8 +77,8 @@ public class Grenade {
         if (player.getInventory().getItemInHand().getType() != item.getType()) {
             return;
         } //might be a bug here
-        played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnSimplePhysicsItem(player,
-                player.getItemInHand(), throwSpeed)));
+        played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnPhysicsItem(player,
+                player.getItemInHand(), throwSpeed, type == GrenadeType.FIRE)));
         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), null);
         //play sound
     }
@@ -87,13 +87,13 @@ public class Grenade {
         if (player.getInventory().getItemInHand().getType() != item.getType()) {
             return;
         } //might be a bug here
-        played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnSimplePhysicsItem(player,
-                player.getItemInHand(), throwSpeed/10)));
+        played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnPhysicsItem(player,
+                player.getItemInHand(), throwSpeed/10, type == GrenadeType.FIRE)));
         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), null);
         //play sound
     }
 
-    public void explode(SimplePhysicsItem item) {
+    public void explode(PhysicsItem item) {
         for(GrenadeCache cache : played) {
             if(cache.getGrenade() == item) {
                 spawnFire(cache);
