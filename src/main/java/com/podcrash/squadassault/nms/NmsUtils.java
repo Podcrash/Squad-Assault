@@ -88,8 +88,8 @@ public final class NmsUtils {
         }
     }
 
-    public static SimplePhysicsItem spawnSimplePhysicsItem(Player player, ItemStack stack, double power) {
-        return new SimplePhysicsItem(player, stack, power);
+    public static PhysicsItem spawnPhysicsItem(Player player, ItemStack stack, double power, boolean fire) {
+        return fire ? new ComplexPhysicsItem(((CraftPlayer)player).getHandle(), CraftItemStack.asNMSCopy(stack), power) : new SimplePhysicsItem(player, stack, power);
     }
 
     public static ItemStack addNBTInteger(ItemStack stack, String key, int value) {

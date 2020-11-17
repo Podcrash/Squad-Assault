@@ -1,7 +1,7 @@
 package com.podcrash.squadassault.weapons;
 
 import com.podcrash.squadassault.game.SAGame;
-import com.podcrash.squadassault.nms.SimplePhysicsItem;
+import com.podcrash.squadassault.nms.PhysicsItem;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -14,10 +14,10 @@ public class GrenadeCache {
     private final Player player;
     private final long time;
     private long duration = -1;
-    private final SimplePhysicsItem grenade;
+    private final PhysicsItem grenade;
     private final List<Block> blocks;
 
-    public GrenadeCache(SAGame game, Player player, long time, SimplePhysicsItem grenade) {
+    public GrenadeCache(SAGame game, Player player, long time, PhysicsItem grenade) {
         this.game = game;
         this.player = player;
         this.time = time;
@@ -45,7 +45,7 @@ public class GrenadeCache {
         this.duration = duration;
     }
 
-    public SimplePhysicsItem getGrenade() {
+    public PhysicsItem getGrenade() {
         return grenade;
     }
 
