@@ -14,6 +14,8 @@ public class PlayerStats {
     private int headshots;
     private int bombPlants;
     private int bombDefuses;
+    private int openWins;
+    private int openLosses;
     private double damage;
     private final Map<Player, Double> damagedPlayers;
     private int roundsPlayed;
@@ -105,5 +107,21 @@ public class PlayerStats {
 
     public Map<Player, Double> getDamagedPlayers() {
         return damagedPlayers;
+    }
+
+    public int getOpenWins() {
+        return openWins;
+    }
+
+    public void addOpenWin() {
+        openWins++;
+    }
+
+    public int getOpenLosses() {
+        return openLosses;
+    }
+
+    public void addOpenLoss() {
+        openLosses++;
     }
 }

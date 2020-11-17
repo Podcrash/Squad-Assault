@@ -15,14 +15,14 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhysicsItem extends EntityArmorStand {
+public class ComplexPhysicsItem extends EntityArmorStand {
 
 
     private Hitbox hitbox;
     private boolean intersects;
     private boolean fire;
 
-    public PhysicsItem(EntityPlayer player, ItemStack item, double power) {
+    public ComplexPhysicsItem(EntityPlayer player, ItemStack item, double power) {
         super(player.world, player.locX, player.locY + 0.3, player.locZ);
         intersects = false;
         fire = Main.getWeaponManager().getGrenade(CraftItemStack.asBukkitCopy(item)).getType() == GrenadeType.FIRE;

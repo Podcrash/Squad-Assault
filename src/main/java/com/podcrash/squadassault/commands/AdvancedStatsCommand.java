@@ -1,6 +1,7 @@
 package com.podcrash.squadassault.commands;
 
 import com.podcrash.squadassault.Main;
+import com.podcrash.squadassault.game.PlayerStats;
 import com.podcrash.squadassault.game.SAGame;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,8 +28,10 @@ public class AdvancedStatsCommand implements CommandExecutor {
         if((game = Main.getGameManager().getGame(player)) == null) {
             return true;
         }
-        String adr = new DecimalFormat("##.#").format(game.getStats().get(player.getUniqueId()).getADR());
+        PlayerStats stats = game.getStats().get(player.getUniqueId());
+        String adr = new DecimalFormat("##.#").format(stats.getADR());
         player.sendMessage(ChatColor.AQUA + "ADR: " + ChatColor.YELLOW + adr);
+        player.sendMessage(ChatColor.AQUA + "Opening Duels: " + ChatColor.YELLOW + stats.getOpenWins() + ChatColor.AQUA + "/" + ChatColor.YELLOW + stats.getOpenLosses());
         return true;
     }
 }
