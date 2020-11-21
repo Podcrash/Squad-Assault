@@ -14,6 +14,9 @@ import org.bukkit.entity.EntityType;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -269,9 +272,9 @@ public class Config {
         config.addDefault("MaxPlayers",maxPlayers);
         config.addDefault("PrivateLobby", privateLobby);
         config.addDefault("Private", privateServer);
-        config.addDefault("AllowedPlayers", new String[]{"n0toh","pmahCgoP"});
-        config.addDefault("Hosts", new String[]{"pmahCgoP, n0toh"});
-        config.addDefault("BannedPlayers", new String[]{"Notoh"});
+        config.addDefault("AllowedPlayers", new ArrayList<>(Arrays.asList("n0toh", "pmahcgop")));
+        config.addDefault("Hosts", new ArrayList<>(Arrays.asList("n0toh", "pmahcgop")));
+        config.addDefault("BannedPlayers", new ArrayList<>(Collections.singletonList("notoh")));
         config.addDefault("RoundsPerHalf", roundsPerHalf);
         config.addDefault("RoundsToWin", roundsToWin);
         config.addDefault("RandomizeSide", randomizeSide);
