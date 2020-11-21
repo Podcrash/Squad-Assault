@@ -14,6 +14,7 @@ import org.bukkit.entity.EntityType;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 
 public class Config {
@@ -23,6 +24,12 @@ public class Config {
     private YamlConfiguration grenades;
     private YamlConfiguration shop;
     private YamlConfiguration maps;
+
+    private int roundsPerHalf;
+    private int roundsToWin;
+    private boolean privateServer;
+    private boolean shutdownOnExit;
+    private List<String> whitelistedPlayers;
 
     public void startConfig() {
         File dataFolder = Main.getInstance().getDataFolder();
