@@ -25,15 +25,68 @@ public class Config {
     private YamlConfiguration shop;
     private YamlConfiguration maps;
 
+    public FileConfiguration getConfig() {
+        return config;
+    }
+
+    public YamlConfiguration getGuns() {
+        return guns;
+    }
+
+    public YamlConfiguration getGrenades() {
+        return grenades;
+    }
+
+    public YamlConfiguration getShop() {
+        return shop;
+    }
+
+    public int getRoundsPerHalf() {
+        return roundsPerHalf;
+    }
+
+    public int getRoundsToWin() {
+        return roundsToWin;
+    }
+
+    public int getMinPlayers() {
+        return minPlayers;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public boolean isPrivateServer() {
+        return privateServer;
+    }
+
+    public boolean isPrivateLobby() {
+        return privateLobby;
+    }
+
+    public boolean getShutdownOnExit() {
+        return shutdownOnExit;
+    }
+
+    public boolean getRandomizeSide() {
+        return randomizeSide;
+    }
+
+    public boolean getExportStatsAtEnd() {
+        return exportStatsAtEnd;
+    }
+
     private int roundsPerHalf = 15;
     private int roundsToWin = 16;
     private int minPlayers = 4;
     private int maxPlayers = 16;
+    private String map;
     private boolean privateServer = false; //whether ths is an MPS or not
     private boolean privateLobby = false; //whether people need to be whitelisted or not
     private boolean shutdownOnExit = true;
     private boolean randomizeSide = true;
-    private boolean exportStatsAtEnd;
+    private boolean exportStatsAtEnd = true;
     private List<String> hosts;
     private List<String> whitelistedPlayers;
     private List<String> blacklistedPlayers;
@@ -211,7 +264,34 @@ public class Config {
     public void loadConfig() {
         Main.getInstance().reloadConfig();
         config = Main.getInstance().getConfig();
-        //todo replace hardcoded timing values with config
+        config.addDefault("Map", "Nuke");
+        config.addDefault("MinPlayers",minPlayers);
+        config.addDefault("MaxPlayers",maxPlayers);
+        config.addDefault("PrivateLobby", privateLobby);
+        config.addDefault("Private", privateServer);
+        config.addDefault("AllowedPlayers", new String[]{"n0toh","pmahCgoP"});
+        config.addDefault("Hosts", new String[]{"pmahCgoP, n0toh"});
+        config.addDefault("BannedPlayers", new String[]{"Notoh"});
+        config.addDefault("RoundsPerHalf", roundsPerHalf);
+        config.addDefault("RoundsToWin", roundsToWin);
+        config.addDefault("RandomizeSide", randomizeSide);
+        config.addDefault("ExportStatsAtEnd", exportStatsAtEnd);
+        config.addDefault("ShutdownOnExit", shutdownOnExit);
+
+        roundsPerHalf = config.getInt("RoundsPerHalf");
+        map = config.getString("Map");
+        privateLobby = config.getBoolean("PrivateLobby");
+        privateServer = config.getBoolean("Private");
+        whitelistedPlayers = config.getStringList("AllowedPlayers");
+        blacklistedPlayers = config.getStringList("BannedPlayers");
+        hosts = config.getStringList("Hosts");
+        roundsToWin = config.getInt("RoundsToWin");
+        randomizeSide = config.getBoolean("RandomizeSide");
+        exportStatsAtEnd = config.getBoolean("ExportStatsAtEnd");
+        shutdownOnExit = config.getBoolean("ShutdownOnExit");
+        minPlayers = config.getInt("MinPlayers");
+        maxPlayers = config.getInt("MaxPlayers");
+        //todo implement these tomorrow
     }
 
     private void log(String msg) {
@@ -222,4 +302,19 @@ public class Config {
         Main.getInstance().getLogger().log(Level.SEVERE, msg);
     }
 
+    public String getMap() {
+        return map;
+    }
+
+    public List<String> getBlacklistedPlayers() {
+        return blacklistedPlayers;
+    }
+
+    public List<String> getWhitelistedPlayers() {
+        return whitelistedPlayers;
+    }
+
+    public List<String> getHosts() {
+        return hosts;
+    }
 }
