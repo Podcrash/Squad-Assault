@@ -25,11 +25,18 @@ public class Config {
     private YamlConfiguration shop;
     private YamlConfiguration maps;
 
-    private int roundsPerHalf;
-    private int roundsToWin;
-    private boolean privateServer;
-    private boolean shutdownOnExit;
+    private int roundsPerHalf = 15;
+    private int roundsToWin = 16;
+    private int minPlayers = 4;
+    private int maxPlayers = 16;
+    private boolean privateServer = false; //whether ths is an MPS or not
+    private boolean privateLobby = false; //whether people need to be whitelisted or not
+    private boolean shutdownOnExit = true;
+    private boolean randomizeSide = true;
+    private boolean exportStatsAtEnd;
+    private List<String> hosts;
     private List<String> whitelistedPlayers;
+    private List<String> blacklistedPlayers;
 
     public void startConfig() {
         File dataFolder = Main.getInstance().getDataFolder();

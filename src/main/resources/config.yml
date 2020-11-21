@@ -1,4 +1,5 @@
 Map: Nuke
+PrivateLobby: FALSE
 Private: FALSE
 AllowedPlayers:
   -n0toh
