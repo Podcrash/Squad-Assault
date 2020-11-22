@@ -14,10 +14,7 @@ import org.bukkit.entity.EntityType;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 public class Config {
@@ -316,6 +313,9 @@ public class Config {
         config.addDefault("RandomizeSide", randomizeSide);
         config.addDefault("ExportStatsAtEnd", exportStatsAtEnd);
         config.addDefault("ShutdownOnExit", shutdownOnExit);
+
+        config.options().copyDefaults(true);
+        Main.getInstance().saveConfig();
 
         roundsPerHalf = config.getInt("RoundsPerHalf");
         map = config.getString("Map");

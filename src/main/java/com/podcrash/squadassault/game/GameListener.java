@@ -45,7 +45,16 @@ public class GameListener implements Listener {
     private final Inventory selector;
     private final ConcurrentMap<SAGame, Boolean> bombPlants;
     private final Map<Player, Long> clickMap;
-    private final SAGame game;
+
+    public SAGame getGame() {
+        return game;
+    }
+
+    public void setGame(SAGame game) {
+        this.game = game;
+    }
+
+    private SAGame game;
 
     public GameListener(SAGame game) {
         this.game = game;
@@ -357,8 +366,6 @@ public class GameListener implements Listener {
                         break;
                     } else if(shop.getType() == ItemType.GUN) {
                         if(shop.getTeam() != null && Main.getGameManager().getTeam(game, player) != shop.getTeam()) {
-                            player.sendMessage("read team as " + Main.getGameManager().getTeam(game, player) + ", " +
-                                    "shop item team " + (shop.getTeam() == null ? "nothing" : shop.getTeam().toString()));
                             break;
                         }
                         Gun gun = Main.getWeaponManager().getGun(shop.getWeaponName());
