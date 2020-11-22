@@ -80,6 +80,42 @@ public class Config {
         return exportStatsAtEnd;
     }
 
+    public void setRoundsPerHalf(int roundsPerHalf) {
+        this.roundsPerHalf = roundsPerHalf;
+    }
+
+    public void setRoundsToWin(int roundsToWin) {
+        this.roundsToWin = roundsToWin;
+    }
+
+    public void setMinPlayers(int minPlayers) {
+        this.minPlayers = minPlayers;
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
+    }
+
+    public void setMap(String map) {
+        this.map = map;
+    }
+
+    public void setPrivateLobby(boolean privateLobby) {
+        this.privateLobby = privateLobby;
+    }
+
+    public void setShutdownOnExit(boolean shutdownOnExit) {
+        this.shutdownOnExit = shutdownOnExit;
+    }
+
+    public void setRandomizeSide(boolean randomizeSide) {
+        this.randomizeSide = randomizeSide;
+    }
+
+    public void setExportStatsAtEnd(boolean exportStatsAtEnd) {
+        this.exportStatsAtEnd = exportStatsAtEnd;
+    }
+
     private int roundsPerHalf = 15;
     private int roundsToWin = 16;
     private int minPlayers = 4;
