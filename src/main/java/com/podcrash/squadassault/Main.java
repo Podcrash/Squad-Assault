@@ -111,5 +111,7 @@ public class Main extends JavaPlugin {
         getCommand("setmap").setExecutor(new SetMapCommand());
         getCommand("setprivate").setExecutor(new SetPrivateCommand());
         getCommand("setrandomizeside").setExecutor(new SetRandomizeSideCommand());
+        getCommand("setmaxplayers").setExecutor(new SetMaxPlayersCommand());
+        getCommand("setminplayers").setExecutor(new SetMinPlayersCommand());
     }
 }

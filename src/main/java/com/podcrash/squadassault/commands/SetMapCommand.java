@@ -24,7 +24,7 @@ public class SetMapCommand extends HostCommand {
         String map = args[0];
 
         for(SAGame game : Main.getGameManager().getGames()) {
-            game.stop();
+            Main.getGameManager().stopGame(game, false);
             for(Player player : game.getTeamA().getPlayers()) {
                 Main.getGameManager().removePlayer(game, player, true, false);
             }
