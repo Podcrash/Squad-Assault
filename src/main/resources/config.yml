@@ -1,17 +1,20 @@
 Map: Nuke
+PrivateLobby: FALSE
 Private: FALSE
 AllowedPlayers:
   -n0toh
-  -Chr1mz
+  -chr1mz
   -rodcad66
-  -pmahCgoP
+  -pmahcgop
   -TheTobiasEaton
-Host:
+Hosts:
   -n0toh
-  -pmahCgoP
+  -pmahcgop
 BannedPlayers:
-  -Callum09
+  -callum09
 RoundsPerHalf: 15
 RoundsToWin: 16
+RandomizeSide: TRUE
 ExportStatsAtEnd: TRUE
+ShutdownOnExit: TRUE
 # TODO

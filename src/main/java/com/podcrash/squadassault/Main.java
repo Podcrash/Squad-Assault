@@ -1,6 +1,6 @@
 package com.podcrash.squadassault;
 
-import com.podcrash.squadassault.commands.AdvancedStatsCommand;
+import com.podcrash.squadassault.commands.*;
 import com.podcrash.squadassault.game.GameListener;
 import com.podcrash.squadassault.game.GameTask;
 import com.podcrash.squadassault.game.SAGame;
@@ -11,8 +11,10 @@ import com.podcrash.squadassault.shop.ShopManager;
 import com.podcrash.squadassault.util.Randomizer;
 import com.podcrash.squadassault.weapons.WeaponManager;
 import me.dpohvar.powernbt.api.NBTManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -74,6 +76,9 @@ public class Main extends JavaPlugin {
         SAGame game = gameList.get(Randomizer.randomInt(gameList.size()));
 
         getServer().getPluginManager().registerEvents(listener = new GameListener(game), this);
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            gameManager.addPlayer(game, player);
+        }
     }
 
     @Override
@@ -96,5 +101,17 @@ public class Main extends JavaPlugin {
 
     private void registerCommands() {
         getCommand("advancedstats").setExecutor(new AdvancedStatsCommand());
+        getCommand("addhost").setExecutor(new AddHostCommand());
+        getCommand("blacklistplayer").setExecutor(new BlacklistPlayerCommand());
+        getCommand("whitelistplayer").setExecutor(new WhitelistPlayerCommand());
+        getCommand("setroundshalf").setExecutor(new SetRoundsHalfCommand());
+        getCommand("setroundswin").setExecutor(new SetRoundsWinCommand());
+        getCommand("setshutdown").setExecutor(new SetShutdownCommand());
+        getCommand("setexportstats").setExecutor(new SetExportStatsCommand());
+        getCommand("setmap").setExecutor(new SetMapCommand());
+        getCommand("setprivate").setExecutor(new SetPrivateCommand());
+        getCommand("setrandomizeside").setExecutor(new SetRandomizeSideCommand());
+        getCommand("setmaxplayers").setExecutor(new SetMaxPlayersCommand());
+        getCommand("setminplayers").setExecutor(new SetMinPlayersCommand());
     }
 }

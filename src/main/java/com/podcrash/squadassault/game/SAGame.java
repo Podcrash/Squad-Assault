@@ -300,12 +300,17 @@ public class SAGame {
     public void start() {
         gameStarted = true;
         bombA.getWorld().setStorm(false);
-        if(Randomizer.randomBool()) {
+        if(Main.getSAConfig().getRandomizeSide()) {
+            if(Randomizer.randomBool()) {
+                teamA.setTeam(ALPHA);
+                teamB.setTeam(OMEGA);
+            } else {
+                teamA.setTeam(OMEGA);
+                teamB.setTeam(ALPHA);
+            }
+        } else {
             teamA.setTeam(ALPHA);
             teamB.setTeam(OMEGA);
-        } else {
-            teamA.setTeam(OMEGA);
-            teamB.setTeam(ALPHA);
         }
     }
 
@@ -367,7 +372,9 @@ public class SAGame {
             return;
         }
         Main.getGameManager().stopGame(this, false);
-        Bukkit.shutdown();
+        if(Main.getSAConfig().getShutdownOnExit()) {
+            Bukkit.shutdown();
+        }
         /*
           if(shutdown) {
             shutdown();

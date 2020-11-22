@@ -53,6 +53,42 @@ commands:
   advancedstats:
     description: gets a player's advanced stats
     usage: /advancedstats [player]
+  setmaxplayers:
+    description: sets max amount of players
+    usage: /setmaxplayers <amount>
+  setminplayers:
+    description: sets min amount of players
+    usage: /setminplayers <amount>
+  setmap:
+    description: sets the map
+    usage: /setmap <map>
+  setprivate:
+    description: sets the lobby to be private or not
+    usage: /setprivate <boolean>
+  setrandomizeside:
+    description: sets whether or not side is randomized on game start
+    usage: /setrandomizeside <boolean>
+  setroundshalf:
+    description: sets the amount of rounds in the half
+    usage: /setroundshalf <rounds>
+  setroundswin:
+    description: sets the amount of rounds to win
+    usage: /setroundswin <rounds>
+  setshutdown:
+    description: sets whether or not the server shuts down on end
+    usage: /setshutdown <boolean>
+  whitelistplayer:
+    description: whitelists a player so they can join a private lobby
+    usage: /whitelistplayer <player>
+  blacklistplayer:
+    description: blacklists a player so they cannot join a lobby
+    usage: /blacklistplayer <player>
+  setexportstats:
+    description: sets whether or not stats will be exported by the server on game end
+    usage: /setexportstats <boolean>
+  addhost:
+    description: adds a player as host of the lobby
+    usage: /addhost <player>
 permissions:
   squadassault.admin:
     description: permission to use admin gamesetup/enable/disable/reload commands
