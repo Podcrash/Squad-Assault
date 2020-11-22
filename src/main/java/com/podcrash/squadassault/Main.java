@@ -103,6 +103,10 @@ public class Main extends JavaPlugin {
         getCommand("advancedstats").setExecutor(new AdvancedStatsCommand());
         getCommand("addhost").setExecutor(new AddHostCommand());
         getCommand("blacklistplayer").setExecutor(new BlacklistPlayerCommand());
+        getCommand("whitelistplayer").setExecutor(new WhitelistPlayerCommand());
+        getCommand("setroundshalf").setExecutor(new SetRoundsHalfCommand());
+        getCommand("setroundswin").setExecutor(new SetRoundsWinCommand());
+        getCommand("setshutdown").setExecutor(new SetShutdownCommand());
         getCommand("setexportstats").setExecutor(new SetExportStatsCommand());
         getCommand("setmap").setExecutor(new SetMapCommand());
         getCommand("setprivate").setExecutor(new SetPrivateCommand());
