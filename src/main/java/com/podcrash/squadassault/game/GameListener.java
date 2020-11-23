@@ -480,6 +480,10 @@ public class GameListener implements Listener {
     public void onLogin(PlayerLoginEvent event) {
         if(game.getState() != SAGameState.WAITING || game.getPlayerCount() >= game.getMaxPlayers()) {
             event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.RED + "You cannot join a game that is in progress!");
+            return;
+        }
+        if((Main.getSAConfig().isPrivateLobby() && !Main.getSAConfig().getWhitelistedPlayers().contains(event.getPlayer().getName().toLowerCase())) || Main.getSAConfig().getBlacklistedPlayers().contains(event.getPlayer().getName().toLowerCase())) {
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.RED + "You are not whitelisted on this server");
         }
     }
 

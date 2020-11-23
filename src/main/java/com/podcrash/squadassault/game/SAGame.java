@@ -27,7 +27,7 @@ import static com.podcrash.squadassault.game.SATeam.Team.ALPHA;
 import static com.podcrash.squadassault.game.SATeam.Team.OMEGA;
 
 /**
- * This classs represents a single ongoing lobby of the game. probably needs bungee integration todo
+ * This class represents a single ongoing lobby of the game.
  */
 public class SAGame {
 
@@ -95,7 +95,7 @@ public class SAGame {
         scoreboards = new HashMap<>();
         stats = new HashMap<>();
         timer = 30;
-        maxPlayers = alphaSpawns.size() + omegaSpawns.size();
+        maxPlayers = Math.min(Main.getSAConfig().getMaxPlayers(), alphaSpawns.size() + omegaSpawns.size());
         bar = NmsUtils.createBossbar(Messages.BOSSBAR_WAITING.replace("%name%", mapName));
     }
 
@@ -295,6 +295,14 @@ public class SAGame {
         teamB.removePlayer(player);
         teamA.removePlayer(player);
         teamB.addPlayer(player);
+    }
+    
+    public void setMaxPlayers(int max) {
+        this.maxPlayers = max;
+    }
+
+    public void setMinPlayers(int min) {
+        this.minPlayers = min;
     }
 
     public void start() {
@@ -505,7 +513,7 @@ public class SAGame {
         //round ending
         if(roundEnding) {
             //game is won
-            if(scoreTeamA >= 16 || scoreTeamB >= 16) {
+            if(scoreTeamA >= Main.getSAConfig().getRoundsToWin() || scoreTeamB >= Main.getSAConfig().getRoundsToWin()) {
                 timer = 10;
                 setState(SAGameState.END);
                 String winnerMsg = ChatColor.YELLOW + (scoreTeamA > scoreTeamB ?
@@ -527,7 +535,7 @@ public class SAGame {
             }
             if(timer == 0)  {
                 timer = 11;
-                if(round == 15) {
+                if(round == Main.getSAConfig().getRoundsPerHalf()) {
                     timer = 16;
                     if(teamA.getTeam() == ALPHA) {
                         teamA.setTeam(OMEGA);
@@ -626,16 +634,16 @@ public class SAGame {
             if (isDead(player)) {
                 continue;
             }
-            double distance = player.getLocation().distance(bomb.getLocation());
-            if (distance >= 48) {
+            double distance = player.getLocation().distanceSquared(bomb.getLocation());
+            if (distance >= 2304) {
                 continue;
             }
-            if (distance <= 16) {
+            if (distance <= 256) {
                 Main.getGameManager().damage(this, null, player, 20.0,
                         "Bomb");
                 continue;
             }
-            double range = (distance - 16.0) / 32.0;
+            double range = (Math.sqrt(distance) - 16.0) / 32.0;
             double damage = Math.min(20.0, 0.0062 / range);
 
             Main.getGameManager().damage(this, null, player, damage,

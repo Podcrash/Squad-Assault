@@ -55,6 +55,10 @@ public class Main extends JavaPlugin {
         return task;
     }
 
+    public static GameListener getListener() {
+        return listener;
+    }
+
     @Override
     public void onLoad() {
         NmsUtils.injectEntity("bullet_snowball", 104, BulletSnowball.class);

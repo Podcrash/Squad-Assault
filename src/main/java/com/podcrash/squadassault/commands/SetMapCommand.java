@@ -43,13 +43,14 @@ public class SetMapCommand extends HostCommand {
             world.getLivingEntities().stream().filter(e -> e.getType() != EntityType.PLAYER).forEach(Entity::remove);
             world.setStorm(false);
             try {
-                Main.getGameManager().addGame(new SAGame(id, maps.getString("Game." + id + ".Name"),
-                        Utils.getDeserializedLocation(maps.getString("Game." + id + ".Lobby")), maps.getInt(
-                        "Game." + id + ".Min"),
+                SAGame game = new SAGame(id, maps.getString("Game." + id + ".Name"),
+                        Utils.getDeserializedLocation(maps.getString("Game." + id + ".Lobby")), Main.getSAConfig().getMinPlayers(),
                         Utils.getDeserializedLocations(maps.getStringList("Game." + id + ".AlphaSpawns")),
                         Utils.getDeserializedLocations(maps.getStringList("Game." + id + ".OmegaSpawns")),
                         Utils.getDeserializedLocation(maps.getString("Game." + id + ".BombA")),
-                        Utils.getDeserializedLocation(maps.getString("Game." + id + ".BombB"))));
+                        Utils.getDeserializedLocation(maps.getString("Game." + id + ".BombB")));
+                Main.getGameManager().addGame(game);
+                Main.getListener().setGame(game);
             } catch (Exception e) {
                 Main.getInstance().getLogger().log(Level.SEVERE, "Could not load map with id " + id);
                 e.printStackTrace();
