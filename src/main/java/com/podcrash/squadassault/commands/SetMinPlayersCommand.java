@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class SetMinPlayersCommand extends HostCommand {
 
@@ -23,6 +24,7 @@ public class SetMinPlayersCommand extends HostCommand {
         }
 
         Main.getSAConfig().setMinPlayers(setting);
+        Main.getGameManager().getGame((Player) commandSender).setMinPlayers(setting);
         Bukkit.broadcastMessage(ChatColor.AQUA + "Minimum players set to " + ChatColor.YELLOW + setting);
         return true;
     }

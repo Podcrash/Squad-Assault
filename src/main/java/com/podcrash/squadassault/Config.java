@@ -229,8 +229,7 @@ public class Config {
                 world.setStorm(false);
                 try {
                     Main.getGameManager().addGame(new SAGame(id, maps.getString("Game." + id + ".Name"),
-                            Utils.getDeserializedLocation(maps.getString("Game." + id + ".Lobby")), maps.getInt(
-                            "Game." + id + ".Min"),
+                            Utils.getDeserializedLocation(maps.getString("Game." + id + ".Lobby")), minPlayers,
                             Utils.getDeserializedLocations(maps.getStringList("Game." + id + ".AlphaSpawns")),
                             Utils.getDeserializedLocations(maps.getStringList("Game." + id + ".OmegaSpawns")),
                             Utils.getDeserializedLocation(maps.getString("Game." + id + ".BombA")),
