@@ -357,8 +357,8 @@ public class GameListener implements Listener {
                         if(desiredSlot != -1) {
                             game.setMoney(player, game.getMoney(player)-shop.getPrice());
                             player.getInventory().setItem(desiredSlot,
-                                    ItemBuilder.create(grenade.getItem().getType(), 1,
-                                            grenade.getItem().getData(), grenade.getItem().getName()));
+                                    ItemBuilder.create(grenade.getItemWrapper().getType(), 1,
+                                            grenade.getItemWrapper().getData(), grenade.getItemWrapper().getName()));
                             break;
                         }
                         player.closeInventory();
@@ -373,7 +373,7 @@ public class GameListener implements Listener {
                             ItemStack oldStack = player.getInventory().getItem(gun.getType().ordinal());
 
                             gun.resetDelay(player);
-                            ItemStack newStack = ItemBuilder.create(oldStack.getType(), 1, gun.getItem().getData(),
+                            ItemStack newStack = ItemBuilder.create(oldStack.getType(), 1, gun.getItemWrapper().getData(),
                                     oldStack.getItemMeta().getDisplayName(),
                                     oldStack.getItemMeta().getLore().toArray(new String[0]));
                             newStack = Utils.setReserveAmmo(newStack, Utils.getReserveAmmo(oldStack));
@@ -387,8 +387,8 @@ public class GameListener implements Listener {
                         }
 
                         game.setMoney(player, game.getMoney(player) - shop.getPrice());
-                        ItemStack stack = ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
-                                gun.getItem().getData(), gun.getItem().getName(), shop.getLore());
+                        ItemStack stack = ItemBuilder.create(gun.getItemWrapper().getType(), gun.getMagSize(),
+                                gun.getItemWrapper().getData(), gun.getItemWrapper().getName(), shop.getLore());
                         stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
                         NmsUtils.addNBTInteger(stack, "outofammo", 0);
                         player.getInventory().setItem(gun.getType().ordinal(),
@@ -686,7 +686,7 @@ public class GameListener implements Listener {
                 game.getDrops().put(event.getItemDrop(), amount);
                 itemStack.setAmount(1);
                 gun.resetDelay(player);
-                ItemStack newStack = ItemBuilder.create(itemStack.getType(), 1, gun.getItem().getData(),
+                ItemStack newStack = ItemBuilder.create(itemStack.getType(), 1, gun.getItemWrapper().getData(),
                         itemStack.getItemMeta().getDisplayName(),
                         itemStack.getItemMeta().getLore() == null ? new String[]{""} : itemStack.getItemMeta().getLore().toArray(new String[0]));
                 newStack = Utils.setReserveAmmo(newStack, Utils.getReserveAmmo(itemStack));
@@ -703,7 +703,7 @@ public class GameListener implements Listener {
                 game.getDrops().put(event.getItemDrop(), 1);
                 itemStack.setAmount(1);
                 event.getItemDrop().setItemStack(ItemBuilder.create(itemStack.getType(), 1,
-                        grenade.getItem().getData(), itemStack.getItemMeta().getDisplayName()));
+                        grenade.getItemWrapper().getData(), itemStack.getItemMeta().getDisplayName()));
                 player.getInventory().setItem(heldItemSlot, null);
                 return;
             }

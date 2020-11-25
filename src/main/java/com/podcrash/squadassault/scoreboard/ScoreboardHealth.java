@@ -11,8 +11,8 @@ import java.util.List;
 
 public class ScoreboardHealth {
 
-    private Objective objective;
-    private List<Score> scores;
+    private final Objective objective;
+    private final List<Score> scores;
 
     public ScoreboardHealth(SAGame game, SAScoreboard scoreboard) {
         scores = new ArrayList<>();

@@ -5,7 +5,7 @@ import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.events.GunDamageEvent;
 import com.podcrash.squadassault.nms.BulletSnowball;
 import com.podcrash.squadassault.nms.NmsUtils;
-import com.podcrash.squadassault.util.Item;
+import com.podcrash.squadassault.util.ItemWrapper;
 import com.podcrash.squadassault.util.Randomizer;
 import com.podcrash.squadassault.util.Utils;
 import me.dpohvar.powernbt.api.NBTManager;
@@ -28,7 +28,7 @@ import java.util.UUID;
 
 public class Gun {
 
-    private final Item item;
+    private final ItemWrapper itemWrapper;
     private final String name;
     private final GunHotbarType type;
     private final boolean projectile;
@@ -62,9 +62,9 @@ public class Gun {
     private final Map<UUID, GunReload> reloading;
     private final Map<UUID, Long> scopeDelays;
 
-    public Gun(String name, Item item, GunHotbarType type, boolean projectile, Sound shootSound, boolean isShotgun) {
+    public Gun(String name, ItemWrapper itemWrapper, GunHotbarType type, boolean projectile, Sound shootSound, boolean isShotgun) {
         this.name = name;
-        this.item = item;
+        this.itemWrapper = itemWrapper;
         this.type = type;
         this.projectile = projectile;
         this.shootSound = shootSound;
@@ -183,8 +183,8 @@ public class Gun {
         return name;
     }
 
-    public Item getItem() {
-        return item;
+    public ItemWrapper getItemWrapper() {
+        return itemWrapper;
     }
 
     public GunHotbarType getType() {
@@ -245,7 +245,7 @@ public class Gun {
 
     public void reload(Player player, int slot, int left) {
         ItemStack itemStack = player.getInventory().getItem(slot);
-        if (!item.equals(itemStack) || itemStack.getAmount() >= magSize || reloading.containsKey(player.getUniqueId())) {
+        if (!itemWrapper.equals(itemStack) || itemStack.getAmount() >= magSize || reloading.containsKey(player.getUniqueId())) {
             return;
         }
         try {
@@ -305,7 +305,7 @@ public class Gun {
                 }
                 Player player = Bukkit.getPlayer(entry.getKey());
                 if(player != null && !player.isDead() && player.isOnline() && Main.getGameManager().getGame(player) != null) {
-                    if(item.equals(player.getItemInHand())) {
+                    if(itemWrapper.equals(player.getItemInHand())) {
                         player.getItemInHand().setDurability((short)(entry.getValue().getLeft() / entry.getValue().getDuration() * player.getItemInHand().getType().getMaxDurability()));
                         if(entry.getValue().getLeft() <= 0) {
                             iterator.remove();
@@ -355,7 +355,7 @@ public class Gun {
                 if (player != null && !player.isDead() && player.isOnline() && gunCache.getGame() != null) {
                     if (!gunCache.getGame().getSpectators().contains(player)) {
                         gunCache.setTicksLeft(gunCache.getTicksLeft() - 1);
-                        if (gunCache.getRounds() > 0 && item.equals(player.getInventory().getItemInHand())) {
+                        if (gunCache.getRounds() > 0 && itemWrapper.equals(player.getInventory().getItemInHand())) {
                             gunCache.setTicks(gunCache.getTicks() + 1);
                             if (gunCache.isFirstShot()) {
                                 gunCache.setFirstShot(false);
@@ -595,7 +595,6 @@ public class Gun {
 
     private void shotgun(Player player, boolean moving, GunCache cache) {
         for(int i = 0; i < shotgunBullets; i++) {
-            //todo sound here
             projectile(player, moving, cache);
         }
     }

@@ -106,6 +106,7 @@ public class Main extends JavaPlugin {
 
     private void registerCommands() {
         getCommand("advancedstats").setExecutor(new AdvancedStatsCommand());
+        getCommand("stopgame").setExecutor(new StopGame());
         getCommand("addhost").setExecutor(new AddHostCommand());
         getCommand("blacklistplayer").setExecutor(new BlacklistPlayerCommand());
         getCommand("whitelistplayer").setExecutor(new WhitelistPlayerCommand());

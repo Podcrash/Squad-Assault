@@ -10,7 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class SimplePhysicsItem implements PhysicsItem {
 
-    private Item item;
+    private final Item item;
     private boolean removed;
 
     public SimplePhysicsItem(final Player player, final ItemStack itemStack, final double n) {

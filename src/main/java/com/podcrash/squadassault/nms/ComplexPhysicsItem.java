@@ -191,19 +191,6 @@ public class ComplexPhysicsItem extends EntityArmorStand implements PhysicsItem 
     }
 
     public Location getGrenadeLocation() {
-        //todo
-        /*Vector armDir = new Vector(0,-1,0);
-        armDir.setY(armDir.getY() * cos(rightArmPose.getX()) - armDir.getZ() * sin(rightArmPose.getX()));
-        armDir.setZ(armDir.getY() * sin(rightArmPose.getX()) + armDir.getZ() * cos(rightArmPose.getX()));
-        armDir.setX(armDir.getX() * cos(-rightArmPose.getY()) + armDir.getZ() * sin(-rightArmPose.getY()));
-        armDir.setZ(armDir.getX() * -sin(-rightArmPose.getY()) + armDir.getZ() * cos(-rightArmPose.getY()));
-        armDir.setX(armDir.getX() * cos(-rightArmPose.getZ()) - armDir.getY() * sin(-rightArmPose.getZ()));
-        armDir.setY(armDir.getX() * sin(-rightArmPose.getZ()) + armDir.getY() * cos(-rightArmPose.getZ()));
-        armDir.setX(armDir.getX() * cos(-rightArmPose.getY()) + armDir.getZ() * sin(-rightArmPose.getY()));
-        armDir.setZ(armDir.getX() * -sin(-rightArmPose.getY()) + armDir.getZ() * cos(-rightArmPose.getY()));
-
-
-        return new Location(world.getWorld(), rightArmPose.getX(),  rightArmPose.getY(), rightArmPose.getZ());*/
         return Utils.getArmTip((ArmorStand) getBukkitEntity());
     }
 

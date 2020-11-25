@@ -4,8 +4,7 @@ import com.podcrash.squadassault.Main;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.nms.PhysicsItem;
-import com.podcrash.squadassault.util.Item;
-import com.podcrash.squadassault.util.Utils;
+import com.podcrash.squadassault.util.ItemWrapper;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,19 +24,19 @@ import java.util.List;
 
 public class Grenade {
 
-    private Item item;
-    private double effectPower;
-    private String name;
-    private int delay;
-    private int duration;
-    private GrenadeType type;
-    private double throwSpeed;
-    private List<GrenadeCache> played;
+    private final ItemWrapper itemWrapper;
+    private final double effectPower;
+    private final String name;
+    private final int delay;
+    private final int duration;
+    private final GrenadeType type;
+    private final double throwSpeed;
+    private final List<GrenadeCache> played;
 
-    public Grenade(String name, GrenadeType type, Item item, int delay, int duration, double throwSpeed, double effectPower) {
+    public Grenade(String name, GrenadeType type, ItemWrapper itemWrapper, int delay, int duration, double throwSpeed, double effectPower) {
         this.name = name;
         this.type = type;
-        this.item = item;
+        this.itemWrapper = itemWrapper;
         this.delay = delay;
         this.duration = duration;
         this.throwSpeed = throwSpeed;
@@ -45,8 +44,8 @@ public class Grenade {
         played = new ArrayList<>();
     }
 
-    public Item getItem() {
-        return item;
+    public ItemWrapper getItemWrapper() {
+        return itemWrapper;
     }
 
     public double getEffectPower() {
@@ -74,7 +73,7 @@ public class Grenade {
     }
 
     public void throwGrenade(SAGame game, Player player) {
-        if (player.getInventory().getItemInHand().getType() != item.getType()) {
+        if (player.getInventory().getItemInHand().getType() != itemWrapper.getType()) {
             return;
         } //might be a bug here
         played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnPhysicsItem(player,
@@ -84,7 +83,7 @@ public class Grenade {
     }
 
     public void roll(SAGame game, Player player) {
-        if (player.getInventory().getItemInHand().getType() != item.getType()) {
+        if (player.getInventory().getItemInHand().getType() != itemWrapper.getType()) {
             return;
         } //might be a bug here
         played.add(new GrenadeCache(game, player, System.currentTimeMillis(), NmsUtils.spawnPhysicsItem(player,
@@ -245,36 +244,12 @@ public class Grenade {
         return newEntities;
     }
 
-    private boolean isEntityInCone(Location entityLocation, Vector startPos, float radius, float degrees, Vector direction) {
-        float squaredRadius = radius * radius;
-
-        Vector relativePosition = entityLocation.clone().toVector();
-        relativePosition.subtract(startPos);
-        if (relativePosition.lengthSquared() > squaredRadius)
-            return false;
-        return !(getAngleBetweenVectors(direction, relativePosition) > degrees);
-    }
-
     private double flashbangTime(double angle) {
         return (angle) / (80) * (1 - duration*20) + duration*20;
     }
 
     private double getAngleBetweenVectors(Vector v1, Vector v2) {
         return Math.toDegrees(v1.angle(v2));
-    }
-
-    private boolean grenadeLos(Location location, Player player) {
-        Location clone = player.getEyeLocation().clone();
-        Vector trajectory = Utils.getTrajectory(location.toVector(), clone.toVector());
-        boolean breakLos = false;
-        for(int i = 0; i < Math.round(location.distance(clone)) + 1; i++) {
-            clone.add(trajectory);
-            if(clone.getBlock().getType() != Material.AIR || clone.getBlock().getType() != Material.CROPS) {
-                breakLos = true;
-                break;
-            }
-        }
-        return breakLos;
     }
 
     public void remove() {

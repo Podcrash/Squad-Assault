@@ -7,16 +7,14 @@ import org.bukkit.scoreboard.Team;
 public class ScoreboardLine {
 
     private Team team;
-    private Score score;
+    private final Score score;
     private String name;
-    private SAScoreboard scoreboard;
 
     public ScoreboardLine(SAScoreboard scoreboard, String line, int score) {
         String string = ChatColor.values()[score-1].toString();
         team = scoreboard.getScoreboard().registerNewTeam(string);
         (this.score = scoreboard.getStatus().getObjective().getScore(string)).setScore(score);
         team.addEntry(string);
-        this.scoreboard = scoreboard;
         update(line);
     }
 
