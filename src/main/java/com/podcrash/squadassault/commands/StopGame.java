@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 
 public class StopGame implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         for(SAGame game : Main.getGameManager().getGames()) {
             Main.getGameManager().stopGame(game, false);
         }

@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
 
 public class AddBombCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if(commandSender.hasPermission("podcrash.admin") && commandSender instanceof Player) {
-            if(strings.length != 1) {
+            if(args.length != 1) {
                 commandSender.sendMessage("arg 0 should be letter");
                 return true;
             }
@@ -19,7 +19,7 @@ public class AddBombCommand implements CommandExecutor {
                 commandSender.sendMessage("use /creategame first");
                 return true;
             }
-            boolean isA = strings[0].equalsIgnoreCase("a");
+            boolean isA = args[0].equalsIgnoreCase("a");
             if(isA) {
                 setup.setBombA(((Player)commandSender).getLocation().clone());
             } else {

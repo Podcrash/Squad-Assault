@@ -14,6 +14,7 @@ public class AddHostCommand extends HostCommand {
         }
 
         Main.getSAConfig().getHosts().add(args[0].toLowerCase());
+        Main.getSAConfig().getConfig().set("Hosts", Main.getSAConfig().getHosts());
         Bukkit.broadcastMessage(ChatColor.YELLOW + args[0] + ChatColor.AQUA + " has been added as a host.");
         return true;
     }

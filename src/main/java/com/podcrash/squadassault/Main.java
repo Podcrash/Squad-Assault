@@ -10,7 +10,6 @@ import com.podcrash.squadassault.nms.NmsUtils;
 import com.podcrash.squadassault.shop.ShopManager;
 import com.podcrash.squadassault.util.Randomizer;
 import com.podcrash.squadassault.weapons.WeaponManager;
-import me.dpohvar.powernbt.api.NBTManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -28,7 +27,6 @@ public class Main extends JavaPlugin {
     private static WeaponManager weaponManager;
     private static ShopManager shopManager;
     private static GameListener listener;
-    private static NBTManager nbtManager;
     private static GameTask task;
 
     public static Main getInstance() {
@@ -96,6 +94,9 @@ public class Main extends JavaPlugin {
                 }
             }
         }
+
+        saveConfig();
+
         gameManager = null;
         HandlerList.unregisterAll(listener);
         listener = null;

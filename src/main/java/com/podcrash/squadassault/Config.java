@@ -5,7 +5,10 @@ import com.podcrash.squadassault.game.SATeam;
 import com.podcrash.squadassault.shop.PlayerShopItem;
 import com.podcrash.squadassault.util.Item;
 import com.podcrash.squadassault.util.Utils;
-import com.podcrash.squadassault.weapons.*;
+import com.podcrash.squadassault.weapons.Grenade;
+import com.podcrash.squadassault.weapons.GrenadeType;
+import com.podcrash.squadassault.weapons.Gun;
+import com.podcrash.squadassault.weapons.WeaponManager;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -14,7 +17,10 @@ import org.bukkit.entity.EntityType;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 
 public class Config {
@@ -24,95 +30,6 @@ public class Config {
     private YamlConfiguration grenades;
     private YamlConfiguration shop;
     private YamlConfiguration maps;
-
-    public FileConfiguration getConfig() {
-        return config;
-    }
-
-    public YamlConfiguration getGuns() {
-        return guns;
-    }
-
-    public YamlConfiguration getGrenades() {
-        return grenades;
-    }
-
-    public YamlConfiguration getShop() {
-        return shop;
-    }
-
-    public int getRoundsPerHalf() {
-        return roundsPerHalf;
-    }
-
-    public int getRoundsToWin() {
-        return roundsToWin;
-    }
-
-    public int getMinPlayers() {
-        return minPlayers;
-    }
-
-    public int getMaxPlayers() {
-        return maxPlayers;
-    }
-
-    public boolean isPrivateServer() {
-        return privateServer;
-    }
-
-    public boolean isPrivateLobby() {
-        return privateLobby;
-    }
-
-    public boolean getShutdownOnExit() {
-        return shutdownOnExit;
-    }
-
-    public boolean getRandomizeSide() {
-        return randomizeSide;
-    }
-
-    public boolean getExportStatsAtEnd() {
-        return exportStatsAtEnd;
-    }
-
-    public void setRoundsPerHalf(int roundsPerHalf) {
-        this.roundsPerHalf = roundsPerHalf;
-    }
-
-    public void setRoundsToWin(int roundsToWin) {
-        this.roundsToWin = roundsToWin;
-    }
-
-    public void setMinPlayers(int minPlayers) {
-        this.minPlayers = minPlayers;
-    }
-
-    public void setMaxPlayers(int maxPlayers) {
-        this.maxPlayers = maxPlayers;
-    }
-
-    public void setMap(String map) {
-        this.map = map;
-    }
-
-    public void setPrivateLobby(boolean privateLobby) {
-        this.privateLobby = privateLobby;
-    }
-
-    public void setShutdownOnExit(boolean shutdownOnExit) {
-        this.shutdownOnExit = shutdownOnExit;
-    }
-
-    public void setRandomizeSide(boolean randomizeSide) {
-        this.randomizeSide = randomizeSide;
-    }
-
-    public void setExportStatsAtEnd(boolean exportStatsAtEnd) {
-        this.exportStatsAtEnd = exportStatsAtEnd;
-    }
-
     private int roundsPerHalf = 15;
     private int roundsToWin = 16;
     private int minPlayers = 4;
@@ -246,7 +163,7 @@ public class Config {
         for(String gun : guns.getConfigurationSection("Guns").getKeys(false)) {
             Gun gunObj = new Gun(guns.getString("Guns."+gun+".ItemInfo.Name"), new Item(Material.valueOf(guns.getString("Guns."+gun+".ItemInfo.Type")),
                     (byte)guns.getInt("Guns."+gun+".ItemInfo.Data"),guns.getString("Guns."+gun+".ItemInfo.Name")),
-                    GunHotbarType.valueOf(guns.getString("Guns."+gun+".ItemInfo.HotbarType")),
+                    Gun.GunHotbarType.valueOf(guns.getString("Guns."+gun+".ItemInfo.HotbarType")),
                     guns.getBoolean("Guns."+gun+".Shoot.Projectile"), Sound.valueOf(guns.getString("Guns."+gun+
                     ".Shoot.Sound")), guns.getBoolean("Guns."+gun+
                     ".ItemInfo.IsShotgun"));
@@ -279,8 +196,7 @@ public class Config {
     public void saveMaps(File dataFolder) {
         File file = new File(dataFolder, "maps.yml");
         try {
-            if(!file.exists()) {
-                file.createNewFile();
+            if(!file.createNewFile()) {
                 maps = YamlConfiguration.loadConfiguration(file);
                 if(maps.getString("Game") == null) {
                     maps.set("Game", "No games made yet");
@@ -329,7 +245,6 @@ public class Config {
         shutdownOnExit = config.getBoolean("ShutdownOnExit");
         minPlayers = config.getInt("MinPlayers");
         maxPlayers = config.getInt("MaxPlayers");
-        //todo implement these tomorrow
     }
 
     private void log(String msg) {
@@ -354,5 +269,91 @@ public class Config {
 
     public List<String> getHosts() {
         return hosts;
+    }
+
+    public FileConfiguration getConfig() {
+        return config;
+    }
+
+    public int getRoundsPerHalf() {
+        return roundsPerHalf;
+    }
+
+    public int getRoundsToWin() {
+        return roundsToWin;
+    }
+
+    public int getMinPlayers() {
+        return minPlayers;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public boolean isPrivateServer() {
+        return privateServer;
+    }
+
+    public boolean isPrivateLobby() {
+        return privateLobby;
+    }
+
+    public boolean getShutdownOnExit() {
+        return shutdownOnExit;
+    }
+
+    public boolean getRandomizeSide() {
+        return randomizeSide;
+    }
+
+    public boolean getExportStatsAtEnd() {
+        return exportStatsAtEnd;
+        //todo implement
+    }
+
+    public void setRoundsPerHalf(int roundsPerHalf) {
+        this.roundsPerHalf = roundsPerHalf;
+        config.set("RoundsPerHalf", roundsPerHalf);
+    }
+
+    public void setRoundsToWin(int roundsToWin) {
+        this.roundsToWin = roundsToWin;
+        config.set("RoundsToWin", roundsToWin);
+    }
+
+    public void setMinPlayers(int minPlayers) {
+        this.minPlayers = minPlayers;
+        config.set("MinPlayers", minPlayers);
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
+        config.set("MaxPlayers", maxPlayers);
+    }
+
+    public void setMap(String map) {
+        this.map = map;
+        config.set("Map", map);
+    }
+
+    public void setPrivateLobby(boolean privateLobby) {
+        this.privateLobby = privateLobby;
+        config.set("PrivateLobby", privateLobby);
+    }
+
+    public void setShutdownOnExit(boolean shutdownOnExit) {
+        this.shutdownOnExit = shutdownOnExit;
+        config.set("ShutdownOnExit", shutdownOnExit);
+    }
+
+    public void setRandomizeSide(boolean randomizeSide) {
+        this.randomizeSide = randomizeSide;
+        config.set("RandomizeSide", randomizeSide);
+    }
+
+    public void setExportStatsAtEnd(boolean exportStatsAtEnd) {
+        this.exportStatsAtEnd = exportStatsAtEnd;
+        config.set("ExportStatsAtEnd", exportStatsAtEnd);
     }
 }
