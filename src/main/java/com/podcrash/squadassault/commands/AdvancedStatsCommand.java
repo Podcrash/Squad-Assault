@@ -14,13 +14,13 @@ import java.text.DecimalFormat;
 
 public class AdvancedStatsCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if(!(commandSender instanceof Player) || strings.length > 1) {
+    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
+        if(!(commandSender instanceof Player) || args.length > 1) {
             return true;
         }
         Player player;
-        if(strings.length == 1) {
-            player = Bukkit.getPlayer(strings[0]);
+        if(args.length == 1) {
+            player = Bukkit.getPlayer(args[0]);
         } else {
             player = (Player) commandSender;
         }

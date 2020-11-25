@@ -280,6 +280,7 @@ public class Gun {
             reloading.remove(player.getUniqueId());
         }
         cache.get(player.getUniqueId()).setActive(false);
+        //todo ?
     }
 
     public void resetDelay(Player player) {
@@ -308,17 +309,6 @@ public class Gun {
                         player.getItemInHand().setDurability((short)(entry.getValue().getLeft() / entry.getValue().getDuration() * player.getItemInHand().getType().getMaxDurability()));
                         if(entry.getValue().getLeft() <= 0) {
                             iterator.remove();
-                            /*
-                            Get ammo left in gun then deduct from mag size
-                            If there isn't enough in reserves then just give whats left
-                             */
-//                            int oldAmount = player.getItemInHand().getAmount();
-//                            int newAmount =
-//                                    Utils.getReserveAmmo(player.getItemInHand()) >= magSize || Utils.getReserveAmmo(player.getItemInHand()) >= magSize - oldAmount ?
-//                                            magSize :
-//                                            Utils.getReserveAmmo(player.getItemInHand()) + oldAmount;
-//                            Utils.setReserveAmmo(player.getItemInHand(),
-//                                    Utils.getReserveAmmo(player.getItemInHand()) - newAmount);
                             int oldAmount = entry.getValue().getOldAmount();
                             int needed = magSize - oldAmount;
                             int reserve = Utils.getReserveAmmo(player.getItemInHand());
@@ -707,4 +697,9 @@ public class Gun {
     public void setShotgunBullets(int shotgunBullets) {
         this.shotgunBullets = shotgunBullets;
     }
+
+    public enum GunHotbarType {
+        PRIMARY, SECONDARY
+    }
+
 }

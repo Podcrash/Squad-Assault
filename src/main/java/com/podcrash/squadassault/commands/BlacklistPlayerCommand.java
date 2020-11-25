@@ -14,6 +14,7 @@ public class BlacklistPlayerCommand extends HostCommand {
         }
 
         Main.getSAConfig().getBlacklistedPlayers().add(args[0].toLowerCase());
+        Main.getSAConfig().getConfig().set("BannedPlayers", Main.getSAConfig().getBlacklistedPlayers());
         Bukkit.broadcastMessage(ChatColor.YELLOW + args[0] + ChatColor.AQUA + " has been added as a blacklisted player.");
         return true;
     }

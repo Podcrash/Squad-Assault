@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 public class AddAlphaSpawnCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if(commandSender.hasPermission("podcrash.admin") && commandSender instanceof Player) {
             GameSetup setup = Main.getGameManager().getSetup().get(commandSender);
             if(setup == null) {

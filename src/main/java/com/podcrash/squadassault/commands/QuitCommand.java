@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 public class QuitCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if(!(commandSender instanceof Player)) {
             return true;
         }

@@ -10,9 +10,9 @@ public class AnnounceCommand implements CommandExecutor {
 
     //Todo delete this later, this is just for communicating to players on the server via console
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         StringBuilder builder = new StringBuilder();
-        for(String string : strings) {
+        for(String string : args) {
             builder.append(string).append(" ");
         }
         Bukkit.broadcastMessage(builder.toString());

@@ -13,6 +13,7 @@ public class WhitelistPlayerCommand extends HostCommand {
             return true;
         }
         Main.getSAConfig().getWhitelistedPlayers().add(args[0].toLowerCase());
+        Main.getSAConfig().getConfig().set("AllowedPlayers", Main.getSAConfig().getWhitelistedPlayers());
         Bukkit.broadcastMessage(ChatColor.YELLOW + args[0] + ChatColor.AQUA + " has been added as a whitelisted " +
                 "player.");
         return true;

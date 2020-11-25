@@ -9,13 +9,13 @@ import org.bukkit.command.CommandSender;
 
 public class EnableMapCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if(commandSender.hasPermission("podcrash.admin")) {
-            if(strings.length != 1) {
+            if(args.length != 1) {
                 commandSender.sendMessage("Must specify id!");
                 return true;
             }
-            String id = strings[0];
+            String id = args[0];
             SAGame game = Main.getGameManager().getGame(id);
             if(game != null) {
                 if(game.getState() != SAGameState.DISABLED) {

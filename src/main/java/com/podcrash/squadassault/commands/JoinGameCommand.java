@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
 
 public class JoinGameCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if(commandSender instanceof Player && strings.length == 1) {
-            Main.getGameManager().addPlayer(Main.getGameManager().getGame(strings[0]), (Player) commandSender);
+    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
+        if(commandSender instanceof Player && args.length == 1) {
+            Main.getGameManager().addPlayer(Main.getGameManager().getGame(args[0]), (Player) commandSender);
         }
         return true;
     }
