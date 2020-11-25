@@ -11,10 +11,10 @@ import org.bukkit.scoreboard.Team;
 
 public class SAScoreboard {
 
-    private Scoreboard scoreboard;
+    private final Scoreboard scoreboard;
+    private final ScoreboardStatus status;
     private SAScoreboardTeam team;
     private ScoreboardHealth health;
-    private ScoreboardStatus status;
 
     public SAScoreboard(Player player) {
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();

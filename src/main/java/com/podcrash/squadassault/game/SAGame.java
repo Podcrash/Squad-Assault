@@ -811,12 +811,12 @@ public class SAGame {
         for(PlayerShopItem shop : Main.getShopManager().getShops()) {
             if(shop.getType() == ItemType.GRENADE) {
                 Grenade grenade = Main.getWeaponManager().getGrenade(shop.getWeaponName());
-                inventory.setItem(shop.getShopSlot(), ItemBuilder.create(grenade.getItem().getType(),
-                        1, grenade.getItem().getData(), shop.getName(),shop.getLore()));
+                inventory.setItem(shop.getShopSlot(), ItemBuilder.create(grenade.getItemWrapper().getType(),
+                        1, grenade.getItemWrapper().getData(), shop.getName(),shop.getLore()));
             } else if(shop.getType() == ItemType.GUN && (shop.getTeam() == null || shop.getTeam() == team)) {
                 Gun gun = Main.getWeaponManager().getGun(shop.getWeaponName());
-                inventory.setItem(shop.getShopSlot(), ItemBuilder.create(gun.getItem().getType(), 1,
-                        gun.getItem().getData(), shop.getName(), shop.getLore()));
+                inventory.setItem(shop.getShopSlot(), ItemBuilder.create(gun.getItemWrapper().getType(), 1,
+                        gun.getItemWrapper().getData(), shop.getName(), shop.getLore()));
             } else {
                 if(shop.getTeam() != null && shop.getTeam() != team) {
                     continue;

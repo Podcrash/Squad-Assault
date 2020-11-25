@@ -7,8 +7,8 @@ import org.bukkit.util.Vector;
 
 public class Hitbox {
 
-    private Vector max;
-    private Vector min;
+    private final Vector max;
+    private final Vector min;
 
     public Hitbox(Block block) {
         this(block.getLocation().toVector(), block.getLocation().toVector().add(new Vector(1.0,

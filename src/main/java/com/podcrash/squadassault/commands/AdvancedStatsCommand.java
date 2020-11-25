@@ -32,6 +32,8 @@ public class AdvancedStatsCommand implements CommandExecutor {
         String adr = new DecimalFormat("##.#").format(stats.getADR());
         player.sendMessage(ChatColor.AQUA + "ADR: " + ChatColor.YELLOW + adr);
         player.sendMessage(ChatColor.AQUA + "Opening Duels: " + ChatColor.YELLOW + stats.getOpenWins() + ChatColor.AQUA + "/" + ChatColor.YELLOW + stats.getOpenLosses());
+        player.sendMessage(ChatColor.AQUA + "Headshots: " + ChatColor.YELLOW + stats.getHeadshots());
+        player.sendMessage(ChatColor.AQUA + "Bomb Plants/Defuses: " + ChatColor.YELLOW + stats.getBombPlants() + ChatColor.AQUA + "/" + ChatColor.YELLOW + stats.getBombDefuses());
         return true;
     }
 }

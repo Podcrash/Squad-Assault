@@ -35,7 +35,7 @@ public class WeaponManager {
 
     public Gun getGun(ItemStack stack) {
         for(Gun gun : guns) {
-            if(gun.getItem().equals(stack)) {
+            if(gun.getItemWrapper().equals(stack)) {
                 return gun;
             }
         }
@@ -44,7 +44,7 @@ public class WeaponManager {
 
     public Grenade getGrenade(ItemStack stack) {
         for(Grenade grenade : grenades) {
-            if(grenade.getItem().equals(stack)) {
+            if(grenade.getItemWrapper().equals(stack)) {
                 return grenade;
             }
         }

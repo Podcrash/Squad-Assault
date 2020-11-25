@@ -78,26 +78,6 @@ public final class Utils {
         return NmsUtils.getNBTInteger(stack, "reserve");
     }
 
-
-    //    public static int getReserveAmmo(ItemStack stack) {
-//        ItemMeta meta = stack.getItemMeta();
-//        if(meta == null || meta.getLore() == null) {
-//            return -1;
-//        }
-//        List<String> lore = meta.getLore();
-//        String line = lore.get(0);
-//        if(line.contains("Reserve Ammo: ")) {
-//            try {
-//                return Integer.parseInt(line.substring(line.indexOf(": ")+2));
-//            } catch (NumberFormatException e) {
-//                Main.getInstance().getLogger().log(Level.SEVERE, "invalid item meta " + line + " belonging to " + stack.getType());
-//                return -1;
-//            }
-//        } else {
-//            return -1;
-//        }
-//    }
-
     public static ItemStack setReserveAmmo(ItemStack stack, int ammo) {
         stack = NmsUtils.addNBTInteger(stack, "reserve", ammo);
         setReserveAmmoLore(stack, ammo);

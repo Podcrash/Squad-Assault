@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ShopManager {
 
-    private List<PlayerShopItem> shops;
+    private final List<PlayerShopItem> shops;
 
     public ShopManager() {
         shops = new ArrayList<>();

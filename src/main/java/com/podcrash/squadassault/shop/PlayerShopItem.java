@@ -5,15 +5,15 @@ import org.bukkit.Material;
 
 public class PlayerShopItem {
 
-    private int shopSlot;
-    private int price;
+    private final int shopSlot;
+    private final int price;
     private SATeam.Team team;
-    private String name;
-    private String lore;
+    private final String name;
+    private final String lore;
     private String weaponName;
     private int hotbarSlot;
     private Material material;
-    private ItemType type;
+    private final ItemType type;
     private String itemName;
 
     public PlayerShopItem(String weaponName, String name, int slot, int price, String lore, SATeam.Team team) {

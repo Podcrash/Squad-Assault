@@ -47,7 +47,7 @@ public class SATeam {
     public enum Team {
         ALPHA(ChatColor.AQUA), OMEGA(ChatColor.RED);
 
-        private ChatColor color;
+        private final ChatColor color;
 
         Team(ChatColor color) {
             this.color = color;

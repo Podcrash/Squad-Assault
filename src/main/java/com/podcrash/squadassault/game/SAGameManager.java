@@ -429,8 +429,8 @@ public class SAGameManager {
                 player.getInventory().setItem(5, null);
                 player.getInventory().setItem(6, null);
                 Gun gun = Main.getWeaponManager().getGun("P2000");
-                ItemStack stack =  ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
-                        gun.getItem().getData(), gun.getItem().getName());
+                ItemStack stack =  ItemBuilder.create(gun.getItemWrapper().getType(), gun.getMagSize(),
+                        gun.getItemWrapper().getData(), gun.getItemWrapper().getName());
                 stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
                 NmsUtils.addNBTInteger(stack, "outofammo", 0);
                 player.getInventory().setItem(1, stack);
@@ -438,8 +438,8 @@ public class SAGameManager {
             }
             if(player.getInventory().getItem(1) == null) {
                 Gun gun = Main.getWeaponManager().getGun("P2000");
-                ItemStack stack =  ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
-                        gun.getItem().getData(), gun.getItem().getName());
+                ItemStack stack =  ItemBuilder.create(gun.getItemWrapper().getType(), gun.getMagSize(),
+                        gun.getItemWrapper().getData(), gun.getItemWrapper().getName());
                 stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
                 NmsUtils.addNBTInteger(stack, "outofammo", 0);
                 player.getInventory().setItem(1, stack);
@@ -457,8 +457,8 @@ public class SAGameManager {
                 Gun gun = Main.getWeaponManager().getGun(player.getInventory().getItem(i));
                 if(gun != null) {
                     gun.resetPlayer(player);
-                    player.getInventory().setItem(i, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
-                            gun.getItem().getData(), gun.getName()));
+                    player.getInventory().setItem(i, ItemBuilder.create(gun.getItemWrapper().getType(), gun.getMagSize(),
+                            gun.getItemWrapper().getData(), gun.getName()));
                     NmsUtils.addNBTInteger(player.getInventory().getItem(i), "outofammo", 0);
                 }
             }
@@ -510,8 +510,8 @@ public class SAGameManager {
                 player.getInventory().setItem(6, null);
                 player.getInventory().setItem(7, ItemBuilder.create(Material.GOLD_NUGGET, 1, "Wire Cutters", true));
                 Gun gun = Main.getWeaponManager().getGun("Glock-18");
-                ItemStack stack = ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
-                        gun.getItem().getData(), gun.getItem().getName());
+                ItemStack stack = ItemBuilder.create(gun.getItemWrapper().getType(), gun.getMagSize(),
+                        gun.getItemWrapper().getData(), gun.getItemWrapper().getName());
                 stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
                 NmsUtils.addNBTInteger(stack, "outofammo", 0);
                 player.getInventory().setItem(1, stack);
@@ -519,8 +519,8 @@ public class SAGameManager {
             }
             if(player.getInventory().getItem(1) == null) {
                 Gun gun = Main.getWeaponManager().getGun("Glock-18");
-                ItemStack stack = ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
-                        gun.getItem().getData(), gun.getItem().getName());
+                ItemStack stack = ItemBuilder.create(gun.getItemWrapper().getType(), gun.getMagSize(),
+                        gun.getItemWrapper().getData(), gun.getItemWrapper().getName());
                 stack = Utils.setReserveAmmo(stack, gun.getTotalAmmoSize());
                 NmsUtils.addNBTInteger(stack, "outofammo", 0);
                 player.getInventory().setItem(1, stack);
@@ -536,8 +536,8 @@ public class SAGameManager {
                 Gun gun = Main.getWeaponManager().getGun(player.getInventory().getItem(i));
                 if(gun != null) {
                     gun.resetPlayer(player);
-                    player.getInventory().setItem(i, ItemBuilder.create(gun.getItem().getType(), gun.getMagSize(),
-                            gun.getItem().getData(), gun.getName()));
+                    player.getInventory().setItem(i, ItemBuilder.create(gun.getItemWrapper().getType(), gun.getMagSize(),
+                            gun.getItemWrapper().getData(), gun.getName()));
                     NmsUtils.addNBTInteger(player.getInventory().getItem(i), "outofammo", 0);
                 }
             }

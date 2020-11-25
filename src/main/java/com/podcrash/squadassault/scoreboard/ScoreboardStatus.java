@@ -9,10 +9,10 @@ import java.util.Map;
 
 public class ScoreboardStatus {
 
-    private Player player;
-    private Objective objective;
-    private SAScoreboard scoreboard;
-    private Map<Integer, ScoreboardLine> entries;
+    private final Player player;
+    private final Objective objective;
+    private final SAScoreboard scoreboard;
+    private final Map<Integer, ScoreboardLine> entries;
 
     public ScoreboardStatus(Player player, SAScoreboard scoreboard) {
         this.entries = new HashMap<>();

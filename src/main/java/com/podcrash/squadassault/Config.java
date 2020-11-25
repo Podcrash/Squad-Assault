@@ -3,7 +3,7 @@ package com.podcrash.squadassault;
 import com.podcrash.squadassault.game.SAGame;
 import com.podcrash.squadassault.game.SATeam;
 import com.podcrash.squadassault.shop.PlayerShopItem;
-import com.podcrash.squadassault.util.Item;
+import com.podcrash.squadassault.util.ItemWrapper;
 import com.podcrash.squadassault.util.Utils;
 import com.podcrash.squadassault.weapons.Grenade;
 import com.podcrash.squadassault.weapons.GrenadeType;
@@ -128,7 +128,7 @@ public class Config {
         for(String nade : grenades.getConfigurationSection("Grenades").getKeys(false)) {
             Main.getWeaponManager().addGrenade(
                 new Grenade(nade, GrenadeType.valueOf(grenades.getString("Grenades."+nade+".ItemInfo.Type")),
-                        new Item(Material.valueOf(grenades.getString("Grenades."+nade+".ItemInfo.ItemType")),
+                        new ItemWrapper(Material.valueOf(grenades.getString("Grenades."+nade+".ItemInfo.ItemType")),
                                 (byte)grenades.getInt("Grenades."+nade+".ItemInfo.Data"), grenades.getString(
                                         "Grenades."+nade+".ItemInfo.Name")), grenades.getInt("Grenades."+nade+
                         ".Properties.Delay"),grenades.getInt("Grenades."+nade+
@@ -161,7 +161,7 @@ public class Config {
 
     private void loadGuns() {
         for(String gun : guns.getConfigurationSection("Guns").getKeys(false)) {
-            Gun gunObj = new Gun(guns.getString("Guns."+gun+".ItemInfo.Name"), new Item(Material.valueOf(guns.getString("Guns."+gun+".ItemInfo.Type")),
+            Gun gunObj = new Gun(guns.getString("Guns."+gun+".ItemInfo.Name"), new ItemWrapper(Material.valueOf(guns.getString("Guns."+gun+".ItemInfo.Type")),
                     (byte)guns.getInt("Guns."+gun+".ItemInfo.Data"),guns.getString("Guns."+gun+".ItemInfo.Name")),
                     Gun.GunHotbarType.valueOf(guns.getString("Guns."+gun+".ItemInfo.HotbarType")),
                     guns.getBoolean("Guns."+gun+".Shoot.Projectile"), Sound.valueOf(guns.getString("Guns."+gun+
