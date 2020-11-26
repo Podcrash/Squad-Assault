@@ -89,6 +89,9 @@ commands:
   addhost:
     description: adds a player as host of the lobby
     usage: /addhost <player>
+  removehost:
+    description: removes a player as host of the lobby
+    usage: /removehost
 permissions:
   squadassault.admin:
     description: permission to use admin gamesetup/enable/disable/reload commands
