@@ -10,6 +10,10 @@ public class AddHostCommand extends HostCommand {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if(!checkPermission(commandSender, command, s, args)) {
+            if(!Main.getSAConfig().getHosts().get(0).equalsIgnoreCase(commandSender.getName())) {
+                return true;
+            }
+
             return true;
         }
 
