@@ -6,16 +6,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class AddHostCommand extends HostCommand {
+public class RemoveHostCommand extends HostCommand {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if(!checkPermission(commandSender, command, s, args) || !Main.getSAConfig().getHosts().get(0).equalsIgnoreCase(commandSender.getName())) {
-            return true;
+           return true;
         }
 
-        Main.getSAConfig().getHosts().add(args[0].toLowerCase());
+        Main.getSAConfig().getHosts().remove(args[0].toLowerCase());
         Main.getSAConfig().getConfig().set("Hosts", Main.getSAConfig().getHosts());
-        Bukkit.broadcastMessage(ChatColor.YELLOW + args[0] + ChatColor.AQUA + " has been added as a host.");
+        Bukkit.broadcastMessage(ChatColor.YELLOW + args[0] + ChatColor.AQUA + " has been removed as a host.");
         return true;
     }
 }
